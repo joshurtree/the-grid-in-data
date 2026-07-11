@@ -1,25 +1,68 @@
-# electricity-prices flake
+# GB Electricity Prices - Gradio Web Interface
 
-This repository contains `gbwep.py`, a small script that analyses GB electricity prices and generation data.
+A web application for analyzing and visualizing GB electricity market data, including wholesale prices, gas prices, and generation locations.
 
-This flake provides a reproducible Python environment with the dependencies required to run the script (pandas, matplotlib, requests and taipy).
+Built with **Gradio** for interactive data visualization and **Plotly** for charts.
 
-Quick start
+## Features
 
-- Enter a development shell with the required packages:
+- **Electricity Prices Tab** — View wholesale electricity prices over time, colored by renewable energy percentage
+- **Electricity vs Gas Tab** — Compare electricity and gas prices with dual-axis charts
+- **Energy Map Tab** — Interactive map showing generator locations and DNO zone boundaries
 
-```bash
-nix develop
-# then
-uv run main.py 
-```
+## Quick Start
 
-- Run directly using the flake app:
+### Using Nix Flakes (Recommended)
 
 ```bash
-nix run .#gbgridtracker
+nix develop          # Enter dev environment
+uv sync              # Install dependencies
+uv run app.py        # Start the Gradio app
 ```
 
-Notes
+Access the app at: **http://localhost:7860**
 
-- The flake pins to `nixos-unstable` for up-to-date packages; change the input in `flake.nix` if you prefer a specific release.
+### Using Poetry
+
+```bash
+poetry install       # Install dependencies
+poetry run python app.py
+```
+
+### Direct with UV
+
+```bash
+uv sync              # Install dependencies
+uv run app.py
+```
+
+### Using the Nix Flake App
+
+```bash
+nix run .#app
+```
+
+## Requirements
+
+- Python 3.12+
+- Dependencies: gradio, pandas, plotly, matplotlib, numpy, requests, statsmodels, osgridconverter
+
+## Data Files
+
+The application expects data in the `data/` directory:
+- `market-prices.csv` — Wholesale electricity prices
+- `gas_prices.csv` — Natural gas prices
+- `generators.csv` — Generator locations and metadata
+- `tnuosgenzones.geojson` — DNO zone boundaries
+
+## Architecture
+
+- **app.py** — Main Gradio application with three tabs
+- **constants.py** — Configuration and paths
+- **pyproject.toml** — Project dependencies (managed by UV or Poetry)
+
+## Notes
+
+- The flake pins to `nixos-unstable` for up-to-date packages
+- Data files should be downloaded/fetched using `fetch-data.py` first
+- The app runs on `http://0.0.0.0:7860` by default

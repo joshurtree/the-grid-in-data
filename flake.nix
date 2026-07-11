@@ -1,5 +1,5 @@
 {
-  description = "Nix flake for running gbwep.py with taipy (installed via pip from GitHub source)";
+  description = "Nix flake for GB Electricity Prices - Gradio web interface";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -10,10 +10,10 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs { inherit system; };
   in {
-    apps.${system}.gbgridtracker = {
+    apps.${system}.app = {
       type = "app";
       program = "uv";
-      args = [ "run", "${toString ./.}/main.py" ];
+      args = [ "run" "app.py" ];
     };
 
     devShells.${system}.default = pkgs.mkShell {
@@ -23,6 +23,15 @@
         python312Packages.numpy
         uv
       ];
+      
+      shellHook = ''
+        echo "✓ Nix environment loaded with Python 3.12, uv, git, and poetry"
+        echo ""
+        echo "Quick start:"
+        echo "  uv sync              # Install dependencies from pyproject.toml"
+        echo "  uv run app.py        # Run the Gradio web interface on http://localhost:7860"
+        echo "  nix run .#app        # Run with flake"
+      '';
     };
   };
 }

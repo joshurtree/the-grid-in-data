@@ -3,10 +3,10 @@ import json
 import os
 import pandas as pd
 import plotly.graph_objects as go
-import taipy.gui.builder as tgb
 from constants import ELEXON_GENERATION_TYPES, GENERATION_COLOURS, GENERATION_TYPE_GROUPS, GENERATION_SUPER_GROUPS, TRANSFORMED_DATA_DIR
 from bmrs import fetch_FPN
 from geojson import add_boundaries_to_chart
+from gradio import Interface, Row, Column, CheckboxGroup, DateTimePicker, Textbox, Markdown, Plot
 
 generators = pd.read_json(os.path.join(TRANSFORMED_DATA_DIR, 'all_generators.json'))
 
@@ -66,11 +66,11 @@ def create_scatter_data(row, generation):
     }
 
 def create_data(time, generator_types):
-    global data
     print(f"[DEBUG] Creating data with time={time}, generator_types={generator_types}")
     generation = fetch_FPN(time if time else datetime.now())
     print(f"[DEBUG] Fetched {len(generation)} generation records")
     data = pd.DataFrame([create_scatter_data(row, generation) for _, row in generators.iterrows()])
+    
     data = data[data['current_generation'] > 0]  # Filter out generators with zero current generation
     data = data[data['fuel_type'].isin(generator_types)]  # Filter by selected generator types
     data['text'] = data.apply(lambda row: f"{row['name']} ({ELEXON_GENERATION_TYPES[row['fuel_type']]}): {row['current_generation']:.2f} MW", axis=1)
@@ -126,54 +126,3 @@ def update_chart(data):
 
     return chart_figure
 
-def do_update_chart(state):
-    data = create_data(state.time, state.fossil_fuel_types + state.low_carbon_types + state.other_types)
-    state.chart_figure = update_chart(data)
-
-def do_show_generator_details(state):
-    if len(state.selected_generator) == 0:
-        return
-    generator_info = state.data.iloc[state.selected_generator[-1]].to_dict('records')[0]
-    state.generator_details = f"## {generator_info['name']}\n"
-    state.generator_details += f"| **Fuel Type** | {ELEXON_GENERATION_TYPES[generator_info['fuel_type']]} |\n"
-    state.generator_details += f"| **Latitude** | {generator_info['lat']} |\n"
-    state.generator_details += f"| **Longitude** | {generator_info['lon']} |\n"
-    state.generator_details += f"| **Current Generation** | {generator_info['current_generation']:.2f} MW |\n"
-    #state.generator_details += f"**BMU IDs: {', '.join(generator_info['elexonBmUnit'])}\n"
-    state.show_generator_details = True
-
-fossil_fuel_types = GENERATION_SUPER_GROUPS['Fossil Fuels']
-low_carbon_types = GENERATION_SUPER_GROUPS['Low Carbon']
-other_types = GENERATION_SUPER_GROUPS['Other'] 
-selected_generator = []
-generator_details = ""
-show_generator_details = False
-time = datetime.now()
-data = create_data(time, fossil_fuel_types + low_carbon_types + other_types)
-chart_figure = update_chart(data)
-
-def get_generator_types(group):
-    return [(fuel_type, ELEXON_GENERATION_TYPES[fuel_type]) for fuel_type in GENERATION_SUPER_GROUPS[group]]
-
-with tgb.Page() as generation_map:
-    with tgb.part(class_name="card"):
-        tgb.text(value="# GB Generation Live Map", mode="md")
-        with tgb.layout(columns="1 1"):
-            with tgb.part():
-                tgb.text(value="### Total Generators: {len(data)}", mode="md")
-            with tgb.part(): 
-                tgb.text(value="### Total Tracked Generation: {int(data['current_generation'].sum())} MW", mode="md")
-
-    with tgb.part(class_name="card"):
-            tgb.chart(figure="{chart_figure}", scale="4.0", on_change="do_show_generator_details", selected="{selected_generator}")
-            with tgb.expandable("Generator Information", expand="{show_generator_details}"):
-                tgb.text(value="{generator_details}", mode="md")
-    with tgb.part(class_name="card"):
-        tgb.date("{time}", label="Date/Time", with_time=True, on_change="do_update_chart")
-        with tgb.layout(columns="1 1 1"):
-            with tgb.part():
-                tgb.selector("{fossil_fuel_types}", label='Fossil Fuels', show_select_all=True, lov=get_generator_types('Fossil Fuels'), on_change="do_update_chart", multiple=True)
-            with tgb.part():
-                tgb.selector("{low_carbon_types}", label='Low Carbon', show_select_all=True, lov=get_generator_types('Low Carbon'), on_change="do_update_chart", multiple=True)
-            with tgb.part():
-                tgb.selector("{other_types}", label='Other', show_select_all=True, lov=get_generator_types('Other'), on_change="do_update_chart", multiple=True)
