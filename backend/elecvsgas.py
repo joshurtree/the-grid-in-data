@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from constants import PERIOD_GROUPS, TRANSFORMED_DATA_DIR, RAW_DATA_DIR
+from backend.constants import PERIOD_GROUPS, TRANSFORMED_DATA_DIR, RAW_DATA_DIR
 import numpy as np
 
 electricity_prices = pd.read_csv(os.path.join(TRANSFORMED_DATA_DIR, 'daily_data.csv')).rename(columns={'Price': 'Electricity Price', 'SettlementDate': 'Date'}).assign(Date=lambda df: pd.to_datetime(df['Date'], format='mixed'))

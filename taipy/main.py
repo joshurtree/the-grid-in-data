@@ -1,9 +1,9 @@
 from taipy.gui import Gui, Icon, navigate
 import taipy.gui.builder as tgb
-from gbwep import gbwep_page
-from cfd import cfd_page
-from elecvsgas import elecvsgas_page
-from energy_map import generation_map
+from backend.gbwep import gbwep_page
+from backend.cfd import cfd_page
+from backend.elecvsgas import elecvsgas_page
+from backend.energy_map import generation_map
 
 def change_page(state, action, info):
     navigate(state, info["args"][0])

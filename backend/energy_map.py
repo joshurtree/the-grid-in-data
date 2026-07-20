@@ -3,10 +3,9 @@ import json
 import os
 import pandas as pd
 import plotly.graph_objects as go
-from constants import ELEXON_GENERATION_TYPES, GENERATION_COLOURS, GENERATION_TYPE_GROUPS, GENERATION_SUPER_GROUPS, TRANSFORMED_DATA_DIR
-from bmrs import fetch_FPN
-from geojson import add_boundaries_to_chart
-from gradio import Interface, Row, Column, CheckboxGroup, DateTimePicker, Textbox, Markdown, Plot
+from backend.constants import ELEXON_GENERATION_TYPES, GENERATION_COLOURS, GENERATION_TYPE_GROUPS, GENERATION_SUPER_GROUPS, TRANSFORMED_DATA_DIR
+from backend.bmrs import fetch_FPN
+from backend.geojson import add_boundaries_to_chart
 
 generators = pd.read_json(os.path.join(TRANSFORMED_DATA_DIR, 'all_generators.json'))
 
@@ -30,7 +29,7 @@ generators = pd.read_json(os.path.join(TRANSFORMED_DATA_DIR, 'all_generators.jso
 # ]
 
 #def embeded_generation(row, time):
-    
+
 
 def aggregate_generation(rows, time):
     total_generation = 0
@@ -73,11 +72,28 @@ def create_data(time, generator_types):
     
     data = data[data['current_generation'] > 0]  # Filter out generators with zero current generation
     data = data[data['fuel_type'].isin(generator_types)]  # Filter by selected generator types
-    data['text'] = data.apply(lambda row: f"{row['name']} ({ELEXON_GENERATION_TYPES[row['fuel_type']]}): {row['current_generation']:.2f} MW", axis=1)
+
+    # Safe construction of the hover text column (avoid DataFrame-from-apply issues)
+    if data.empty:
+        data['text'] = []
+    else:
+        # Resolve human-readable fuel type names, fallback to the raw fuel type key
+        fuel_labels = data['fuel_type'].map(lambda ft: ELEXON_GENERATION_TYPES.get(ft, ft))
+        # Build the text column vectorized
+        data['text'] = (
+            data['name'].astype(str)
+            + " ("
+            + fuel_labels.astype(str)
+            + "): "
+            + data['current_generation'].map(lambda v: f"{v:.2f}")
+            + " MW"
+        )
+
     print(f"[DEBUG] Created data with {len(data)} generators after filtering")
     return data
 
-def update_chart(data):
+def create_chart(time, generator_types):
+    data = create_data(time, generator_types)
     # Create Plotly figure with boundaries and generator markers
     chart_figure = go.Figure()
 

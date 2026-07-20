@@ -2,7 +2,17 @@ import pandas as pd
 import plotly.graph_objects as go
 from taipy.gui import Gui
 import taipy.gui.builder as tgb
-from constants import NESO_GENERATION_TYPES, TRANSFORMED_DATA_DIR
+from backend.constants import NESO_GENERATION_TYPES, TRANSFORMED_DATA_DIR
+
+target_generation: str = "LOW_CARBON"
+minimum_usage: int = 0
+start_date: date = date.today() - pd.DateOffset(years=1)  # Default to one year ago
+end_date: date = date.today()
+date_range = [start_date, end_date]
+show_table: bool = False
+maximum_usage: int = 100
+(chart_figure, maximum_usage) = create_chart(start_date, end_date, target_generation, minimum_usage)
+(table, maximum_usage) = group_by_generation(start_date, end_date, target_generation, minimum_usage)
 
 def update_gbwep_chart(state):
     if not state.show_table:

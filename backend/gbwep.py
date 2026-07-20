@@ -1,20 +1,18 @@
 from dataclasses import dataclass
 from datetime import datetime, date
 import os
+from typing import Tuple
 import pandas as pd
 import plotly.graph_objects as go
-from taipy.gui import Gui
-import taipy.gui.builder as tgb
 
-from constants import NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
+from backend.constants import NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
 
 base_data: pd.DataFrame = pd.read_csv(os.path.join(TRANSFORMED_DATA_DIR, 'half_hourly_data.csv'), parse_dates=['StartTime', 'SettlementDate'])
 daily_data: pd.DataFrame = pd.read_csv(os.path.join(TRANSFORMED_DATA_DIR, 'daily_data.csv'), parse_dates=['SettlementDate'])
-color_range: (int, int) = (daily_data['Total'].min()/1000, daily_data['Total'].max()/1000)
-date_range: (datetime, datetime) = (daily_data['SettlementDate'].min(), daily_data['SettlementDate'].max())
+color_range: Tuple[int, int] = (daily_data['Total'].min()/1000, daily_data['Total'].max()/1000)
 
 # Group by generation type and calculate average price, total generation, and total cost for each generation type
-def group_by_generation(start_date, end_date, target_generation, minimum_usage):
+def create_table(start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
     data = filter_data(base_data, start_date, end_date, target_generation, minimum_usage)
     def calc_data(gen_type):
         if data[gen_type].sum() < data['Total'].sum() * 0.001:  # Skip groups that contribute less than 0.1% of total generation
@@ -39,13 +37,14 @@ def group_by_generation(start_date, end_date, target_generation, minimum_usage):
             'Total generated (GWh)': data['Total'].sum()/1000,  # Convert MWh to GWh
             'Total cost (£ million)': (data['Price'] * data['Total']).sum()/1e6  # Convert £ to £ million
     })  # Add total row
-    return (pd.DataFrame(grouped_data), data[target_generation + '_perc'].max())
+    return pd.DataFrame(grouped_data)
 
 
-def filter_data(data, start_date, end_date, target_generation, minimum_usage):
+def filter_data(data: pd.DataFrame, start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
     print(f'{len(data)} records before filtering')
     filtered_data = data.copy()
 
+    print(f'Filtering data from {start_date} to {end_date} for {NESO_GENERATION_TYPES[target_generation]} with minimum usage of {minimum_usage}%')
     filtered_data = filtered_data[filtered_data['SettlementDate'] >= pd.to_datetime(start_date)]
     filtered_data = filtered_data[filtered_data['SettlementDate'] <= pd.to_datetime(end_date)]
     print(f'{len(filtered_data)} records after date filtering')
@@ -56,7 +55,7 @@ def filter_data(data, start_date, end_date, target_generation, minimum_usage):
     return filtered_data
 
 
-def create_chart(start_date, end_date, target_generation, minimum_usage):
+def create_chart(start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
     data = filter_data(daily_data, start_date, end_date, target_generation, minimum_usage)
     # Create Plotly scatter chart with color by volume
     chart_figure = go.Figure(data=go.Scatter(
@@ -91,12 +90,3 @@ def create_chart(start_date, end_date, target_generation, minimum_usage):
 
     return (chart_figure, data[target_generation + '_perc'].max())
 
-target_generation: str = "LOW_CARBON"
-minimum_usage: int = 0
-start_date: date = date.today() - pd.DateOffset(years=1)  # Default to one year ago
-end_date: date = date.today()
-date_range = [start_date, end_date]
-show_table: bool = False
-maximum_usage: int = 100
-(chart_figure, maximum_usage) = create_chart(start_date, end_date, target_generation, minimum_usage)
-(table, maximum_usage) = group_by_generation(start_date, end_date, target_generation, minimum_usage)

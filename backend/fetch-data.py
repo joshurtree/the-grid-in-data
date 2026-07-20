@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 import requests
 from tqdm import tqdm
-from bmrs import fetch_demand, fetch_FPN
+from backend.bmrs import fetch_demand, fetch_FPN
 
-from constants import MANUAL_DATA_DIR, NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
+from backend.constants import MANUAL_DATA_DIR, NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
 
 def fetch_gas_prices() :
     print('Fetching gas prices from ONS...')

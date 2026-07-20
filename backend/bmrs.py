@@ -97,8 +97,8 @@ def fetch_demand(dateFrom: datetime, dateTo: datetime, settlementPeriod: int = N
     """
     params = {
         "dataset": "D",
-        "settlementDateFrom": date.strftime('%Y-%m-%d'),
-        "settlementDateTo": date.strftime('%Y-%m-%d'),
+        "settlementDateFrom": dateFrom.strftime('%Y-%m-%d'),
+        "settlementDateTo": dateTo.strftime('%Y-%m-%d'),
     }
 
     if settlementPeriod is not None:

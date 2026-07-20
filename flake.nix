@@ -19,13 +19,13 @@
     devShells.${system}.default = pkgs.mkShell {
       buildInputs = with pkgs; [ 
         git
-        python312 
-        python312Packages.numpy
+        python313 
+        python313Packages.numpy
         uv
       ];
       
       shellHook = ''
-        echo "✓ Nix environment loaded with Python 3.12, uv, git, and poetry"
+        echo "✓ Nix environment loaded with Python 3.13, uv, git, and poetry"
         echo ""
         echo "Quick start:"
         echo "  uv sync              # Install dependencies from pyproject.toml"
