@@ -12,10 +12,10 @@ def _fig_from_error(msg):
 
 def update_chart(start_date, end_date, target, min_usage):
     # chart
-    fig = gbwep.create_chart(datetime.fromtimestamp(start_date), datetime.fromtimestamp(end_date), target, min_usage)
+    fig = gbwep.filter_daily_data(datetime.fromtimestamp(start_date), datetime.fromtimestamp(end_date), target, min_usage)
     if isinstance(fig, str):
         fig = _fig_from_error(fig)
-
+    fig['Total'] = fig['Total'] / 1000000  # Convert MWh to GWh for color scale
     return fig
 
 def update_table(start_date, end_date, target, min_usage):
@@ -41,14 +41,13 @@ target = gr.Dropdown(
 )
 min_usage = gr.Slider(minimum=0, maximum=100, value=min_usage0, label="Minimum Usage (%)")
 inputs = [start_date, end_date, target, min_usage]
-print("Inputs:", inputs)
 # Electricity Prices page
 with gr.Blocks() as prices_page:    
     with gr.Row():
         with gr.Column(scale=3):
             gr.Tabs(["Chart", "Table"], elem_id="prices_tabs")
             with gr.Tab("Chart"):
-                gr.Plot(update_chart, inputs=inputs, label="Electricity Prices")
+                gr.ScatterPlot(update_chart, x="SettlementDate", y="Price", color="Total", inputs=inputs, label="Electricity Prices")
             with gr.Tab("Table"):
                 gr.Dataframe(update_table, inputs=inputs, label="Electricity Prices Table")
         with gr.Column(scale=1):

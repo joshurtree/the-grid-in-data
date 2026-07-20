@@ -94,6 +94,10 @@ def create_data(time, generator_types):
 
 def create_chart(time, generator_types):
     data = create_data(time, generator_types)
+    config = {
+        'displayModeBar': False,
+        'displaylogo': False,
+    }
     # Create Plotly figure with boundaries and generator markers
     chart_figure = go.Figure()
 
@@ -108,7 +112,7 @@ def create_chart(time, generator_types):
         marker=dict(size=data['current_generation'] / 10, color=data['colour'], opacity=0.5),
         text=data["text"],
         hovertemplate='%{text}<extra></extra>',
-        name='Generators'
+        showlegend=False,
     ))
     chart_figure.update_geos(
         scope='europe',
@@ -118,7 +122,7 @@ def create_chart(time, generator_types):
         showocean=True,
         landcolor='rgb(74, 170, 68)',
         oceancolor='rgb(119, 221, 221)',
-        lataxis=dict(range=[49.5, 61.5]),
+        lataxis=dict(range=[52, 61.5]),
         lonaxis=dict(range=[-8, 3])
     )
 
@@ -136,7 +140,6 @@ def create_chart(time, generator_types):
     chart_figure.update_layout(
         title='GB Generation Live Map',
         height=1200,
-        margin=dict(l=0, r=0, t=40, b=0),
         hovermode='closest'
     )
 

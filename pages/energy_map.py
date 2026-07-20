@@ -1,6 +1,7 @@
 import gradio as gr
 import pandas as pd
 from datetime import datetime, timedelta
+import plotly.graph_objects as go
 from backend.constants import ELEXON_GENERATION_TYPES
 import backend.energy_map as energy_map
 
@@ -18,20 +19,25 @@ def update_map(time, generator_types):
 
     return fig
 
+inputs = [
+    gr.DateTime(value=datetime.now(), label="Time"), 
+    gr.CheckboxGroup(
+        choices=[(v, k) for k, v in ELEXON_GENERATION_TYPES.items()], 
+        value=list(ELEXON_GENERATION_TYPES.keys()), 
+        label="Generator Types")
+]
+
 # Energy Map page
 with gr.Blocks() as energy_map_page:
     gr.Markdown("## GB Energy Generation Map")
     with gr.Row():
         with gr.Column(scale=3):
-            outputs = [gr.Plot(value=update_map(datetime.now(), list(ELEXON_GENERATION_TYPES.keys())), label="GB Energy Generation Map")]
+            map_plot = gr.Plot(update_map, inputs=inputs)
         with gr.Column(scale=1):
-            inputs = [
-                gr.DateTime(value=datetime.now(), label="Time"), 
-                gr.CheckboxGroup(
-                    choices=[(v, k) for k, v in ELEXON_GENERATION_TYPES.items()], 
-                    value=list(ELEXON_GENERATION_TYPES.keys()), 
-                    label="Generator Types")
-            ]
-
-    for i in inputs:
-        i.change(update_map, inputs=inputs, outputs=outputs)
+            gr.Markdown("### Filter Options")
+            gr.Markdown("Select the time and generator types to filter the data.")
+            gr.Markdown("The map shows the locations of generators in Great Britain, with marker sizes proportional to their current generation levels.")
+            for i in inputs:
+                i.render()
+    # for i in inputs:
+    #     i.change(update_map, inputs=inputs, outputs=[map_plot])

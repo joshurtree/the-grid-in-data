@@ -54,6 +54,8 @@ def filter_data(data: pd.DataFrame, start_date: datetime, end_date: datetime, ta
 
     return filtered_data
 
+def filter_daily_data(start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
+    return filter_data(daily_data, start_date, end_date, target_generation, minimum_usage)
 
 def create_chart(start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
     data = filter_data(daily_data, start_date, end_date, target_generation, minimum_usage)
