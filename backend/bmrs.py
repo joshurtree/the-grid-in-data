@@ -1,6 +1,8 @@
 import requests
 import pandas as pd
-from datetime import datetime 
+from datetime import date, datetime, timedelta, timezone
+from io import StringIO
+from tqdm import tqdm
 
 BASE_URL = "https://data.elexon.co.uk/bmrs/api/v1/"
 FUEL_TYPES = [
@@ -45,6 +47,29 @@ def fetch_bmrs_data(endpoint, params=None, is_list=False) -> pd.DataFrame:
     # Convert JSON data to DataFrame
     return pd.DataFrame(response.json()['data']) if not is_list else pd.DataFrame(response.json())
 
+def fetch_extended_bmrs_data(endpoint_func, start_date: date, description: str) -> pd.DataFrame:
+    """
+    Fetch extended data from the BMRS API, handling pagination.
+
+    Args:
+        endpoint_func (str): The specific endpoint function to fetch data from.
+        params (dict, optional): Query parameters for the request.
+
+    Returns:
+        pd.DataFrame: DataFrame containing the fetched data.
+    """
+    df = pd.DataFrame()
+    date_ranges = pd.date_range(start=start_date, end=date.today(), freq='7D')
+    progress_bar = tqdm(total=len(date_ranges), desc=description, unit='request')
+    for start in date_ranges:
+        end = start + timedelta(days=7)
+        response = endpoint_func(start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d'))
+
+        df = pd.concat([df, response], ignore_index=True)
+        progress_bar.update(1)
+    progress_bar.close()
+    return df
+
 def time_to_settlement_period(dt: datetime) -> int:
     """
     Convert a datetime object to the corresponding settlement period.
@@ -85,26 +110,24 @@ def fetch_FPN(date: datetime, bmus: list[str] = None) -> pd.DataFrame:
         params["bmUnit[]"] = bmus
     return fetch_bmrs_data("balancing/physical/all",  params=params)
 
-def fetch_demand(dateFrom: datetime, dateTo: datetime, settlementPeriod: int = None) -> pd.DataFrame:
+def fetch_generation(dateFrom: datetime, dateTo: datetime, bmus: list[str] = None) -> pd.DataFrame:
     """
-    Fetch demand data from the BMRS API.
+    Fetch generation data from the BMRS API.
 
     Args:
-        date (datetime): The date for which to fetch demand data.
+        dateFrom (datetime): Start date for fetching generation data.
+        dateTo (datetime): End date for fetching generation data.
+        bmus (list[str], optional): List of BM Unit identifiers to filter by.
 
     Returns:
-        pd.DataFrame: DataFrame containing demand data.
+        pd.DataFrame: DataFrame containing generation data.
     """
     params = {
-        "dataset": "D",
         "settlementDateFrom": dateFrom.strftime('%Y-%m-%d'),
         "settlementDateTo": dateTo.strftime('%Y-%m-%d'),
     }
 
-    if settlementPeriod is not None:
-        params["settlementPeriod"] = settlementPeriod
-
-    return fetch_bmrs_data("demand/outturn", params=params)
+    return fetch_bmrs_data("generation/outturn/summary", params=params)
 
 def get_bid_accepts(unit: str, start_date: str, end_date: str) -> pd.DataFrame:
     """
