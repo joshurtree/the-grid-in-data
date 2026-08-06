@@ -5,7 +5,9 @@ description = "GB Electricity Market Analysis - Gradio web interface"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "bs4>=0.0.2",
     "gradio>=4.44.1",
+    "gradio-datetimerange",
     "matplotlib>=3.11.0",
     "numpy>=2.4.6",
     "openpyxl>=3.1.5",
@@ -17,3 +19,6 @@ dependencies = [
     "statsmodels>=0.14.6",
     "tqdm>=4.68.3",
 ]
+
+[tool.uv.sources]
+gradio-datetimerange = { path = "../gradio_datetimerange" }

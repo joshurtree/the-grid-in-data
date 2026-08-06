@@ -12,18 +12,19 @@ from datetime import datetime, timedelta
 import os
 import traceback
 import json
-from backend.constants import ELEXON_GENERATION_TYPES, NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
+from backend.constants import ALL_GENERATION_TYPES, NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
 
-import backend.gbwep as gbwep
-import backend.elecvsgas as elecvsgas
-import backend.energy_map as energy_map
-import backend.cfd as cfd
+# import backend.gbwep as gbwep
+# import backend.elecvsgas as elecvsgas
+# import backend.energy_map as energy_map
+# import backend.cfd as cfd
 
 from pages.prices import prices_page
 from pages.gasvselectricity import evg_page
 from pages.energy_map import energy_map_page
+from pages.cfd import cfd_page
 
-with gr.Blocks("GB Energy Generation Map") as app:
+with gr.Blocks("GB Energy Generation Map", title="GB Electricity") as app:
     energy_map_page.render()
 
 with app.route("Electricity vs Gas Prices"):
@@ -31,6 +32,9 @@ with app.route("Electricity vs Gas Prices"):
 
 with app.route("GB Energy Wholesale Prices"):
     prices_page.render()
+
+with app.route("Contracts for Difference"):
+    cfd_page.render()
 
 if __name__ == "__main__":
     app.launch(server_name="0.0.0.0", server_port=7860, share=False)

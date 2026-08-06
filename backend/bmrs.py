@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import date, datetime, timedelta, timezone
 from io import StringIO
 from tqdm import tqdm
+from backend.constants import ELEXON_GENERATION_TYPES
 
 BASE_URL = "https://data.elexon.co.uk/bmrs/api/v1/"
 FUEL_TYPES = [
@@ -128,6 +129,30 @@ def fetch_generation(dateFrom: datetime, dateTo: datetime, bmus: list[str] = Non
     }
 
     return fetch_bmrs_data("generation/outturn/summary", params=params)
+
+def fetch_generation_by_type(dateFrom: datetime = datetime.now() - timedelta(days=1), dateTo: datetime = datetime.now()) -> pd.DataFrame:
+    """
+    Fetch generation data by type from the BMRS API.
+
+    Args:
+        dateFrom (datetime): Start date for fetching generation data.
+        dateTo (datetime): End date for fetching generation data.
+
+    Returns:
+        pd.DataFrame: DataFrame containing generation data by type.
+    """
+    params = {
+        "startTime": dateFrom.strftime('%Y-%m-%d'),
+        "endTime": dateTo.strftime('%Y-%m-%d'),
+    }
+
+    data = fetch_bmrs_data("generation/outturn/summary", params, True)
+
+    # Convert `data: { "fuelType": ..., "generation": ... }` to `fuelType`: `generation`
+    for fuel_type in ELEXON_GENERATION_TYPES.keys():
+        data[fuel_type] = data['data'].apply(lambda x: next((item['generation'] for item in x if item['fuelType'] == fuel_type), 0))
+    data.drop(columns=['data'], inplace=True)
+    return data
 
 def get_bid_accepts(unit: str, start_date: str, end_date: str) -> pd.DataFrame:
     """

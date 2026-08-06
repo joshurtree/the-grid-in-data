@@ -6,19 +6,37 @@ import backend.gbwep as gbwep
 import plotly.graph_objects as go
 
 def _fig_from_error(msg):
-    fig = go.Figure()
-    fig.update_layout(title=msg)
+    fig = go.Figure(title=msg)
     return fig
 
+def check_inputs(start_date, end_date, target, min_usage):
+    if start_date is None or end_date is None:
+        return "Start date and end date must be provided"
+    
+    if start_date > end_date:
+        return "Start date must be before end date"
+
+    if target not in NESO_GENERATION_TYPES.keys():
+        return f"Invalid target generation type: {target}"
+
+    if min_usage < 0 or min_usage > 100:
+        return "Minimum usage must be between 0 and 100"
+
+    return None
+
 def update_chart(start_date, end_date, target, min_usage):
-    # chart
+    check_result = check_inputs(start_date, end_date, target, min_usage)
+    if check_result is not None:
+        fig = _fig_from_error(check_result["error"][0])
+        return fig
     fig = gbwep.filter_daily_data(datetime.fromtimestamp(start_date), datetime.fromtimestamp(end_date), target, min_usage)
-    if isinstance(fig, str):
-        fig = _fig_from_error(fig)
     fig['Total'] = fig['Total'] / 1000000  # Convert MWh to GWh for color scale
     return fig
 
-def update_table(start_date, end_date, target, min_usage):
+def update_table(start_date, end_date, target, min_usage = 0):
+    check_result = check_inputs(start_date, end_date, target, min_usage)
+    if check_result is not None:
+        return check_result
     tbl = gbwep.create_table(datetime.fromtimestamp(start_date), datetime.fromtimestamp(end_date), target, min_usage)
 
     if isinstance(tbl, str):
@@ -29,8 +47,6 @@ def update_table(start_date, end_date, target, min_usage):
 start_date0 = datetime.now() - timedelta(days=365)
 end_date0 = datetime.now()
 target0 = list(NESO_GENERATION_TYPES.keys())[0]
-min_usage0 = 0
-gr.Markdown("## GB Wholesale Electricity Prices")
 start_date = gr.DateTime(value=start_date0, label="Start Date", include_time=False)
 end_date = gr.DateTime(value=end_date0, label="End Date", include_time=False)
 target = gr.Dropdown(
@@ -39,15 +55,15 @@ target = gr.Dropdown(
     label="Target Generation",
     allow_custom_value=False
 )
-min_usage = gr.Slider(minimum=0, maximum=100, value=min_usage0, label="Minimum Usage (%)")
-inputs = [start_date, end_date, target, min_usage]
+#min_usage = gr.Slider(minimum=0, maximum=100, value=0, label="Minimum Usage (%)")
+inputs = [start_date, end_date, target]  # Removed min_usage
 # Electricity Prices page
 with gr.Blocks() as prices_page:    
     with gr.Row():
         with gr.Column(scale=3):
             gr.Tabs(["Chart", "Table"], elem_id="prices_tabs")
             with gr.Tab("Chart"):
-                gr.ScatterPlot(update_chart, x="SettlementDate", y="Price", color="Total", inputs=inputs, label="Electricity Prices")
+                gr.ScatterPlot(update_chart, x="SettlementDate", y="Price", color="Total", inputs=inputs, label="Electricity Prices", color_map='Viridis')
             with gr.Tab("Table"):
                 gr.Dataframe(update_table, inputs=inputs, label="Electricity Prices Table")
         with gr.Column(scale=1):
