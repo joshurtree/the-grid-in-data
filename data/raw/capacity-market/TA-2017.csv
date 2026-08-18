@@ -1,0 +1,36 @@
+Applicant Company,CMU ID,Capacity AG,CMU Classification,Capacity (MW),Duration (Years)
+UK Power Reserve Limited,AGPR01,Yes,Unproven DSR CMU,10,1
+Limejump Ltd.,DSR_04,Yes,Unproven DSR CMU,0.5,1
+Limejump Ltd.,DSR_05,Yes,Unproven DSR CMU,0.5,1
+Limejump Ltd.,DSR_06,Yes,Unproven DSR CMU,0.869,1
+Limejump Ltd.,DSR_07,Yes,Unproven DSR CMU,1.738,1
+Limejump Ltd.,DSR_08,Yes,Unproven DSR CMU,4.344,1
+Limejump Ltd.,DSR_09,Yes,Unproven DSR CMU,4.344,1
+Limejump Ltd.,DSR_10,Yes,Unproven DSR CMU,3.475,1
+Limejump Ltd.,DSR_11,Yes,Unproven DSR CMU,1.738,1
+E.ON UK Plc,DSR026,Yes,Unproven DSR CMU,20,1
+E.ON UK Plc,DSR027,Yes,Unproven DSR CMU,6,1
+E.ON UK Plc,DSR028,Yes,Unproven DSR CMU,6,1
+E.ON UK Plc,DSR029,Yes,Unproven DSR CMU,3.5,1
+E.ON UK Plc,DSR030,Yes,Unproven DSR CMU,0.5,1
+EnerNOC UK Limited,ECMU57,Yes,Unproven DSR CMU,21.72,1
+EnerNOC UK Limited,ECMU58,Yes,Unproven DSR CMU,21.72,1
+EnerNOC UK Limited,ECMU59,Yes,Unproven DSR CMU,21.72,1
+EnerNOC UK Limited,ECMU60,Yes,Unproven DSR CMU,21.72,1
+EDF Energy Customers plc,EDFSR5,Yes,Unproven DSR CMU,2.606,1
+EDF Energy Customers plc,EDFSR6,Yes,Unproven DSR CMU,3.475,1
+EDF Energy Customers plc,EDFSR7,Yes,Unproven DSR CMU,1.303,1
+EDF Energy Customers plc,EDFSR8,Yes,Unproven DSR CMU,1.303,1
+Energy Pool UK limited,EPO008,No,Unproven DSR CMU,N/A,N/A
+Energy Pool UK limited,EPO009,Yes,Unproven DSR CMU,4.344,1
+KiWi Power Ltd,KIWI90,Yes,Unproven DSR CMU,20,1
+KiWi Power Ltd,KIWI91,Yes,Unproven DSR CMU,20,1
+KiWi Power Ltd,KIWI93,Yes,Unproven DSR CMU,20,1
+SmartestEnergy Limited,SEL-1c,No,Unproven DSR CMU,N/A,N/A
+SmartestEnergy Limited,SEL-2c,No,Unproven DSR CMU,N/A,N/A
+SmartestEnergy Limited,SEL-3c,Yes,Unproven DSR CMU,17.376,1
+SmartestEnergy Limited,SEL-4c,Yes,Unproven DSR CMU,17.376,1
+BOC Ltd,TLGUK2,Yes,Proven DSR CMU,19,1
+Tata Steel UK Limited,TS16_1,Yes,Unproven DSR CMU,10,1
+Tata Steel UK Limited,TS16_2,Yes,Proven DSR CMU,18,1
+Tata Steel UK Limited,TS16_3,Yes,Unproven DSR CMU,7,1

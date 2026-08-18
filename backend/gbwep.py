@@ -13,7 +13,7 @@ color_range: Tuple[int, int] = (daily_data['Total'].min()/1000, daily_data['Tota
 
 # Group by generation type and calculate average price, total generation, and total cost for each generation type
 def create_table(start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
-    data = filter_data(base_data, start_date, end_date, target_generation, minimum_usage)
+    data, y_max = filter_data(base_data, start_date, end_date, target_generation, minimum_usage)
     def calc_data(gen_type):
         if data[gen_type].sum() < data['Total'].sum() * 0.001:  # Skip groups that contribute less than 0.1% of total generation
             return None
@@ -40,25 +40,27 @@ def create_table(start_date: datetime, end_date: datetime, target_generation: st
     return pd.DataFrame(grouped_data)
 
 
-def filter_data(data: pd.DataFrame, start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
+def filter_data(data: pd.DataFrame, start_date: datetime, end_date: datetime, target_generation: str, usage: [float, float]):
     print(f'{len(data)} records before filtering')
     filtered_data = data.copy()
 
-    print(f'Filtering data from {start_date} to {end_date} for {NESO_GENERATION_TYPES[target_generation]} with minimum usage of {minimum_usage}%')
+    print(f'Filtering data from {start_date} to {end_date} for {NESO_GENERATION_TYPES[target_generation]} with minimum usage of {usage[0]}% and maximum usage of {usage[1]}%')
     filtered_data = filtered_data[filtered_data['SettlementDate'] >= pd.to_datetime(start_date)]
     filtered_data = filtered_data[filtered_data['SettlementDate'] <= pd.to_datetime(end_date)]
+    y_max = filtered_data['Price'].max() * 1.1  # Set a fixed maximum for the y-axis to allow better scaling
     print(f'{len(filtered_data)} records after date filtering')
-    filtered_data = filtered_data[filtered_data[target_generation + '_perc'] >= minimum_usage]
+    filtered_data = filtered_data[filtered_data[target_generation + '_perc'] >= usage[0]]
+    filtered_data = filtered_data[filtered_data[target_generation + '_perc'] <= usage[1]]
 
-    print(f'{len(filtered_data)} records after filtering by {NESO_GENERATION_TYPES[target_generation]} percentage >= {minimum_usage}%')
+    print(f'{len(filtered_data)} records after filtering by {NESO_GENERATION_TYPES[target_generation]} percentage >= {usage[0]}% and <= {usage[1]}%')
 
-    return filtered_data
+    return filtered_data, y_max
 
-def filter_daily_data(start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
-    return filter_data(daily_data, start_date, end_date, target_generation, minimum_usage)
+def filter_daily_data(start_date: datetime, end_date: datetime, target_generation: str, usage: [float, float]):
+    return filter_data(daily_data, start_date, end_date, target_generation, usage)
 
-def create_chart(start_date: datetime, end_date: datetime, target_generation: str, minimum_usage: float):
-    data = filter_data(daily_data, start_date, end_date, target_generation, minimum_usage)
+def create_chart(start_date: datetime, end_date: datetime, target_generation: str, usage: [float, float]):
+    data, y_max = filter_data(daily_data, start_date, end_date, target_generation, usage)
     # Create Plotly scatter chart with color by volume
     chart_figure = go.Figure(data=go.Scatter(
         mode='markers',
@@ -66,12 +68,10 @@ def create_chart(start_date: datetime, end_date: datetime, target_generation: st
         y=data['Price'],
         marker=dict(
             size=8,
-            color=data['Total']/1000,  # Use total generation for color scale
+            color=data[target_generation + '_perc']*100, 
             colorscale='Viridis_r',
-            cmin=color_range[0],
-            cmax=color_range[1],
             showscale=True,
-            colorbar=dict(title=f"Total Generation (GWh)"),
+            colorbar=dict(title=f"Usage (%)"),
             opacity=0.7,
             line=dict(width=0)
         ),
@@ -80,7 +80,7 @@ def create_chart(start_date: datetime, end_date: datetime, target_generation: st
         hovertemplate='%{text}<extra></extra>'
     ))
 
-    chart_figure.update_yaxes(range=[0, 450])  # Fix y-axis max to max price for better comparison     
+    chart_figure.update_yaxes(range=[0, y_max])  # Fix y-axis max to max price for better comparison
     chart_figure.update_layout(
         title='Wholesale Price vs Date',
         xaxis_title='Date',
@@ -90,5 +90,5 @@ def create_chart(start_date: datetime, end_date: datetime, target_generation: st
         height=600
     )
 
-    return (chart_figure, data[target_generation + '_perc'].max())
+    return chart_figure
 

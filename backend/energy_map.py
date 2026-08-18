@@ -134,8 +134,8 @@ class GenerationData:
             showocean=True,
             landcolor='rgb(74, 170, 68)',
             oceancolor='rgb(119, 221, 221)',
-            # lataxis=dict(range=[54, 60]),
-            # lonaxis=dict(range=[-8, 3.5]),
+            lataxis=dict(range=[54, 60]),
+            lonaxis=dict(range=[-4, 3.5]),
             fitbounds='locations'
         )
 

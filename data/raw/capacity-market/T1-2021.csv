@@ -1,0 +1,201 @@
+Parent Company,Applicant Company,CMU ID,Capacity AG,CMU Classification,Capacity (MW),Duration (Years),Fuel Type
+Uniper Holding GmbH,Uniper Global Commodities SE,RATS44,Yes,Existing Generating CMU,435.179,1,Coal
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0017,Yes,New Build Generating CMU,5.713,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0039,Yes,New Build Generating CMU,4.828,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR2113,Yes,New Build Generating CMU,4.828,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9214,No,New Build Generating CMU,4.816,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9217,No,New Build Generating CMU,4.816,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0111,Yes,New Build Generating CMU,4.761,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9132,Yes,New Build Generating CMU,4.761,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9221,Yes,New Build Generating CMU,4.761,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9197,No,New Build Generating CMU,4.343,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR2137,Yes,New Build Generating CMU,3.858,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9145,No,New Build Generating CMU,3.858,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0016,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0038,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0062,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0068,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0073,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0081,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0112,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR2092,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR2162,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9141,Yes,New Build Generating CMU,3.809,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9263,No,New Build Generating CMU,3.416,1,Gas
+Aggregated Micro Power Infrastructure 2 Plc,AMPIL 2 ASSET LIMITED,VILLA4,Yes,Existing Generating CMU,2.666,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9119,No,New Build Generating CMU,2.414,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9226,No,New Build Generating CMU,2.414,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR2150,No,New Build Generating CMU,2.381,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR9108,Yes,Existing Generating CMU,2.19,1,Gas
+Aggregated Micro Power Infrastructure 2 plc,URBAN RESERVE (ASSETCO) LIMITED,UR0003,Yes,New Build Generating CMU,1.904,1,Gas
+AMALGAMATED SMART METERING LIMITED,AMALGAMATED SMART METERING LIMITED,ASMUS1,Yes,Existing Generating CMU,7.523,1,Gas
+Amber Energy Storage Limited,AMBER ENERGY STORAGE XL LIMITED,AMB020,Yes,New Build Generating CMU,24.536,1,Storage - Battery
+Anesco Asset Management Limited ,Hulley Road Energy Storage Limited,AGHUL2,Yes,Existing Generating CMU,5.064,1,Storage - Battery
+Anesco Asset Management Three Limited ,Larport Energy Storage Limited,AGLAR2,Yes,Existing Generating CMU,4.937,1,Storage - Battery
+Anesco Asset Management Three Limited ,Lascar Battery Storage Limited,ADSLS2,Yes,Existing Generating CMU,5.064,1,Storage - Battery
+Bagnall Energy Limited ,Nursling Energy Two Limited,KeNur3,Yes,New Build Generating CMU,11.981,1,Storage - Battery
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES1B,Yes,Existing Generating CMU,1.037,1,Gas
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES16,Yes,Proven DSR CMU,9.505,1,DSR
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES18,Yes,Unproven DSR CMU,2.681,1,DSR
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES-4,No,Proven DSR CMU,1.731,1,DSR
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES15,Yes,Existing Generating CMU,40.919,1,Gas
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES22,Yes,Existing Generating CMU,6.12,1,Diesel
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES-6,Yes,Existing Generating CMU,7.399,1,Gas
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES2A,Yes,Existing Generating CMU,3.633,1,Gas
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES17,Yes,Existing Generating CMU,1.869,1,Gas
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES2B,Yes,Existing Generating CMU,3.562,1,Gas
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES1A,Yes,Existing Generating CMU,2.077,1,Gas
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES1C,Yes,Existing Generating CMU,1.759,1,Gas
+Centrica plc,Centrica Business Solutions UK Optimisation Limite,6RES1D,Yes,Existing Generating CMU,1.438,1,Gas
+Centrica Plc,Centrica Business Solutions UK Limited,6RES19,Yes,Existing Generating CMU,1.099,1,Gas
+COGENERATION SOLUTIONS LIMITED,COGENERATION SOLUTIONS LIMITED,Cavrd5,Yes,Existing Generating CMU,7.618,1,Gas
+Conrad (Cherwell) Limited,Conrad (Flint) Limited,CDFLB3,Yes,Existing Generating CMU,2.353,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDRUN2,No,New Build Generating CMU,4.285,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDLAG3,Yes,New Build Generating CMU,4.047,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDWHI3,No,New Build Generating CMU,7.142,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDMIN2,No,New Build Generating CMU,6.856,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDHAW3,Yes,New Build Generating CMU,2.381,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDYXY1,No,New Build Generating CMU,6.856,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDCAE2,Yes,New Build Generating CMU,4.761,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDPLY3,Yes,New Build Generating CMU,4.761,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDSUN3,No,New Build Generating CMU,4.761,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDWRA3,Yes,New Build Generating CMU,4.761,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDWOO3,No,New Build Generating CMU,6.189,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDYEO3,No,New Build Generating CMU,14.283,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDMDD2,No,New Build Generating CMU,8.189,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDWRB3,Yes,New Build Generating CMU,4.666,1,Gas
+Conrad Energy (Holdings) Limited,CONRAD ENERGY (DEVELOPMENTS) LIMITED,CDLOW3,Yes,New Build Generating CMU,7.142,1,Gas
+Corus Group Limited,Tata Steel UK Limited,TS20_1,Yes,Proven DSR CMU,7,1,DSR
+Corus Group Limited,Tata Steel UK Limited,TS20_3,Yes,Proven DSR CMU,7,1,DSR
+Corus Group Limited,Tata Steel UK Limited,TS20_4,Yes,Existing Generating CMU,18.111,1,Gas
+CROSSDYKES WF LIMITED,CROSSDYKES WF LIMITED,NB_109,Yes,New Build Generating CMU,3.684,1,Onshore Wind
+Distributed Generators Limited,Distributed Generators Limited,elms03,Yes,Existing Generating CMU,4.761,1,Gas
+DURHAM RP LIMITED,DURHAM RP LIMITED,DRPKR1,Yes,Existing Generating CMU,3.825,1,Gas
+E.ON UK Plc,E.ON UK Plc,CEN010,Yes,Existing Generating CMU,2.241,1,Gas
+E.ON UK Plc,E.ON UK Plc,SPX001,Yes,Existing Generating CMU,1.072,1,Gas
+E.ON UK Plc,E.ON UK Plc,IMP001,Yes,Existing Generating CMU,1.547,1,Gas
+E.ON UK Plc,E.ON UK Plc,BVC002,Yes,Existing Generating CMU,3.471,1,Gas
+Eclipse Power Generation Limited,THRIVE RENEWABLES (WICKEN) LIMITED,WKN002,Yes,New Build Generating CMU,1.812,1,Storage - Battery
+EDF Energy Holdings Limited,EDF Energy (Thermal Generation) Limited,WA3-20,No,Existing Generating CMU,423.491,1,Coal
+EDF Energy Holdings Limited,EDF Energy (Thermal Generation) Limited,WA2-20,No,Existing Generating CMU,423.406,1,Coal
+EDF Energy Holdings Limited,EDF Energy (Thermal Generation) Limited,WG1-20,No,Existing Generating CMU,19.044,1,Distillate
+EDF Energy Holdings Limited,EDF Energy (Thermal Generation) Limited,WG4-20,No,Existing Generating CMU,19.044,1,Distillate
+EDF Energy Holdings Limited,EDF Energy (Thermal Generation) Limited,WA1-20,No,Existing Generating CMU,423.746,1,Coal
+EDF Energy Holdings Limited,EDF Energy (Thermal Generation) Limited,WA4-20,No,Existing Generating CMU,423.746,1,Coal
+Eelpower (Opco4) Limited,Rock Energy Storage Limited,ROCK21,Yes,Existing Generating CMU,5.029,1,Storage - Battery
+EirGrid plc,EirGrid Interconnector Designated Activity Company,EWIC19,Yes,Existing Interconnector CMU,295,1,Interconnector
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRX76,Yes,Unproven DSR CMU,7.921,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX35,Yes,Existing Generating CMU,4.47,1,Gas
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX24,Yes,Existing Generating CMU,7.395,1,Gas
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRP39,Yes,Proven DSR CMU,5.889,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRP38,Yes,Proven DSR CMU,5.888,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRX77,Yes,Unproven DSR CMU,5.545,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX20,Yes,Existing Generating CMU,6.804,1,Gas
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRP07,Yes,Proven DSR CMU,2.61,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX34,Yes,Existing Generating CMU,3.558,1,Gas
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX36,Yes,Existing Generating CMU,22.877,1,Waste
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX31,Yes,Existing Generating CMU,22.565,1,Waste
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX25,Yes,Existing Generating CMU,5.852,1,Gas
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX18,Yes,Existing Generating CMU,5.529,1,Gas
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRX78,Yes,Unproven DSR CMU,21.369,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRP01,Yes,Proven DSR CMU,19.787,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRP03,Yes,Proven DSR CMU,14.843,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRP04,Yes,Proven DSR CMU,11.897,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRP02,Yes,Proven DSR CMU,9.893,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,GENX30,Yes,Existing Generating CMU,5.022,1,Gas
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRX01,Yes,Unproven DSR CMU,7.921,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRX02,Yes,Unproven DSR CMU,7.921,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRX03,Yes,Unproven DSR CMU,7.921,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRX04,Yes,Unproven DSR CMU,7.921,1,DSR
+ENEL X INTERNATIONAL S.R.L.,Enel X UK Limited,DSRX05,Yes,Unproven DSR CMU,7.921,1,DSR
+Energy Store 4 Ltd,Energy Store 4 Ltd,BILT01,Yes,New Build Generating CMU,5.202,1,Solar
+ESB ASSET DEVELOPMENT UK LIMITED,ESB SOLAR (NORTHERN IRELAND) LIMITED,MLFRM1,Yes,Existing Generating CMU,1.772,1,Storage - Battery
+ESBII UK LIMITED,Corby Power Limited,CRBY01,Yes,Existing Generating CMU,366.3,1,Gas
+Ethical Power Ltd ,Fishpond Energy Limited,CDASH1,No,New Build Generating CMU,7.618,1,Gas
+FLINT TO CELL LIMITED,FLINT TO CELL LIMITED,Finwy3,Yes,Existing Generating CMU,4.823,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG73,Yes,Existing Generating CMU,1.73,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG53,Yes,Existing Generating CMU,3.638,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG54,Yes,Existing Generating CMU,3.306,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG69,Yes,Existing Generating CMU,1.389,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG55,Yes,Existing Generating CMU,3.013,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG58,Yes,Existing Generating CMU,1.092,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG68,Yes,Existing Generating CMU,2.503,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG77,Yes,Existing Generating CMU,4.819,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG52,Yes,Existing Generating CMU,5.378,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG74,Yes,Existing Generating CMU,1.8,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG64,Yes,Existing Generating CMU,18.84,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG62,Yes,Existing Generating CMU,15.488,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG66,Yes,Existing Generating CMU,15.483,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG65,Yes,Existing Generating CMU,15.202,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG67,Yes,Existing Generating CMU,15.102,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG63,Yes,Existing Generating CMU,15.1,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG60,Yes,Existing Generating CMU,14.904,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG72,Yes,Existing Generating CMU,1.764,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG59,Yes,Existing Generating CMU,13.173,1,Gas
+General Electricity Holdings Ltd,KiWi Power Ltd,KPEG71,Yes,Existing Generating CMU,3.983,1,Gas
+Glass Leaf Power Limited,Glass Leaf Power Limited,BRAN20,Yes,Existing Generating CMU,3,1,Gas
+GREEN PEAK GENERATION LIMITED,GREEN PEAK GENERATION LIMITED,Lilly5,Yes,Existing Generating CMU,7.142,1,Gas
+Greencoat Uk Wind Holdco Limited,Douglas West Wind Farm Ltd,DGWEST,Yes,New Build Generating CMU,3.605,1,Onshore Wind
+Greenspan Energy Limited,Greenspan Nifty Fifty Limited,WPKA04,Yes,Existing Generating CMU,3.809,1,Gas
+Greenspan Energy Limited,Greenspan Nifty Fifty Limited,WPKB04,Yes,Existing Generating CMU,3.809,1,Gas
+GridBeyond Limited,GridBeyond Limited,END030,No,Unproven DSR CMU,7.94,1,DSR
+GridBeyond Limited,GridBeyond Limited,GBD009,Yes,Existing Generating CMU,29.88,1,Gas
+GridBeyond Limited,GridBeyond Limited,END035,Yes,Unproven DSR CMU,1.85,1,DSR
+GridBeyond Limited,GridBeyond Limited,END033,No,Unproven DSR CMU,11,1,DSR
+GridBeyond Limited,GridBeyond Limited,END027,No,Unproven DSR CMU,6.19,1,DSR
+GridBeyond Limited,GridBeyond Limited,END036,Yes,Unproven DSR CMU,10.17,1,DSR
+GridBeyond Limited,GridBeyond Limited,GBD010,Yes,Existing Generating CMU,4.617,1,Gas
+GridBeyond Limited,GridBeyond Limited,END028,No,Unproven DSR CMU,5.811,1,DSR
+GridBeyond Limited,GridBeyond Limited,END039,No,Unproven DSR CMU,30,1,DSR
+GridBeyond Limited,GridBeyond Limited,END029,No,Unproven DSR CMU,5.437,1,DSR
+GridBeyond Limited,GridBeyond Limited,END031,No,Unproven DSR CMU,3.936,1,DSR
+GridBeyond Limited,GridBeyond Limited,END034,Yes,Unproven DSR CMU,3,1,DSR
+GRIDSERVE HC LTD,Braintree Electric Forecourt Ltd,GSEF01,Yes,New Build Generating CMU,1.266,1,Storage - Battery
+Harmony HB Limited,Harmony HB Limited,HHBL20,Yes,Existing Generating CMU,3.688,1,Storage - Battery
+Inovyn Limited,INOVYN ChlorVinyls Limited,INO200,Yes,Unproven DSR CMU,32,1,DSR
+Morpheat Limited,Shovel Ready 7 Limited,vent03,Yes,Existing Generating CMU,8.094,1,Gas
+Oldbury Power Limited,Oldbury Power Limited,CDSWB1,No,New Build Generating CMU,7.618,1,Gas
+Ombu Group Limited,OPEN ENERGI LIMITED,EMISTA,Yes,Proven DSR CMU,2.093,1,DSR
+Peak Gen Top Co Limited,Peak Gen Power Limited,PGPHAT,No,Existing Generating CMU,5.142,1,Diesel
+Peak Gen Top Co Limited,Peak Gen Power Limited,PGPHAY,No,Existing Generating CMU,5.142,1,Diesel
+Peak Gen Top Co Limited,Peak Gen Power Limited,PGPDID,No,Existing Generating CMU,3.142,1,Diesel
+Peak Gen Top Co Limited,Peak Gen Power Limited,PGPCOV,No,Existing Generating CMU,5.713,1,Diesel
+PISTON HEATING SERVICES LIMITED,PISTON HEATING SERVICES LIMITED,casw20,Yes,Existing Generating CMU,8.57,1,Gas
+PIVOT POWER LIMITED,PIVOT POWER BATTERY CO. LIMITED,PPKM20,Yes,New Build Generating CMU,10.888,1,Storage - Battery
+PIVOT POWER LIMITED,PIVOT POWER BATTERY CO. LIMITED,PPCW20,Yes,New Build Generating CMU,10.888,1,Storage - Battery
+Power Act Limited,LOWER MINETY ENERGY LIMITED,LMES02,Yes,New Build Generating CMU,12.635,1,Storage - Battery
+Power Act Limited,MINETY BATTERY STORAGE LIMITED,MBSS02,Yes,New Build Generating CMU,12.635,1,Storage - Battery
+POWER UP GENERATION LIMITED,POWER UP GENERATION LIMITED,PUG002,Yes,Existing Generating CMU,5.508,1,Gas
+PUTNEY POWER LIMITED,PUTNEY POWER LIMITED,Copse4,Yes,Existing Generating CMU,8.094,1,Gas
+RE Projects Development Limited,BOTLEY ENERGY LIMITED,BOT333,No,New Build Generating CMU,19.044,1,Gas
+RESERVE POWER HOLDINGS (JERSEY) LIMITED,Flexitricity Limited,F20111,No,Existing Generating CMU,7.034,1,Gas
+RESERVE POWER HOLDINGS (JERSEY) LIMITED,Flexitricity Limited,F20033,No,Existing Generating CMU,4.21,1,Gas
+RESERVE POWER HOLDINGS (JERSEY) LIMITED,Flexitricity Limited,F20025,No,Existing Generating CMU,14,1,Gas
+RESERVE POWER HOLDINGS (JERSEY) LIMITED,Flexitricity Limited,F20043,Yes,Proven DSR CMU,10.977,1,DSR
+RESERVE POWER HOLDINGS (JERSEY) LIMITED,Flexitricity Limited,F18034,No,Existing Generating CMU,3.02,1,Gas
+SCOTTISHPOWER RENEWABLE ENERGY LIMITED,SCOTTISHPOWER RENEWABLES (UK) LIMITED,HLYWF2,Yes,New Build Generating CMU,2.283,1,Onshore Wind
+SCOTTISHPOWER RENEWABLE ENERGY LIMITED,SCOTTISHPOWER RENEWABLES (UK) LIMITED,BT3WF2,Yes,New Build Generating CMU,4.005,1,Onshore Wind
+Shell Petroleum Company Limited(The),Limejump Ltd,DSR452,No,Unproven DSR CMU,3.168,1,DSR
+Shell Petroleum Company Limited(The),Limejump Ltd,DSR455,No,Unproven DSR CMU,7.921,1,DSR
+Shell Petroleum Company Limited(The),Limejump Ltd,DSR454,No,Unproven DSR CMU,3.961,1,DSR
+Shell Petroleum Company Limited(The),Limejump Ltd,BAT003,Yes,Existing Generating CMU,0.671,1,Storage - Battery
+Shell Petroleum Company Limited(The),Limejump Ltd,BAT001,Yes,Existing Generating CMU,0.38,1,Storage - Battery
+Shell Petroleum Company Limited(The),Limejump Ltd,EXL202,Yes,Existing Generating CMU,0.9,1,Storage - Battery
+Shell Petroleum Company Limited(The),Limejump Ltd,DSR402,Yes,Proven DSR CMU,3.168,1,DSR
+SSE plc,SSE Generation Limited,LOC121,Yes,Existing Generating CMU,21.278,1,Hydro
+SSE plc,SSE Generation Limited,TU1211,Yes,Existing Generating CMU,16.789,1,Hydro
+SSE plc,SSE Generation Limited,TU2211,Yes,Existing Generating CMU,15.468,1,Hydro
+SSE plc,SSE Generation Limited,LOC221,Yes,Existing Generating CMU,21.431,1,Hydro
+Stat-Flex Limited,Saltholme South Power Limited,SEL070,Yes,New Build Generating CMU,47.6,1,Gas
+Thermal Generation Limited,Shovel Ready 6 Limited,amyjn2,Yes,Existing Generating CMU,6.665,1,Gas
+Viridor Waste Limited, Viridor Waste Management Limited ,AVON20,Yes,New Build Generating CMU,25.44,1,Waste
+Viridor Waste Limited, Viridor Waste Management Limited ,EXET20,Yes,Existing Generating CMU,3.573,1,Waste
+Vital Holdings Limited,VITAL ENERGI SOLUTIONS LIMITED,VIT307,Yes,Existing Generating CMU,3.969,1,Gas
+Vital Holdings Limited,VITAL ENERGI SOLUTIONS LIMITED,VIT304,Yes,Existing Generating CMU,8.02,1,Gas
+Vital Holdings Limited,VITAL ENERGI SOLUTIONS LIMITED,VIT302,Yes,New Build Generating CMU,2.993,1,Gas
+Vital Holdings Limited,VITAL ENERGI SOLUTIONS LIMITED,VIT303,Yes,New Build Generating CMU,2.993,1,Gas
+Warrington Renewables (York) Ltd,Warrington Renewables (York) Ltd,BOSC01,Yes,Existing Generating CMU,7.522,1,Solar
+Whitetower Holdings UK Limited,Whitetower Energy Limited,THRN02,Yes,Existing Generating CMU,36.057,1,Gas
+Zenobe Energy Limited,Zenobe Energy Limited,DSRBS1,Yes,Unproven DSR CMU,2.29,1,DSR
+Zenobe Energy Limited ,BESS HOLDCO 14 LIMITED,DSRWAL,Yes,Unproven DSR CMU,0.998,1,DSR
+Zenobe Energy Limited ,BESS HOLDCO 8 LIMITED,DSRUU1,Yes,Unproven DSR CMU,1.497,1,DSR

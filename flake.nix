@@ -1,5 +1,5 @@
 {
-  description = "Nix flake for GB Electricity Prices - Gradio web interface";
+  description = "Nix flake for GB Electricity Prices - Streamlit web interface";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -13,7 +13,7 @@
     apps.${system}.app = {
       type = "app";
       program = "uv";
-      args = [ "run" "app.py" ];
+      args = [ "run" "streamlit" "run" "app.py" ];
     };
 
     devShells.${system}.default = pkgs.mkShell {
@@ -28,10 +28,12 @@
         echo "✓ Nix environment loaded with Python 3.13, uv, git, and poetry"
         echo ""
         echo "Quick start:"
-        echo "  uv sync              # Install dependencies from pyproject.toml"
-        echo "  uv run app.py        # Run the Gradio web interface on http://localhost:7860"
-        echo "  nix run .#app        # Run with flake"
+        echo "  uv sync                          # Install dependencies from pyproject.toml"
+        echo "  uv run streamlit run Home.py     # Run the Streamlit web interface on http://localhost:8501"
+        echo "  uv run fetch-data.py                 # Fetch the latest data from the NESO and LCCC APIs"
+        echo "  nix run .#app                    # Run with flake"
       '';
     };
   };
 }
+

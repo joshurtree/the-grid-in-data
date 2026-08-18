@@ -126,6 +126,31 @@ RAW_DATA_DIR = os.path.join('data', 'raw')
 TRANSFORMED_DATA_DIR = os.path.join('data', 'transformed')
 MANUAL_DATA_DIR = os.path.join('data', 'manual')
 
+INFLATORS = {
+    2012: 1.0,
+    2013: 1.026,
+    2014: 1.041,
+    2015: 1.041,
+    2016: 1.048,
+    2017: 1.076,
+    2018: 1.103,
+    2019: 1.122,
+    2020: 1.132,
+    2021: 1.161,    
+    2022: 1.261,
+    2023: 1.376,
+    2024: 1.396,
+    2025: 1.441,
+    2026: 1.482,
+    2027: 1.51, # Estimated based on previous years' trends
+    2028: 1.53,
+    2029: 1.55,
+    2030: 1.58,
+    2031: 1.61,
+    2032: 1.64
+}
+
+
 if __name__ == "__main__":
     print("ELEXON_GENERATION_TYPES:", ELEXON_GENERATION_TYPES)
     print("NESO_GENERATION_TYPES:", NESO_GENERATION_TYPES)

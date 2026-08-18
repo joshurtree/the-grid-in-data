@@ -1,0 +1,508 @@
+Applicant Company,CMU ID,Capacity AG,CMU Classification,Capacity (MW),Duration (Years)
+UK Capacity Reserve Ltd,16CR05,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR10,Yes,New Build Generating CMU,16.951,1
+UK Capacity Reserve Ltd,16CR12,Yes,New Build Generating CMU,5.65,1
+UK Capacity Reserve Ltd,16CR13,Yes,New Build Generating CMU,7.534,1
+UK Capacity Reserve Ltd,16CR15,Yes,New Build Generating CMU,5.65,1
+UK Capacity Reserve Ltd,16CR21,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR24,Yes,New Build Generating CMU,7.534,1
+UK Capacity Reserve Ltd,16CR28,Yes,New Build Generating CMU,22.601,1
+UK Capacity Reserve Ltd,16CR29,Yes,New Build Generating CMU,22.601,1
+UK Capacity Reserve Ltd,16CR35,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR47,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR48,No,New Build Generating CMU,N/A,N/A
+UK Capacity Reserve Ltd,16CR50,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR53,Yes,New Build Generating CMU,16.951,1
+UK Capacity Reserve Ltd,16CR55,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR57,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR58,Yes,New Build Generating CMU,7.534,1
+UK Capacity Reserve Ltd,16CR64,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR72,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR79,Yes,New Build Generating CMU,18.834,1
+UK Capacity Reserve Ltd,16CR82,No,New Build Generating CMU,N/A,N/A
+UK Capacity Reserve Ltd,16CR84,Yes,New Build Generating CMU,4.332,1
+UK Power Reserve Limited,16PR01,Yes,Existing Generating CMU,9.417,1
+UK Power Reserve Limited,16PR02,Yes,Existing Generating CMU,9.417,1
+UK Power Reserve Limited,16PR03,Yes,Existing Generating CMU,9.417,1
+UK Power Reserve Limited,16PR04,Yes,Existing Generating CMU,9.417,1
+UK Power Reserve Limited,16PR05,Yes,Existing Generating CMU,9.417,1
+UK Power Reserve Limited,16PR06,Yes,Existing Generating CMU,9.916,1
+UK Power Reserve Limited,16PR07,Yes,Existing Generating CMU,3.767,1
+UK Power Reserve Limited,16PR08,Yes,Existing Generating CMU,9.134,1
+UK Power Reserve Limited,16PR09,Yes,Existing Generating CMU,9.417,1
+UK Power Reserve Limited,16PR10,Yes,Existing Generating CMU,9.417,1
+UK Power Reserve Limited,16PR11,Yes,Existing Generating CMU,9.417,1
+UK Power Reserve Limited,16PR13,Yes,Existing Generating CMU,4.713,1
+UK Strategic Reserve Limited,16SR11,No,New Build Generating CMU,N/A,N/A
+UK Strategic Reserve Limited,16SR12,No,New Build Generating CMU,N/A,N/A
+UK Strategic Reserve Limited,16SR20,No,New Build Generating CMU,N/A,N/A
+UK Strategic Reserve Limited,16SR23,No,New Build Generating CMU,N/A,N/A
+UK Strategic Reserve Limited,16SR24,No,New Build Generating CMU,N/A,N/A
+UK Strategic Reserve Limited,16SR26,No,New Build Generating CMU,N/A,N/A
+UK Strategic Reserve Limited,16SR27,No,New Build Generating CMU,N/A,N/A
+UK Strategic Reserve Limited,16SR28,No,New Build Generating CMU,N/A,N/A
+RWE Generation UK plc,ABTH7C,Yes,Existing Generating CMU,491.606,1
+RWE Generation UK plc,ABTH8C,Yes,Existing Generating CMU,491.606,1
+RWE Generation UK plc,ABTH9C,Yes,Existing Generating CMU,491.606,1
+Green Frog Power Limited,AD3177,Yes,Existing Generating CMU,18.834,1
+Darent Power Limited,ADPPR2,Yes,Existing Generating CMU,12.755,1
+Barton Hill Way Limited,AF3001,No,New Build Generating CMU,N/A,N/A
+Aggreko UK Limited,AggEpo,No,New Build Generating CMU,N/A,N/A
+Aggreko UK Limited,AggLom,No,Existing Generating CMU,N/A,N/A
+UK Power Reserve Limited,AGPR03,No,Unproven DSR CMU,N/A,N/A
+Alkane Energy UK Limited,ALKE08,Yes,Existing Generating CMU,3.442,1
+Alkane Energy UK Limited,ALKE09,Yes,Existing Generating CMU,2.364,1
+Alkane Energy UK Limited,ALKE10,Yes,Existing Generating CMU,2.73,1
+FCC Recycling (UK) Ltd,ALL001,Yes,Existing Generating CMU,30.51,1
+Ameresco Limited,AMER07,No,Unproven DSR CMU,N/A,N/A
+Ameresco Limited,AMER08,No,Unproven DSR CMU,N/A,N/A
+Anglian Water Services Limited,ANGEA1,Yes,Existing Generating CMU,34.033,1
+ Viridor Waste Management Limited ,ARDerf,Yes,Existing Generating CMU,22.599,1
+Regent Park Energy Limited,ARPNNa,Yes,New Build Generating CMU,5.283,1
+Regent Park Energy Limited,ARPPR6,Yes,Existing Generating CMU,2.871,1
+Regent Park Energy Limited,ARPPR7,Yes,Existing Generating CMU,2.722,1
+Regent Park Energy Limited,ARPPRc,Yes,Existing Generating CMU,5.141,1
+Regent Park Energy Limited,ARPPRd,Yes,Existing Generating CMU,4.121,1
+Regent Park Energy Limited,ARPR8A,Yes,Existing Generating CMU,11.432,1
+Ashford Power Ltd,ASHFO2,Yes,New Build Generating CMU,19.889,1
+Alkane Energy UK Limited,AUKANb,Yes,New Build Generating CMU,2.731,1
+Alkane Energy UK Limited,AUKANc,Yes,New Build Generating CMU,2.383,1
+Alkane Energy UK Limited,AUKANd,Yes,New Build Generating CMU,3.522,1
+Alkane Energy CM ltd,AUKNN7,Yes,New Build Generating CMU,7.534,1
+Alkane Energy CM ltd,AUKNNa,Yes,New Build Generating CMU,5.292,1
+Alkane Energy UK Limited,AUKNNd,Yes,New Build Generating CMU,4.059,1
+Alkane Energy UK Limited,AUKPR6,Yes,Existing Generating CMU,2.205,1
+Alkane Energy UK Limited,AUKPR7,Yes,Existing Generating CMU,8.164,1
+Alkane Energy UK Limited,AUKPR8,Yes,Existing Generating CMU,3.517,1
+Alkane Energy UK Limited,AUKPR9,Yes,Existing Generating CMU,9.22,1
+Calon Energy Limited,BAGE1Z,Yes,Existing Generating CMU,455.52,1
+Calon Energy Limited,BAGE2b,Yes,Existing Generating CMU,30.417,1
+BALBY POWER LIMITED,BALB02,No,New Build Generating CMU,N/A,N/A
+Barking Power Limited,BARKB1,No,Existing Generating CMU,N/A,N/A
+Barking Power Limited,BARKB2,No,Existing Generating CMU,N/A,N/A
+GF Power Peaking Limited,BE3152,Yes,Existing Generating CMU,3.315,1
+British Gas Trading Limited,BGTL01,Yes,Unproven DSR CMU,1.946,1
+British Gas Trading Limited,BGTL02,No,Unproven DSR CMU,N/A,N/A
+British Gas Trading Limited,BGTL03,Yes,Unproven DSR CMU,1.848,1
+Veolia UK Limited,BHRLH2,Yes,Existing Generating CMU,3.22,1
+RYDBERG DEVELOPMENT COMPANY LIMITED,BOLC02,No,New Build Generating CMU,N/A,N/A
+E.ON UK Cogeneration Ltd,BRD001,Yes,Existing Generating CMU,2.133,1
+P3P Energy Management Limited,BREH14,Yes,Existing Generating CMU,13.485,1
+Rolls-Royce Power Development Limited,BRIST2,Yes,Existing Generating CMU,39.908,1
+BritNed Development Limited,Brit16,Yes,Existing Interconnector CMU,888,1
+Infinis Alternative Energies Limited,BRST1A,Yes,Existing Generating CMU,5.694,1
+Infinis Alternative Energies Limited,BRST2B,Yes,Existing Generating CMU,5.661,1
+British Sugar plc,BSBU17,Yes,Existing Generating CMU,55.549,1
+FCC Buckinghamshire Ltd,BUCK02,Yes,New Build Generating CMU,23.642,1
+SSEPG (Operations) Limited,BURG01,Yes,Existing Generating CMU,44.298,1
+Buxton Power Limited,BUXT01,Yes,New Build Generating CMU,15.94,1
+BYGEN POWER (TREGEEN) LIMITED,BYGEN2,Yes,New Build Generating CMU,18.834,1
+Cadoxton Reserve Power Limited,CADO02,Yes,Existing Generating CMU,15.067,1
+ Viridor Waste Management Limited ,CARerf,Yes,Existing Generating CMU,27.319,1
+Cargill PLC,CarGe1,Yes,Existing Generating CMU,25.11,1
+Carrington Power Limited,CARR01,Yes,New Build Generating CMU,398.58,1
+Carrington Power Limited,CARR02,Yes,New Build Generating CMU,398.58,1
+CARRHILL POWER LIMITED,CARR13,No,New Build Generating CMU,N/A,N/A
+P3P Energy Management AE Limited,CASQ14,Yes,Existing Generating CMU,3.038,1
+E.ON UK Cogeneration Ltd,CAST01,Yes,Existing Generating CMU,43.799,1
+Uniper Global Commodities SE,CDCL01,Yes,Existing Generating CMU,385.44,1
+E.ON UK Plc,CEN002,Yes,Existing Generating CMU,2.656,1
+GB Gas Holdings Ltd,CENES1,Yes,Unproven DSR CMU,4.215,1
+GB Gas Holdings Ltd,CENES2,Yes,Unproven DSR CMU,1.867,1
+Industrial Energy Services Limited ,CES003,Yes,Existing Generating CMU,5.382,1
+Excel District Energy Company Limited,CES004,Yes,Existing Generating CMU,7.354,1
+East London Energy Limited ,CES006,Yes,Existing Generating CMU,2.851,1
+East London Energy Limited ,CES007,Yes,Existing Generating CMU,5.09,1
+Leicester District Energy Company Limited,CES008,Yes,Existing Generating CMU,4.123,1
+Southampton Geothermal Heating Company Limited,CES009,Yes,Existing Generating CMU,6.061,1
+Birmingham District Energy Company Limited,CES010,Yes,Existing Generating CMU,5.169,1
+RWE Cogen UK Ltd,CHEGT2,Yes,Existing Generating CMU,42.837,1
+SSEPG (Operations) Limited,CHIC01,Yes,Existing Generating CMU,44.298,1
+SSEPG (Operations) Limited,CHIP01,Yes,Existing Generating CMU,9.614,1
+Winnington CHP Limited,CHPWIN,Yes,Existing Generating CMU,83.626,1
+Citigen (London) Limited,CIT001,Yes,Existing Generating CMU,7.586,1
+SSE Generation Ltd.,CLAC-1,Yes,Existing Generating CMU,34.464,1
+Cleator Battery Storage Limited,CLEAT1,No,New Build Generating CMU,N/A,N/A
+SSE Generation Ltd.,CLUNIE,Yes,Existing Generating CMU,52.73,1
+Uniper Global Commodities SE,CNQPS1,Yes,Existing Generating CMU,328.5,1
+Uniper Global Commodities SE,CNQPS2,Yes,Existing Generating CMU,328.5,1
+Uniper Global Commodities SE,CNQPS3,Yes,Existing Generating CMU,328.5,1
+Uniper Global Commodities SE,CNQPS4,Yes,Existing Generating CMU,328.5,1
+Corby Power Limited,CORBY1,Yes,Existing Generating CMU,356.532,1
+RWE Generation UK plc,COW161,Yes,Existing Generating CMU,46.613,1
+RWE Generation UK plc,COW162,Yes,Existing Generating CMU,46.562,1
+Arjowiggins Chartham Limited,CPM001,No,Existing Generating CMU,N/A,N/A
+Rolls-Royce Power Development Limited,CROYD2,Yes,Existing Generating CMU,47.264,1
+EDF Energy plc,CT1-16,Yes,Existing Generating CMU,430.53,1
+EDF Energy plc,CT2-16,Yes,Existing Generating CMU,438.975,1
+EDF Energy plc,CT3-16,Yes,Existing Generating CMU,440.013,1
+EDF Energy plc,CT4-16,Yes,Existing Generating CMU,430.094,1
+Cynon Power Limited,CYNO02,Yes,Existing Generating CMU,15.067,1
+Dafen Reserve Power Limited,DAFE02,Yes,Existing Generating CMU,9.417,1
+Veolia UK Limited,DCPS02,Yes,Existing Generating CMU,3.27,1
+Deeside Power (UK) Limited,DEEP_1,No,Existing Generating CMU,N/A,N/A
+Rolls-Royce Power Development Limited,DERBY2,Yes,Existing Generating CMU,51.652,1
+RWE Generation UK plc,DID161,Yes,Existing Generating CMU,23.543,1
+RWE Generation UK plc,DID162,Yes,Existing Generating CMU,23.543,1
+RWE Generation UK plc,DID163,Yes,Existing Generating CMU,23.543,1
+RWE Generation UK plc,DID164,Yes,Existing Generating CMU,23.543,1
+RWE Generation UK plc,DIDCB5,Yes,Existing Generating CMU,700.8,1
+RWE Generation UK plc,DIDCB6,Yes,Existing Generating CMU,657,1
+First Hydro Company,DINO_1,Yes,Existing Generating CMU,263.835,1
+First Hydro Company,DINO_2,Yes,Existing Generating CMU,263.835,1
+First Hydro Company,DINO_3,Yes,Existing Generating CMU,290.764,1
+First Hydro Company,DINO_4,Yes,Existing Generating CMU,289.672,1
+First Hydro Company,DINO_5,Yes,Existing Generating CMU,263.835,1
+First Hydro Company,DINO_6,Yes,Existing Generating CMU,263.835,1
+EDF Energy Nuclear Generation Limited,DN2116,Yes,Existing Generating CMU,462.215,1
+EDF Energy Nuclear Generation Limited,DN2216,Yes,Existing Generating CMU,465.864,1
+Limejump Ltd.,DSR_01,Yes,Unproven DSR CMU,6.95,1
+Limejump Ltd.,DSR_02,Yes,Unproven DSR CMU,4.344,1
+E.ON UK Plc,DSR009,Yes,Unproven DSR CMU,20,1
+E.ON UK Plc,DSR010,No,Unproven DSR CMU,N/A,N/A
+E.ON UK Plc,DSR011,Yes,Unproven DSR CMU,10,1
+E.ON UK Plc,DSR013,No,Unproven DSR CMU,N/A,N/A
+E.ON UK Plc,DSR020,Yes,Unproven DSR CMU,4,1
+E.ON UK Plc,DSR024,Yes,Unproven DSR CMU,2.25,1
+Drax Power Limited,DX0516,Yes,Existing Generating CMU,557.843,1
+Drax Power Limited,DX0616,Yes,Existing Generating CMU,556.588,1
+Drax Power Limited,DX0916,Yes,Existing Generating CMU,28.752,1
+Drax Power Limited,DX1016,Yes,Existing Generating CMU,29.786,1
+Drax Power Limited,DX1216,Yes,Existing Generating CMU,29.786,1
+Centrica Brigg Limited,EBRGG2,Yes,Existing Generating CMU,93.228,1
+Centrica Barry Limited,EBRYP2,Yes,Existing Generating CMU,197.525,1
+EnerNOC UK Limited,ECMU13,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU14,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU15,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU16,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU17,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU18,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU19,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU20,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU21,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU22,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU23,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU24,No,Unproven DSR CMU,N/A,N/A
+EDF Energy Customers plc,EDFSR1,No,Unproven DSR CMU,N/A,N/A
+EDF Energy Customers plc,EDFSR2,Yes,Unproven DSR CMU,6.95,1
+EDF Energy Customers plc,EDFSR3,Yes,Unproven DSR CMU,2.606,1
+EDF Energy Customers plc,EDFSR4,No,Unproven DSR CMU,N/A,N/A
+Uniper Global Commodities SE,EECL01,Yes,Existing Generating CMU,357.408,1
+Eggborough Power Limited,EGGBGH,Yes,Existing Generating CMU,1820.104,1
+Esso Petroleum Company Limited,EM5-T4,Yes,Existing Generating CMU,124.34,1
+Endeco Technologies Limited,END003,No,Unproven DSR CMU,N/A,N/A
+Endeco Technologies Limited,END004,Yes,Unproven DSR CMU,2.84,1
+Energy Pool UK limited,EPO001,Yes,Unproven DSR CMU,6.954,1
+Energy Pool UK limited,EPO002,Yes,Unproven DSR CMU,17.542,1
+Energy Pool UK limited,EPO004,Yes,Existing Generating CMU,8.1,1
+Attune Energy Limited,ERNESA,Yes,New Build Generating CMU,18.834,1
+Exeter RP Limited,ERPAL1,Yes,New Build Generating CMU,4.591,1
+Exeter RP Limited,ERPMA1,Yes,New Build Generating CMU,6.441,1
+SSE Generation Ltd.,ERRO01,Yes,Existing Generating CMU,21.739,1
+SSE Generation Ltd.,ERRO02,Yes,Existing Generating CMU,21.801,1
+SSE Generation Ltd.,ERRO03,Yes,Existing Generating CMU,21.805,1
+EirGrid Interconnector Limited,EWIC15,Yes,Existing Interconnector CMU,151.5,1
+Limejump Ltd.,EXC_02,Yes,Existing Generating CMU,3.014,1
+Limejump Ltd.,EXC_03,Yes,Existing Generating CMU,1.8,1
+Limejump Ltd.,EXC_04,Yes,Existing Generating CMU,7.459,1
+Limejump Ltd.,EXC_05,Yes,Existing Generating CMU,13.236,1
+ Viridor Waste Management Limited ,EXEerf,Yes,Existing Generating CMU,3.067,1
+Rolls-Royce Power Development Limited,EXETR2,Yes,Existing Generating CMU,45.21,1
+SSE Generation Ltd.,FAS117,Yes,Existing Generating CMU,19.817,1
+SSE Generation Ltd.,FAS217,Yes,Existing Generating CMU,19.817,1
+SSE Generation Ltd.,FAS317,Yes,Existing Generating CMU,19.817,1
+First Hydro Company,FFES_1,Yes,Existing Generating CMU,86.661,1
+First Hydro Company,FFES_2,Yes,Existing Generating CMU,86.661,1
+First Hydro Company,FFES_3,Yes,Existing Generating CMU,86.661,1
+First Hydro Company,FFES_4,Yes,Existing Generating CMU,86.661,1
+Keadby Generation Limited,FID02G,Yes,Existing Generating CMU,16.009,1
+Keadby Generation Limited,FID03G,Yes,Existing Generating CMU,16.009,1
+Keadby Generation Limited,FID117,No,Existing Generating CMU,N/A,N/A
+Keadby Generation Limited,FIDL02,Yes,Existing Generating CMU,422.582,1
+Keadby Generation Limited,FIDL03,Yes,Existing Generating CMU,424.32,1
+Keadby Generation Limited,FIDL04,Yes,Existing Generating CMU,432.862,1
+Flexitricity Limited,FLXT01,Yes,Existing Generating CMU,8.148,1
+Flexitricity Limited,FLXT02,Yes,Existing Generating CMU,4.982,1
+Flexitricity Limited,FLXT03,Yes,Existing Generating CMU,4.85,1
+Flexitricity Limited,FLXT04,Yes,Existing Generating CMU,6.075,1
+Flexitricity Limited,FLXT05,Yes,Existing Generating CMU,5.362,1
+Flexitricity Limited,FLXT06,Yes,Existing Generating CMU,10.264,1
+Flexitricity Limited,FLXT08,Yes,Existing Generating CMU,4.414,1
+Flexitricity Limited,FLXT09,Yes,Existing Generating CMU,4.05,1
+Flexitricity Limited,FLXT10,Yes,Existing Generating CMU,2.708,1
+Flexitricity Limited,FLXT11,Yes,Existing Generating CMU,2.744,1
+Flexitricity Limited,FLXT12,Yes,Existing Generating CMU,2.673,1
+Flexitricity Limited,FLXT13,Yes,Existing Generating CMU,2.664,1
+Flexitricity Limited,FLXT14,Yes,Existing Generating CMU,2.355,1
+Flexitricity Limited,FLXT15,No,Existing Generating CMU,N/A,N/A
+Flexitricity Limited,FLXT16,No,Existing Generating CMU,N/A,N/A
+Flexitricity Limited,FLXT18,Yes,Existing Generating CMU,3.083,1
+Flexitricity Limited,FLXT19,Yes,Existing Generating CMU,3.063,1
+Flexitricity Limited,FLXT20,Yes,Existing Generating CMU,4.655,1
+Flexitricity Limited,FLXT21,Yes,Existing Generating CMU,2.953,1
+Flexitricity Limited,FLXT22,Yes,Existing Generating CMU,3.769,1
+Flexitricity Limited,FLXT24,Yes,Existing Generating CMU,3.413,1
+Flexitricity Limited,FLXT25,Yes,Existing Generating CMU,15.36,1
+Flexitricity Limited,FLXT26,Yes,New Build Generating CMU,3.6,1
+Flexitricity Limited,FLXT27,Yes,Existing Generating CMU,7.129,1
+Flexitricity Limited,FLXT40,Yes,Proven DSR CMU,3.475,1
+Flexitricity Limited,FLXT41,Yes,Proven DSR CMU,4.492,1
+Flexitricity Limited,FLXT42,Yes,Proven DSR CMU,10.8,1
+Flexitricity Limited,FLXT43,Yes,Proven DSR CMU,12.04,1
+Flexitricity Limited,FLXT61,Yes,Proven DSR CMU,2.581,1
+Flexitricity Limited,FLXT62,Yes,Proven DSR CMU,3.323,1
+Flexitricity Limited,FLXT63,Yes,Proven DSR CMU,3.372,1
+Flexitricity Limited,FLXT64,Yes,Proven DSR CMU,2.778,1
+Flexitricity Limited,FLXT71,Yes,Unproven DSR CMU,17.376,1
+Flexitricity Limited,FLXT72,No,Unproven DSR CMU,N/A,N/A
+Flexitricity Limited,FLXT74,Yes,Unproven DSR CMU,5.213,1
+Flexitricity Limited,FLXT75,Yes,Unproven DSR CMU,17.376,1
+Flexitricity Limited,FLXT76,No,Unproven DSR CMU,N/A,N/A
+Flexitricity Limited,FLXT77,Yes,Unproven DSR CMU,11,1
+Flexitricity Limited,FLXT81,Yes,Unproven DSR CMU,6.8,1
+Ferrybridge MFE Limited,FMFE17,Yes,New Build Generating CMU,66.687,1
+SSEPG (Operations) Limited,FOAK01,Yes,Existing Generating CMU,6.136,1
+SSE Generation Ltd.,FOYE01,Yes,Existing Generating CMU,149.538,1
+SSE Generation Ltd.,FOYE02,Yes,Existing Generating CMU,144.435,1
+Fulcrum Power Ltd,fulcru,Yes,Existing Generating CMU,6.203,1
+Grangemouth CHP Limited,GCHPL1,Yes,Existing Generating CMU,128.208,1
+EnerNOC UK Limited,GCMU02,Yes,Existing Generating CMU,3.6,1
+EnerNOC UK Limited,GCMU03,Yes,Existing Generating CMU,3.6,1
+EnerNOC UK Limited,GCMU04,Yes,Existing Generating CMU,3.78,1
+EnerNOC UK Limited,GCMU05,Yes,Existing Generating CMU,3.24,1
+EnerNOC UK Limited,GCMU06,Yes,Existing Generating CMU,3.96,1
+EnerNOC UK Limited,GCMU07,Yes,Existing Generating CMU,3.96,1
+EnerNOC UK Limited,GCMU08,Yes,Existing Generating CMU,2.61,1
+EnerNOC UK Limited,GCMU09,Yes,Existing Generating CMU,2.61,1
+EnerNOC UK Limited,GCMU10,Yes,Existing Generating CMU,2.61,1
+EnerNOC UK Limited,GCMU11,Yes,Existing Generating CMU,9.45,1
+EnerNOC UK Limited,GCMU14,Yes,Existing Generating CMU,2.025,1
+EnerNOC UK Limited,GCMU15,Yes,Existing Generating CMU,3.6,1
+EnerNOC UK Limited,GCMU17,Yes,Existing Generating CMU,6.03,1
+EnerNOC UK Limited,GCMU18,Yes,Existing Generating CMU,7.02,1
+ TP LEASECO LIMITED,GLAS16,Yes,Existing Generating CMU,9.9,1
+Glassenbury Battery Storage Limited,GLASS2,No,New Build Generating CMU,N/A,N/A
+SSE Generation Ltd.,GLENMS,Yes,Existing Generating CMU,34.214,1
+Uniper Global Commodities SE,GRAI06,Yes,Existing Generating CMU,421.2,1
+Uniper Global Commodities SE,GRAI07,Yes,Existing Generating CMU,421.2,1
+Uniper Global Commodities SE,GRAI08,Yes,Existing Generating CMU,421.2,1
+Uniper Global Commodities SE,GRG101,Yes,Existing Generating CMU,23.785,1
+Uniper Global Commodities SE,GRG40C,Yes,Existing Generating CMU,25.897,1
+RWE Generation UK plc,GYAR01,Yes,Existing Generating CMU,359.16,1
+Veolia UK Limited,HAMP02,Yes,Existing Generating CMU,28.413,1
+Harbourne Power Limited,HARB02,Yes,New Build Generating CMU,15.067,1
+ TP LEASECO LIMITED,HARV16,Yes,Existing Generating CMU,9.9,1
+Harworth Power Generation Limited,Harwo1,Yes,Existing Generating CMU,3.168,1
+RYDBERG DEVELOPMENT COMPANY LIMITED,HAVE02,No,New Build Generating CMU,N/A,N/A
+Rolls-Royce Power Development Limited,HEAR2a,Yes,Existing Generating CMU,46.021,1
+Rolls-Royce Power Development Limited,HEAR2b,Yes,Existing Generating CMU,47.085,1
+EDF Energy Nuclear Generation Limited,HP7-16,Yes,Existing Generating CMU,450.698,1
+EDF Energy Nuclear Generation Limited,HP8-16,Yes,Existing Generating CMU,444.362,1
+EDF Energy Nuclear Generation Limited,HR1-16,Yes,Existing Generating CMU,510.44,1
+EDF Energy Nuclear Generation Limited,HR2-16,Yes,Existing Generating CMU,510.908,1
+EDF Energy Nuclear Generation Limited,HU7-16,Yes,Existing Generating CMU,452.563,1
+EDF Energy Nuclear Generation Limited,HU8-16,Yes,Existing Generating CMU,453.464,1
+EDF Energy Nuclear Generation Limited,HY1116,Yes,Existing Generating CMU,433.301,1
+EDF Energy Nuclear Generation Limited,HY1216,Yes,Existing Generating CMU,502.543,1
+EDF Energy Nuclear Generation Limited,HY2716,Yes,Existing Generating CMU,545.803,1
+EDF Energy Nuclear Generation Limited,HY2816,Yes,Existing Generating CMU,546.171,1
+RWE Cogen UK (Hythe) Ltd,HYTHE2,Yes,Existing Generating CMU,43.712,1
+VPI Immingham LLP,ICHP02,Yes,Existing Generating CMU,1188,1
+National Grid Interconnectors Limited,IFA_16,Yes,Existing Interconnector CMU,1172.92,1
+Coryton Energy Company Ltd,IGCOSX,Yes,Existing Generating CMU,700.8,1
+Rocksavage Power Company Ltd,IGROCK,Yes,Existing Generating CMU,727.08,1
+Spalding Energy Company Ltd,IGSPLN,Yes,Existing Generating CMU,791.028,1
+GF Power Peaking Limited,IL3159,Yes,New Build Generating CMU,6.027,1
+Imerys Minerals,IMERS1,Yes,Existing Generating CMU,4.372,1
+Imerys Minerals,IMERS2,Yes,Existing Generating CMU,5.713,1
+Imerys Minerals,IMERS3,Yes,Existing Generating CMU,6.69,1
+Imerys Minerals,IMERS4,Yes,Existing Generating CMU,3.683,1
+Imerys Minerals,IMERS5,Yes,Existing Generating CMU,3.052,1
+Imerys Minerals,IMERS6,Yes,Existing Generating CMU,3.635,1
+Indian Queens Power Limited,INDQ_1,Yes,Existing Generating CMU,131.838,1
+INEOS Nitriles (UK) Ltd,INEOS1,Yes,Existing Generating CMU,45.9,1
+SSE Generation Ltd.,INV117,Yes,Existing Generating CMU,21.54,1
+Keadby Generation Limited,KEADBY,Yes,Existing Generating CMU,697.515,1
+Harworth Power Generation Limited,Kelli1,Yes,Existing Generating CMU,4.979,1
+Keystone Power Limited,Keyst1,Yes,Existing Generating CMU,19.501,1
+Uniper Global Commodities SE,KILHM1,Yes,Existing Generating CMU,292.869,1
+Uniper Global Commodities SE,KILHM2,Yes,Existing Generating CMU,292.869,1
+KiWi Power Ltd,KIWI70,No,Unproven DSR CMU,N/A,N/A
+KiWi Power Ltd,KIWI71,No,Unproven DSR CMU,N/A,N/A
+KiWi Power Ltd,KIWI73,No,Unproven DSR CMU,N/A,N/A
+KiWi Power Ltd,KIWI74,No,Unproven DSR CMU,N/A,N/A
+KiWi Power Ltd,KIWI75,No,Unproven DSR CMU,N/A,N/A
+KiWi Power Ltd,KIWI76,No,Unproven DSR CMU,N/A,N/A
+KiWi Power Ltd,KIWI78,No,Unproven DSR CMU,N/A,N/A
+KiWi Power Ltd,KIWI96,No,Proven DSR CMU,N/A,N/A
+KIWI POWER BATTERY LIMITED,KPBL01,Yes,New Build Generating CMU,5.777,1
+KiWi Power Ltd,KPEG01,No,Existing Generating CMU,N/A,N/A
+KiWi Power Ltd,KPEG03,Yes,Existing Generating CMU,7.501,1
+KiWi Power Ltd,KPEG06,No,Existing Generating CMU,N/A,N/A
+Goose House Limited,KR3010,No,New Build Generating CMU,N/A,N/A
+LAKESIDE ENERGY FROM WASTE LIMITED,LAKefw,Yes,Existing Generating CMU,32.096,1
+Larigan Power Limited,LARI02,Yes,New Build Generating CMU,15.067,1
+RWE Generation UK plc,LBA161,Yes,Existing Generating CMU,680.543,1
+SSE Generation Ltd.,LCHART,Yes,Existing Generating CMU,29.294,1
+Veolia UK Limited,LEED02,No,Existing Generating CMU,N/A,N/A
+FCC Recycling (UK) Ltd,LINC01,Yes,Existing Generating CMU,11.27,1
+SSE Generation Ltd.,LOC117,Yes,Existing Generating CMU,40.495,1
+Goose House Limited,LP3011,No,New Build Generating CMU,N/A,N/A
+LondonWaste Limited,LWL100,Yes,Existing Generating CMU,33.446,1
+The Isle of Wight Energy Company Limited,MAIN16,Yes,Existing Generating CMU,4.98,1
+Medway Power Limited,MEDP01,Yes,Existing Generating CMU,648.532,1
+Mercia Waste Management Ltd,MERC02,Yes,New Build Generating CMU,21.73,1
+Goose House Limited,MN3012,No,New Build Generating CMU,N/A,N/A
+Moyle Interconnector Ltd,Moyle2,Yes,Existing Interconnector CMU,150,1
+SSE Energy Supply Ltd.,MRWD-1,Yes,Existing Generating CMU,805.92,1
+Limejump Ltd.,NBB_02,Yes,New Build Generating CMU,4.622,1
+Nuclear Decommissioning Authority,NDAFLS,No,Existing Generating CMU,N/A,N/A
+Nuclear Decommissioning Authority,NDAMAN,Yes,Existing Generating CMU,24.478,1
+Nevern Power Limited,NEVE02,Yes,New Build Generating CMU,15.067,1
+Veolia UK Limited,NEWH02,Yes,Existing Generating CMU,15.582,1
+NG 1 Power Ltd,NG1POW,Yes,New Build Generating CMU,19.925,1
+ORIGAMI ENERGY LIMITED,OEL001,Yes,Unproven DSR CMU,9.991,1
+New Power Generation N04 Limited,OR3165,Yes,New Build Generating CMU,7.458,1
+SSE Generation Ltd.,PEH117,No,Existing Generating CMU,N/A,N/A
+RWE Generation UK plc,PEMB11,Yes,Existing Generating CMU,416.1,1
+RWE Generation UK plc,PEMB21,Yes,Existing Generating CMU,416.1,1
+RWE Generation UK plc,PEMB31,Yes,Existing Generating CMU,416.1,1
+RWE Generation UK plc,PEMB41,Yes,Existing Generating CMU,416.1,1
+RWE Generation UK plc,PEMB51,Yes,Existing Generating CMU,416.1,1
+Centrica PB Limited,PETEM2,Yes,Existing Generating CMU,230.87,1
+Peak Gen Power 11 Limited,PGP11B,Yes,New Build Generating CMU,18.834,1
+Peak Gen Power 13 Limited,PGP13F,Yes,Existing Generating CMU,18.834,1
+Peak Gen Power 14 Limited,PGP14E,Yes,New Build Generating CMU,18.834,1
+Peak Gen Power 18 Limited,PGP18H,Yes,New Build Generating CMU,18.834,1
+Peak Gen Power 2 Limited,PGP2PB,Yes,Existing Generating CMU,18.834,1
+Peak Gen Power 5 Limited,PGP5LL,Yes,Existing Generating CMU,18.834,1
+Peak Gen Power 6 Limited,PGP6BA,Yes,Existing Generating CMU,18.834,1
+W4B Renewable Energy Limited,PGPSOT,Yes,Existing Generating CMU,3.767,1
+E.ON UK CHP Limited,POL001,Yes,Existing Generating CMU,29.344,1
+Trinity Power Limited,PR_ALF,No,New Build Generating CMU,N/A,N/A
+Prime Energy Limited,PRIM02,Yes,Existing Generating CMU,5.707,1
+Green Frog Power Limited,PS3116,No,Existing Generating CMU,N/A,N/A
+Powertree (Foxwood Road) Limited,PWTFR1,Yes,New Build Generating CMU,4.591,1
+Powertree (Sidings Road) Limited,PWTSR1,Yes,New Build Generating CMU,2.825,1
+Powertree (Taylor Lane) Limited,PWTTL3,Yes,New Build Generating CMU,6.441,1
+Powertree (Taylor Lane) Limited,PWTTL4,No,New Build Generating CMU,N/A,N/A
+E.ON Connecting Energies Limited,QMC001,Yes,Existing Generating CMU,3.969,1
+Green Frog Power Limited,QT3167,No,Existing Generating CMU,N/A,N/A
+G2 Energy Limited,R092BE,No,New Build Generating CMU,N/A,N/A
+SSE Generation Ltd.,RANN-1,Yes,Existing Generating CMU,13.786,1
+SSE Generation Ltd.,RANN-2,Yes,Existing Generating CMU,13.786,1
+SSE Generation Ltd.,RANN-3,Yes,Existing Generating CMU,13.786,1
+Uniper Global Commodities SE,RATS01,No,Existing Generating CMU,N/A,N/A
+Uniper Global Commodities SE,RATS02,Yes,Existing Generating CMU,447.638,1
+Uniper Global Commodities SE,RATS03,No,Existing Generating CMU,N/A,N/A
+Uniper Global Commodities SE,RATSU4,Yes,Existing Generating CMU,463.647,1
+Redlake Power Limited,RED002,Yes,New Build Generating CMU,15.067,1
+REstore Flexpond UK Limited,REST01,Yes,Existing Generating CMU,4.454,1
+REstore Flexpond UK Limited,REST02,Yes,Existing Generating CMU,6.08,1
+REstore Flexpond UK Limited,REST03,Yes,Existing Generating CMU,4.279,1
+REstore Flexpond UK Limited,REST04,Yes,Existing Generating CMU,7.205,1
+REstore Flexpond UK Limited,REST05,Yes,Existing Generating CMU,33.206,1
+REstore Flexpond UK Limited,REST07,Yes,Existing Generating CMU,35.904,1
+REstore Flexpond UK Limited,REST08,Yes,Existing Generating CMU,6.123,1
+REstore Flexpond UK Limited,REST09,Yes,Existing Generating CMU,6.027,1
+Statkraft Markets GmbH,RHE2_1,Yes,Existing Generating CMU,18.402,1
+Statkraft Markets GmbH,RHE3_1,Yes,Existing Generating CMU,18.367,1
+Reserve Power Trading Limited,RPTGC1,Yes,New Build Generating CMU,12.907,1
+Riverside Resource Recovery Limited,RRRF01,Yes,Existing Generating CMU,67.249,1
+Uniper Global Commodities SE,RTG20C,Yes,Existing Generating CMU,16.009,1
+Green Frog Power Limited,RU3168,No,Existing Generating CMU,N/A,N/A
+Sembcorp Utilities (UK) Limited,S17G01,Yes,Existing Generating CMU,37.539,1
+Sembcorp Utilities (UK) Limited,S17G02,Yes,Existing Generating CMU,37.571,1
+Sembcorp Utilities (UK) Limited,S17S11,Yes,Existing Generating CMU,21.738,1
+Saltend Cogeneration Company Limited,SALTPS,Yes,Existing Generating CMU,1080,1
+E.ON UK Cogeneration Ltd,SAND01,Yes,Existing Generating CMU,43.799,1
+Seabank Power Limited,SEA1_2,Yes,Existing Generating CMU,1102.008,1
+RWE Cogen UK Ltd,SEALS2,Yes,Existing Generating CMU,48.161,1
+SmartestEnergy Limited,SEL-1b,No,Unproven DSR CMU,N/A,N/A
+SmartestEnergy Limited,SEL-2b,No,Unproven DSR CMU,N/A,N/A
+SmartestEnergy Limited,SEL-3b,No,Unproven DSR CMU,N/A,N/A
+SmartestEnergy Limited,SEL-4b,No,Unproven DSR CMU,N/A,N/A
+Selby Power Limited,SELB02,Yes,New Build Generating CMU,15.067,1
+Veolia UK Limited,SGH002,Yes,Existing Generating CMU,1.926,1
+Centrica SHB Limited,SHB1_2,Yes,Existing Generating CMU,1226.4,1
+Veolia UK Limited,SHRO02,Yes,Existing Generating CMU,7.412,1
+SSE Generation Ltd.,SLOY01,Yes,Existing Generating CMU,35.104,1
+SSE Generation Ltd.,SLOY02,Yes,Existing Generating CMU,35.252,1
+SSE Generation Ltd.,SLOY03,Yes,Existing Generating CMU,34.464,1
+SSE Generation Ltd.,SLOY04,Yes,Existing Generating CMU,29.352,1
+ScottishPower Generation Limited,SP16BL,Yes,Existing Generating CMU,52.56,1
+ScottishPower Generation Limited,SP16CR,Yes,Existing Generating CMU,423.676,1
+ScottishPower Generation Limited,SP16DC,Yes,Existing Generating CMU,705.18,1
+ScottishPower Generation Limited,SP16GL,Yes,Existing Generating CMU,20.8,1
+ScottishPower Generation Limited,SP16KE,Yes,Existing Generating CMU,20.82,1
+ScottishPower Generation Limited,SP16RH,Yes,Existing Generating CMU,626.34,1
+ScottishPower Generation Limited,SP16SH,Yes,Existing Generating CMU,372.3,1
+ScottishPower Generation Limited,SP16TO,Yes,Existing Generating CMU,29.761,1
+ScottishPower Energy Retail Limited,SPDR01,Yes,Unproven DSR CMU,4.242,1
+ScottishPower Energy Retail Limited,SPDR02,No,Unproven DSR CMU,N/A,N/A
+ScottishPower Energy Retail Limited,SPDR03,No,Unproven DSR CMU,N/A,N/A
+ScottishPower Energy Retail Limited,SPDR04,No,Unproven DSR CMU,N/A,N/A
+Veolia UK Limited,STAF02,No,Existing Generating CMU,N/A,N/A
+RWE Generation UK plc,STAY01,Yes,Existing Generating CMU,406.464,1
+RWE Generation UK plc,STAY02,Yes,Existing Generating CMU,406.464,1
+RWE Generation UK plc,STAY03,Yes,Existing Generating CMU,406.464,1
+RWE Generation UK plc,STAY04,Yes,Existing Generating CMU,406.464,1
+SUEZ RECYCLING AND RECOVERY KIRKLEES LTD,SUEZ01,Yes,Existing Generating CMU,9.429,1
+SUEZ RECYCLING AND RECOVERY TEES VALLEY LTD,SUEZ02,Yes,Existing Generating CMU,17.02,1
+SITA Northumberland Limited,SUEZ03,Yes,Existing Generating CMU,9.435,1
+SITA South Tyne and Wear Limited,SUEZ04,Yes,Existing Generating CMU,20.876,1
+SUEZ RECYCLING AND RECOVERY SUFFOLK LTD,SUEZ05,Yes,Existing Generating CMU,20.846,1
+Cornwall Energy Recovery Limited,SUEZ06,Yes,New Build Generating CMU,18,1
+West London Energy Recovery Limited,SUEZ07,Yes,New Build Generating CMU,28.597,1
+Calon Energy Limited,SUTB1Z,Yes,Existing Generating CMU,717.444,1
+Green Frog Power Limited,SV3169,No,Existing Generating CMU,N/A,N/A
+Calon Energy Limited,SVR10Z,Yes,Existing Generating CMU,372.3,1
+Calon Energy Limited,SVR20Z,Yes,Existing Generating CMU,372.3,1
+EDF Energy Nuclear Generation Limited,SZ1-16,Yes,Existing Generating CMU,519.658,1
+EDF Energy Nuclear Generation Limited,SZ2-16,Yes,Existing Generating CMU,519.658,1
+Uniper Global Commodities SE,TAYL12,Yes,Existing Generating CMU,46.614,1
+Uniper Global Commodities SE,TAYL13,Yes,Existing Generating CMU,46.148,1
+SSEPG (Operations) Limited,THAT01,Yes,Existing Generating CMU,8.266,1
+E.ON UK Cogeneration Ltd,THRN01,Yes,Existing Generating CMU,43.8,1
+Tillingham Power Limited,TILL02,Yes,New Build Generating CMU,15.067,1
+Centrica Langage Limited,TLAGA1,Yes,Existing Generating CMU,792.78,1
+EDF Energy Nuclear Generation Limited,TN1-16,Yes,Existing Generating CMU,525.93,1
+EDF Energy Nuclear Generation Limited,TN2-16,Yes,Existing Generating CMU,534.788,1
+SSE Generation Ltd.,TUM117,Yes,Existing Generating CMU,16.468,1
+SSE Generation Ltd.,TUM217,Yes,Existing Generating CMU,16.512,1
+Green Frog Power Limited,TW3170,No,Existing Generating CMU,N/A,N/A
+Veolia UK Limited,TYSE02,Yes,Existing Generating CMU,24.737,1
+Simec Uskmouth Power Limited,Uskone,No,Existing Generating CMU,N/A,N/A
+Simec Uskmouth Power Limited,Usktwo,No,Existing Generating CMU,N/A,N/A
+Green Frog Power Limited,UX3171,No,Existing Generating CMU,N/A,N/A
+Viridis 178 Ltd,VIR101,Yes,Existing Generating CMU,5.65,1
+Viridis 178 Ltd,VIR102,Yes,Existing Generating CMU,11.3,1
+Viridis 178 Ltd,VIR103,Yes,Existing Generating CMU,14.126,1
+Viridis 178 Ltd,VIR104,Yes,Existing Generating CMU,19.663,1
+Viridis 178 Ltd,VIR105,Yes,New Build Generating CMU,19.604,1
+Viridis 178 Ltd,VIR107,Yes,New Build Generating CMU,18.948,1
+Viridis 178 Ltd,VIR109,Yes,New Build Generating CMU,18.204,1
+Viridis 178 Ltd,VIR110,Yes,New Build Generating CMU,14.126,1
+Viridis 178 Ltd,VIR201,Yes,New Build Generating CMU,19.604,1
+Viridis 178 Ltd,VIR202,Yes,New Build Generating CMU,12.603,1
+Viridis 178 Ltd,VIR203,Yes,New Build Generating CMU,5.601,1
+Viridis 178 Ltd,VIR204,Yes,New Build Generating CMU,9.229,1
+Viridis 178 Ltd,VIR205,Yes,New Build Generating CMU,3.955,1
+Rolls-Royce Power Development Limited,VKING2,Yes,Existing Generating CMU,44.782,1
+Moorfield Way Limited,VW3021,No,New Build Generating CMU,N/A,N/A
+Green Frog Power Limited,VY3172,No,Existing Generating CMU,N/A,N/A
+EDF Energy plc,WA1-16,Yes,Existing Generating CMU,434.339,1
+EDF Energy plc,WA2-16,Yes,Existing Generating CMU,434.513,1
+EDF Energy plc,WA3-16,Yes,Existing Generating CMU,434.513,1
+EDF Energy plc,WA4-16,Yes,Existing Generating CMU,434.6,1
+Waterswallows Energy Limited,water1,Yes,New Build Generating CMU,13.956,1
+EDF Energy plc,WB1-16,Yes,Existing Generating CMU,404.274,1
+EDF Energy plc,WB2-16,Yes,Existing Generating CMU,404.274,1
+EDF Energy plc,WB3-16,Yes,Existing Generating CMU,404.274,1
+EDF Energy plc,WG1-16,Yes,Existing Generating CMU,18.834,1
+EDF Energy plc,WG4-16,Yes,Existing Generating CMU,18.834,1
+SSE Energy Supply Ltd.,WSTNPT,Yes,Existing Generating CMU,34.784,1
+Green Frog Power Limited,WZ3173,No,Existing Generating CMU,N/A,N/A
+Green Frog Power Limited,XA3174,No,Existing Generating CMU,N/A,N/A
+Green Frog Power Limited,YB3175,No,Existing Generating CMU,N/A,N/A
+Green Frog Power Limited,ZC3176,No,Existing Generating CMU,N/A,N/A

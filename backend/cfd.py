@@ -14,15 +14,16 @@ technologies = base_data['Technology'].unique().tolist()
 rounds = base_data['Allocation Round'].unique().tolist()
 
 class CFDData:
-    def __init__(self, start_date=None, end_date=None, technology=None, allocation_rounds=None):
-        self.start_date = datetime.fromtimestamp(start_date)
-        self.end_date = datetime.fromtimestamp(end_date)
+    def __init__(self, start_date: datetime = None, end_date: datetime = None, technology: list = None, allocation_rounds: list = None):
+        self.start_date = pd.to_datetime(start_date)
+        self.end_date = pd.to_datetime(end_date)
         self.technology = technology
         self.allocation_rounds = allocation_rounds
         print(f"Initialized CFDData with start_date={self.start_date}, end_date={self.end_date}, technology={self.technology}, allocation_rounds={self.allocation_rounds}")
 
     def filter_data(self):
         data = base_data.copy()
+        print(self.start_date, self.end_date, self.technology, self.allocation_rounds)
         data = data[(data['Settlement Date'] >= self.start_date) & (data['Settlement Date'] <= self.end_date)]
         print(f"Filtered data from {len(base_data)} to {len(data)} records based on date range.")
 

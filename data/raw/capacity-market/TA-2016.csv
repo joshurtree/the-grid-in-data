@@ -1,0 +1,79 @@
+Applicant Company,CMU ID,Capacity AG,CMU Classification,Capacity (MW),Duration (Years)
+Tata Steel UK Limited,2015_2,Yes,Unproven DSR CMU,15,1
+Aggreko UK Limited,Aggr15,Yes,New Build Generating CMU,5.768,1
+Ameresco Limited,AMER01,Yes,Unproven DSR CMU,3.45,1
+Ameresco Limited,AMER02,Yes,Unproven DSR CMU,3.45,1
+Ameresco Limited,AMER03,Yes,Unproven DSR CMU,2.6,1
+Ameresco Limited,AMER04,Yes,Unproven DSR CMU,2.6,1
+Ameresco Limited,AMER05,Yes,Unproven DSR CMU,2.6,1
+Ameresco Limited,AMER06,Yes,Unproven DSR CMU,2.6,1
+Anglian Water Services Ltd,ANGLCM,Yes,Existing Generating CMU,28.37,1
+Regent Park Energy Limited,ARPCM1,Yes,Existing Generating CMU,12.195,1
+Alkane Energy UK Limited,AUKCM1,Yes,Existing Generating CMU,8.557,1
+Green Frog Power Limited,BRISTO,No,Existing Generating CMU,N/A,N/A
+British Sugar plc,BSWISS,Yes,Existing Generating CMU,41.4,1
+Cargill PLC,CarGen,Yes,Existing Generating CMU,25.11,1
+E.ON UK plc,CEN001,Yes,Existing Generating CMU,2.017,1
+GB Gas Holdings Ltd,CENEST,Yes,Unproven DSR CMU,5.105,1
+Cofely East London Energy Limited,CES001,Yes,Existing Generating CMU,2.92,1
+Cofely East London Energy Limited,CES002,Yes,Existing Generating CMU,5.254,1
+ofely Industrial Energy Services Limited,CES003,Yes,Existing Generating CMU,5.382,1
+Citigen (London) Limited,CITIGN,Yes,New Build Generating CMU,7.02,1
+Limejump Ltd.,CM_LJ7,Yes,Unproven DSR CMU,6.77,1
+Green Frog Power Limited,DOWSTO,No,Existing Generating CMU,N/A,N/A
+REstore Flexpond UK Limited,DSBABT,Yes,Existing Generating CMU,47.349,1
+E.ON UK plc,DSR001,Yes,Unproven DSR CMU,2.6,1
+E.ON UK plc,DSR002,Yes,Unproven DSR CMU,2.6,1
+E.ON UK plc,DSR003,Yes,Unproven DSR CMU,2.6,1
+E.ON UK plc,DSR004,Yes,Unproven DSR CMU,2.6,1
+EnerNOC UK Limited,ECMU01,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU02,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU03,No,Unproven DSR CMU,N/A,N/A
+EnerNOC UK Limited,ECMU04,Yes,Unproven DSR CMU,21.7,1
+EnerNOC UK Limited,ECMU05,Yes,Unproven DSR CMU,21.7,1
+EnerNOC UK Limited,ECMU06,Yes,Unproven DSR CMU,21.7,1
+Energy Pool UK limited,EPO001,Yes,Unproven DSR CMU,43.34,1
+Energy Pool UK limited,EPO002,Yes,Unproven DSR CMU,16.492,1
+EDF Energy Customers plc,ESR16B,Yes,Unproven DSR CMU,23.87,1
+EDF Energy Customers plc,ESR16C,Yes,Unproven DSR CMU,23.87,1
+Flexitricity Limited,FLEX60,No,Unproven DSR CMU,N/A,N/A
+Flexitricity Limited,FLEX61,Yes,Unproven DSR CMU,2.604,1
+Flexitricity Limited,FLEX62,Yes,Unproven DSR CMU,3.222,1
+Flexitricity Limited,FLEX63,Yes,Unproven DSR CMU,2.778,1
+Flexitricity Limited,FLEX64,Yes,Unproven DSR CMU,5.208,1
+Flexitricity Limited,FLEX65,No,Unproven DSR CMU,N/A,N/A
+Flexitricity Limited,FLEX66,Yes,Unproven DSR CMU,12.586,1
+Flexitricity Limited,FLEX67,Yes,Unproven DSR CMU,11.544,1
+Flexitricity Limited,FLEX68,No,Unproven DSR CMU,N/A,N/A
+Green Frog Power Limited,GIRSTO,No,Existing Generating CMU,N/A,N/A
+Harworth Power Generation Limited,Harwo1,Yes,Existing Generating CMU,2.922,1
+Green Frog Power Limited,HIRSTO,No,Existing Generating CMU,N/A,N/A
+Green Frog Power Limited,HULSTO,No,Existing Generating CMU,N/A,N/A
+Imerys Minerals,IMERS1,Yes,Existing Generating CMU,4.394,1
+Imerys Minerals,IMERS2,Yes,Existing Generating CMU,5.658,1
+Imerys Minerals,IMERS3,Yes,Existing Generating CMU,6.726,1
+KiWi Power Limited,KIWI63,Yes,Unproven DSR CMU,34.72,1
+KiWi Power Limited,KIWI64,Yes,Unproven DSR CMU,34.72,1
+KiWi Power Limited,KIWI65,Yes,Unproven DSR CMU,34.72,1
+KiWi Power Limited,KIWI66,Yes,Unproven DSR CMU,34.72,1
+KiWi Power Limited,KIWI67,Yes,Unproven DSR CMU,17.36,1
+KiWi Power Limited,KIWI68,Yes,Unproven DSR CMU,17.36,1
+Tempus Energy Supply Ltd.,METCHP,No,Unproven DSR CMU,N/A,N/A
+REstore Flexpond UK Limited,MIXUNP,Yes,Unproven DSR CMU,1.99,1
+Green Frog Power Limited,NORSTO,No,Existing Generating CMU,N/A,N/A
+Green Frog Power Limited,PLYSTO,Yes,Existing Generating CMU,18.908,1
+E.ON UK CHP Limited,POLCHP,Yes,Existing Generating CMU,30.87,1
+SmartestEnergy Limited,SMART1,No,Unproven DSR CMU,N/A,N/A
+SmartestEnergy Limited,SMART2,No,Unproven DSR CMU,N/A,N/A
+SmartestEnergy Limited,SMART3,Yes,Unproven DSR CMU,15.624,1
+SmartestEnergy Limited,SMART4,Yes,Unproven DSR CMU,4.34,1
+SmartestEnergy Limited,SMART5,No,Unproven DSR CMU,N/A,N/A
+SmartestEnergy Limited,SMART6,No,Unproven DSR CMU,N/A,N/A
+Southern Water,SOUWAT,Yes,Existing Generating CMU,15.523,1
+Green Frog Power Limited,SWASTO,No,Existing Generating CMU,N/A,N/A
+Green Frog Power Limited,TIRSTO,No,Existing Generating CMU,N/A,N/A
+BOC Ltd,TLGUK1,Yes,Unproven DSR CMU,14,1
+REstore Flexpond UK Limited,TLO1-2,Yes,Existing Generating CMU,46.849,1
+Green Frog Power Limited,TRESTO,No,Existing Generating CMU,N/A,N/A
+UK Power Reserve Limited,UKPR13,Yes,Existing Generating CMU,4.775,1
+Green Frog Power Limited,WILSTO,No,Existing Generating CMU,N/A,N/A

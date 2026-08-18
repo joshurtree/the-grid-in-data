@@ -1,17 +1,18 @@
 #Fetches and cleans the data from the GB electricity market, returning a DataFrame with the relevant columns.
 from bs4 import BeautifulSoup
 from datetime import date, datetime, timezone, timedelta
-from io import StringIO
+from io import StringIO,BytesIO
+import numpy as np
 import os
 from OSGridConverter import grid2latlong, OSGridReference
-import numpy as np
 import pandas as pd
+import random
 import requests
 from tqdm import tqdm
+
 from backend.bmrs import fetch_FPN, fetch_extended_bmrs_data, fetch_bmrs_data
 from backend.neso import fetch_embedded_generation
-from io import BytesIO
-from backend.constants import MANUAL_DATA_DIR, NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
+from backend.constants import INFLATORS, MANUAL_DATA_DIR, NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
 
 
 def fetch_monthly_gas_prices():
@@ -273,32 +274,148 @@ def fetch_cfd_data():
     merged_cfd_data = pd.merge(cfd_locations_data, cfd_contracts_data, on='CfD_Name', how='inner')
     merged_cfd_data.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'cfd_data.csv'), index=False)
 
+monthly_weights = [
+    1.2,
+    1.05,
+    1.09,
+    0.93,
+    0.88,
+    0.86,
+    0.9,
+    0.88,
+    0.9,
+    1.04,
+    1.12,
+    1.15
+]
+
+forecasted_available_capacity = pd.Series({
+    2027: 52.8,
+    2028: 53.2,
+    2029: 54.3,
+    2030: 54.2,
+    2031: 57.5,
+    2032: 58.4,
+    2033: 58.2,
+    2034: 57.8,
+    2035: 63.5,
+    2036: 65.5,
+    2037: 59.8,
+    2038: 64.1,
+    2039: 66.8,
+    2040: 67.2
+})
+
+def fetch_cm_data():
+    print("Fetching Capacity Market data from Low Carbon Contracts Company...")
+    cm_payments = pd.read_csv("https://dp.lowcarboncontracts.uk/dataset/ea55663a-30b2-4b74-b72c-946de1622167/resource/1c4daa32-2358-43d4-b2d1-29e948c159cd/download/capacity_obligation_by_auction.csv")
+    cm_payments.to_csv(os.path.join(RAW_DATA_DIR, 'capacity_obligation_by_auction.csv'), index=False)
+
+    cm_awards = pd.DataFrame()
+    capacity_auctions_dir = os.path.join(RAW_DATA_DIR, 'capacity-market')
+    cm_auctions = pd.read_csv(os.path.join(RAW_DATA_DIR, 'auctions.csv'))
+
+    # Merge the CM datasets in `data/raw/capacity-auctions`
+    for filename in os.listdir(capacity_auctions_dir):
+        if filename.endswith('.csv'):
+            auction_data = ( 
+                pd.read_csv(os.path.join(capacity_auctions_dir, filename))
+                .rename(columns={
+                    'Capacity (MW)': 'Quantity',
+                    'Duration (Years)': 'Duration',
+                })
+                .drop(columns=['Parent Company', 'Bidding Company', 'CMU Name' ], errors='ignore')
+            )
+            #print(f"Processing auction file: {filename} with {len(auction_data)} records")
+            auction_data["Duration"] = pd.to_numeric(auction_data["Duration"], errors='coerce').fillna(0) # Replace "N/A" with 0 in the "Duration" column
+            auction_data['Quantity'] = pd.to_numeric(auction_data['Quantity'], errors='coerce').fillna(0)
+            # if the auction_data does not have a Fuel Type column, add it with a default value of 'Unknown'
+            if 'Fuel Type' not in auction_data.columns:
+                auction_data['Fuel Type'] = 'Unknown'
+            # append the delivery year and price columns from the cm_auctions dataframe to the auction_data dataframe based on the filename
+            auction_name = os.path.splitext(filename)[0]
+            auction_info = cm_auctions[cm_auctions['Auction Name'] == auction_name]
+            if not auction_info.empty:
+                auction_data['Delivery Year'] = auction_info['Delivery Year'].values[0]
+                auction_data['Price'] = auction_info['Price'].values[0]
+                auction_data['Price Year'] = auction_info['Price Year'].values[0]
+                cm_awards = pd.concat([cm_awards, auction_data], ignore_index=True)
+            else:
+                print(f"Warning: No matching auction info found for {auction_name} in auctions.csv")
+
+    cm_awards.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'capacity_auction_awards.csv'), index=False)
+    
+    # Append the auction data to estimate payments for future years by multiplying the price 
+    # with the Quantity from the last known year and applying the inflator to adjust the price to the delivery year.
+    # cm_forcast = pd.DataFrame()
+
+    # for _, row in cm_awards.iterrows():
+    #     if pd.isna(row['Delivery Year']):
+    #         #print(f"Skipping row with Delivery Year for {row}")
+    #         continue
+
+    #     start_date = datetime(int(row['Delivery Year']), 11, 1)
+    #     if start_date < datetime.now():
+    #         start_date = datetime.now()
+    #     next_date = datetime(int(row['Delivery Year']) + int(row['Duration']), 10, 1)
+    #     if next_date > datetime.now() + timedelta(days=365*3):
+    #         next_date = datetime(datetime.now().year + 3, datetime.now().month, 1)
+    #     while next_date >= start_date:
+    #         # Calculate the estimated payments for the month
+    #         estimated_payments = row['Price'] * row['Quantity'] * monthly_weights[next_date.month - 1] * INFLATORS.get(next_date.year, 1.0)/INFLATORS.get(row['Price Year'], 1.0)
+    #         # Append the estimated payments to the cm_forcast DataFrame if it does not already exist for that month overwise update the existing row with the new estimated payments
+    #         forcast_row = pd.DataFrame({'Date': [next_date], 'Capacity Payment': [estimated_payments], 'Quantity': [row['Quantity']]})
+    #         cm_forcast = pd.concat([cm_forcast, forcast_row], ignore_index=True)
+    #         next_date -= pd.DateOffset(months=1)
+
+    # cm_forcast = cm_forcast.groupby('Date').agg({'Capacity Payment': 'sum', 'Quantity': 'sum'}).reset_index()
+
+    cm_forcast = pd.read_csv("https://dp.lowcarboncontracts.uk/dataset/a90f0e9b-d894-4d80-bedd-608a837d5e5d/resource/011a729d-5e58-4247-838e-601fd9bcf8d1/download/cm_forecast_cost.csv")
+    cm_forcast.to_csv(os.path.join(RAW_DATA_DIR, 'neso_capacity_market_forecast.csv'), index=False)
+    
+    # Iterater over each month is the cm_forcast DataFrame if the quantity is less than forcasted_max_demand for that year
+    # then estimate the additional payments needed to meet the forcasted_max_demand and add it to the cm_forcast DataFrame
+    # for index, row in cm_forcast.iterrows():
+    #     year = row['Date'].year
+    #     if year in forecasted_max_demand.index:
+    #         if row['Quantity'] < forecasted_max_demand[year]:
+    #             additional_quantity = forecasted_max_demand[year] - row['Quantity']
+    #             additional_payments = additional_quantity * row['Capacity Payment'] / row['Quantity']
+    #             cm_forcast.loc[index, 'Capacity Payment'] += additional_payments
+    #             cm_forcast.loc[index, 'Quantity'] += additional_quantity
+    cm_forcast.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'capacity_market_forecast.csv'), index=False)
+
+fetch_functions = {
+    'A': fetch_generation_and_prices,
+    'B': fetch_generation_and_prices,
+    'C': fetch_demand,
+    'D': fetch_embedded_generation,
+    'E': fetch_system_prices,
+    'F': merge_generators,
+    'G': fetch_monthly_gas_prices,
+    'H': fetch_cfd_data,
+    'I': fetch_cm_data
+}
+
 if __name__ == "__main__":
     print("Select the data to fetch and process. Available options:")
-    print("1. Generation Data")
-    print("2. Price Data")
-    print("3. Demand Data")
-    print("4. Embedded Generation Data")
-    print("5. System Prices Data")
-    print("6. Update List of Generators")
-    print("7. Monthly Gas Prices Data")
-    print("8. CFD Data")
-    print("0. All Data (default)")
-    option = input("Enter the option number (0-8): ").strip()
-    if option == '0' or option == '':
-        option = '12345678'
+    print("A. Generation Data")
+    print("B. Price Data")
+    print("C. Demand Data")
+    print("D. Embedded Generation Data")
+    print("E. System Prices Data")
+    print("F. Update List of Generators")
+    print("G. Monthly Gas Prices Data")
+    print("H. CFD Data")
+    print("I. Capacity Market Data")
 
-    if '1' in option or '2' in option:
-        fetch_generation_and_prices()
-    if '3' in option:
-        fetch_demand()
-    if '4' in option:
-        fetch_embedded_generation()
-    if '5' in option:
-        fetch_system_prices()
-    if '6' in option:
-        merge_generators()
-    if '7' in option:
-        fetch_monthly_gas_prices()    
-    if '8' in option:
-        fetch_cfd_data()
+    print("#. All Data (default)")
+    option = input("Enter the option letter (A-I, #): ").strip().upper()
+    if option == '#' or option == '':
+        option = 'ABCDEFGHI'
+
+    for opt in option:
+        if opt in fetch_functions:
+            fetch_functions[opt]()
+        else:
+            print(f"Invalid option: {opt}. Skipping.")
