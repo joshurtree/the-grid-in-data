@@ -8,6 +8,7 @@ from OSGridConverter import grid2latlong, OSGridReference
 import pandas as pd
 import random
 import requests
+import sys
 from tqdm import tqdm
 
 from backend.bmrs import fetch_FPN, fetch_extended_bmrs_data, fetch_bmrs_data
@@ -397,7 +398,7 @@ fetch_functions = {
     'I': fetch_cm_data
 }
 
-if __name__ == "__main__":
+def show_menu():
     print("Select the data to fetch and process. Available options:")
     print("A. Generation Data")
     print("B. Price Data")
@@ -408,11 +409,20 @@ if __name__ == "__main__":
     print("G. Monthly Gas Prices Data")
     print("H. CFD Data")
     print("I. Capacity Market Data")
-
     print("#. All Data (default)")
     option = input("Enter the option letter (A-I, #): ").strip().upper()
     if option == '#' or option == '':
         option = 'ABCDEFGHI'
+
+    return option
+
+if __name__ == "__main__":
+    # If --fetch-all is passed as an argument, fetch all data
+    
+    if '--fetch-all' in sys.argv:
+        option = 'ABCDEFGHI'
+    else:
+        option = show_menu()
 
     for opt in option:
         if opt in fetch_functions:
