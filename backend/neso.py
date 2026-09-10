@@ -2,19 +2,19 @@ import pandas as pd
 import requests
 from urllib import parse
 
-def fetch_neso_data(sql_query: str) -> pd.DataFrame:
-    """
-    Fetch data from the Neso API using a SQL query.
-    """
-    params = {'sql': sql_query}
-    response = requests.get('https://api.neso.energy/api/3/action/datastore_search_sql', params = parse.urlencode(params))
-    data = response.json()["result"]
-    df = pd.DataFrame(data["records"])
-    return df
+DEMAND_ID = "8a4a771c-3929-4e56-93ad-cdf13219dea5"
+GENERATION_ID = "f93d1835-75bc-43e5-84ad-12472b180a98"
+EMBEDDED_FORECAST_ID = "db6c038f-98af-4570-ab60-24d71ebd0ae5"
+DEMAND_FORECAST_ID = "f93d1835-75bc-43e5-84ad-12472b180a98"
 
-def fetch_embedded_generation(start_date: str, end_date: str) -> pd.DataFrame:
+def fetch_neso_data(resource_id: str, **kwargs) -> pd.DataFrame:
     """
-    Fetch embedded generation data from the Neso API for a given date range.
+    Fetch data from the Neso API using a datastore query.
     """
-    sql_query = f'''SELECT * FROM  "db6c038f-98af-4570-ab60-24d71ebd0ae5" WHERE "DATE_GMT" >= '{start_date}' AND "DATE_GMT" <= '{end_date}' ORDER BY "DATE_GMT" ASC'''
-    return fetch_neso_data(sql_query)
+    params = {'resource_id': resource_id, **kwargs}
+    response = requests.get('https://api.neso.energy/api/3/action/datastore_search', params=params)
+
+    if response.status_code != 200:
+        raise Exception(f"Error fetching data from Neso API: {response.status_code} - {response.text}")
+    
+    return pd.DataFrame(response.json()["result"]["records"])

@@ -1,5 +1,6 @@
 #Fetches and cleans the data from the GB electricity market, returning a DataFrame with the relevant columns.
 from bs4 import BeautifulSoup
+from collections.abc import Callable
 from datetime import date, datetime, timezone, timedelta
 from io import StringIO,BytesIO
 import numpy as np
@@ -7,18 +8,95 @@ import os
 from OSGridConverter import grid2latlong, OSGridReference
 import pandas as pd
 import random
+import re
 import requests
 import sys
+from titlecase import titlecase
 from tqdm import tqdm
 
 from backend.bmrs import fetch_FPN, fetch_extended_bmrs_data, fetch_bmrs_data
-from backend.neso import fetch_embedded_generation
-from backend.constants import INFLATORS, MANUAL_DATA_DIR, NESO_GENERATION_TYPES, RAW_DATA_DIR, TRANSFORMED_DATA_DIR
+import backend.neso as neso
+from backend.metric import Metric
+from backend.constants import INFLATORS, MANUAL_DATA_PATH, NESO_GENERATION_TYPES, RAW_DATA_PATH, PROCESSED_DATA_PATH, DATE_FIELD, DATETIME_FIELD
+from datasources.gas import *
+from datasources.policy import *
+from datasources.system import *
 
+http_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
-def fetch_monthly_gas_prices():
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-    resp = requests.get("https://poundf.co.uk/uk-natural-gas", headers=headers)
+# Converts dataframe columns from using camel case to capitised words
+def camel_case_to_capitalised(df: pd.DataFrame) :
+    rename = dict(zip(df.columns, [titlecase(re.sub("([a-z])([A-Z])", r"\1 \2", col)) for col in df.columns]))
+    return df.rename(columns=rename)
+
+def snake_case_to_capitalised(df: pd.DataFrame) :
+    return df.rename(columns=dict(zip(df.columns, [titlecase(re.sub("_", " ", col)) for col in df.columns])))
+
+def fix_units(df: pd.DataFrame) -> pd.DataFrame:
+    def do_fix(col: str) -> str:
+        for match in [('GBP Per MWh', '£/MWh'), ('MWh', 'MWh'), ('MW', 'MW'), ('GBP', '£'), ('CO2e', 'CO2e')]:
+            if match[0] in col:
+                return col.replace(match[0], f'({match[1]})')
+        return col
+
+    return df.rename(columns={col: do_fix(col) for col in df.columns})
+
+def fetch_gas_prices() :
+    print('Fetching system prices from ONS and National Gas...')
+    try:
+        if not ons_system_gas_price_source.exists():            
+            # System prices are published on Thursday
+            link = 'https://www.ons.gov.uk/file?uri=/economy/economicoutputandproductivity/output/datasets/systemaveragepricesapofgas/2026/previous/v34/systemaveragepriceofgasdataset270826.xlsx'
+            # Use requests to fetch the Excel file from the ONS website
+            response = requests.get(link, headers=http_headers)
+            response.raise_for_status()
+            ons_prices = pd.read_excel(BytesIO(response.content), "1.Daily SAP Gas", skiprows=4)
+            ons_prices.drop(columns=['SAP seven-day rolling average'], inplace=True)
+            ons_prices.rename(columns={'SAP actual day': 'Price'}, inplace=True)
+            ons_prices["Price"] = ons_prices["Price"] * 10
+
+            ons_system_gas_price_source.save_data(ons_prices)
+    except Exception as e:
+        print(f"Error fetching ONS gas prices: {e}")
+        ons_prices = ons_system_gas_price_source.load_data()
+
+    gas_prices = pd.DataFrame()
+    if ngas_system_gas_price_source.exists():
+        gas_prices = ngas_system_gas_price_source.load_data()
+    startDate = (gas_prices[DATE_FIELD].max() + timedelta(days=1)).strftime('%Y-%m-%d') if not gas_prices.empty else '2017-01-01'
+    endDate = datetime.now().strftime('%Y-%m-%d')
+    fetch_url = f"https://data.nationalgas.com/api/find-gas-data-download?applicableFor=Y&dateFrom={startDate}&dateTo={endDate}&dateType=GASDAY&latestFlag=N&ids=PUBOB603&type=CSV"
+    try:
+        response = requests.get(fetch_url, headers=http_headers)
+        response.raise_for_status()
+        gas_prices = pd.read_csv(BytesIO(response.content))
+        gas_prices.drop(columns=['Applicable At', 'Data Item', 'Generated Time', 'Quality Indicator'], inplace=True)
+        gas_prices.rename(columns={'Applicable For': DATE_FIELD, 'Value': 'Price'}, inplace=True)
+        gas_prices[DATE_FIELD] = pd.to_datetime(gas_prices[DATE_FIELD], format='%d/%m/%Y')
+        gas_prices["Price"] = gas_prices["Price"] * 10
+        ngas_system_gas_price_source.save_data(gas_prices)
+    except Exception as e:
+        print(f"Error fetching National Gas prices: {e}")
+
+def fetch_average_price(page: BeautifulSoup, date: datetime, median_price: float) -> float:
+    ''' 
+    Average price is part of the text in the form of 
+    <p>Natural Gas price forecast  for <strong>September 2026</strong>. 
+        In the beginning the price at 182 GBp. Maximum 267, minimum 177. The averaged price 218. 
+        Natural Gas price at the end of the month 247, the change for September 35.7%.
+    </p>
+    '''
+    p_tags = page.find_all("p")
+    for p in p_tags:
+        strong_tag = p.find("strong")
+        if strong_tag and date.strftime("%B %Y") in strong_tag.get_text():
+            match = re.search(r"The averaged price (\d+)", p.get_text())
+            if match:
+                return float(match.group(1))
+    return median_price  # Return median price if no average found
+
+def fetch_gas_price_forecast():
+    resp = requests.get("https://poundf.co.uk/uk-natural-gas", headers=http_headers)
     resp.raise_for_status()
 
     soup = BeautifulSoup(resp.text, "html.parser")
@@ -37,181 +115,212 @@ def fetch_monthly_gas_prices():
             year = cols[0]
         elif year is not None:
             # Data row, prepend year to the first column
-            cols[0] = f"{year}-{cols[0]}"
-            rows.append(cols[:2])
+            row = []
+            date = datetime.strptime(f"{year} {cols[0]}", "%Y %b")
+            row.append(date)
+
+            min_max = cols[2].split('-')
+
+            # Third column is min-max range, split it into two separate rows for min and max
+            if len(min_max) == 2:
+                median_price = (int(min_max[0]) + int(min_max[1])) / 2
+                row.append(fetch_average_price(soup, date, median_price))
+                row.append(min_max[0])
+                row.append(min_max[1])
+            rows.append(row)
 
     if not rows:
         raise RuntimeError("No data rows found in the table")
 
-    future_gas_prices = pd.DataFrame(rows, columns=["Date", "Price"])
-    future_gas_prices['Date'] = pd.to_datetime(future_gas_prices['Date'], format='%Y-%b')
-    future_gas_prices['Price'] = pd.to_numeric(future_gas_prices['Price'], errors='coerce')
+    future_gas_prices = pd.DataFrame(rows, columns=[DATE_FIELD, "Price", "Min", "Max"])
+
     # Convert from p/therm to p/kWh and round to 4 decimal places
-    future_gas_prices['Price'] = round(future_gas_prices['Price']/29.3071, 4)
-    
-    gas_prices = pd.read_csv(os.path.join(RAW_DATA_DIR, 'system_gas_prices.csv'))
-    gas_prices['Date'] = pd.to_datetime(gas_prices['Date'])
-    gas_prices.drop(columns=['SAP seven-day rolling average'], inplace=True)
+    for col in ['Price', 'Min', 'Max']:
+        future_gas_prices[col] = pd.to_numeric(future_gas_prices[col], errors='coerce')/2.9307
+    gas_price_forecast_source.save_data(future_gas_prices)
 
-    past_gas_prices = gas_prices.resample('MS', on='Date').first().reset_index()
+def process_gas_prices():
+    ons_gas_prices, ngas_prices = daily_gas_prices_dataset.base_data()
+
+    ngas_prices = ngas_prices[ngas_prices[DATE_FIELD] > ons_gas_prices[DATE_FIELD].max()]
+    past_gas_prices = pd.concat([ons_gas_prices, ngas_prices]).sort_values(by=DATE_FIELD).reset_index(drop=True)
+    daily_gas_prices_dataset.save_data(past_gas_prices)
+
+    _, future_gas_prices = monthly_gas_prices_dataset.base_data()
+
+    # Ensure the date column is a proper datetime type, drop invalid rows and resample by month start.
+    past_gas_prices[DATE_FIELD] = pd.to_datetime(past_gas_prices[DATE_FIELD], errors='coerce')
+    past_gas_prices = past_gas_prices.dropna(subset=[DATE_FIELD]).sort_values(by=DATE_FIELD).reset_index(drop=True)
+    past_gas_prices = past_gas_prices.set_index(DATE_FIELD).resample('MS').mean().reset_index()
+
     # Combine past and future gas prices, ensuring no duplicates and sorting by date
-    combined_gas_prices = pd.concat([past_gas_prices, future_gas_prices]).drop_duplicates(subset='Date').sort_values(by='Date').reset_index(drop=True)
-    combined_gas_prices.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'monthly_gas_prices.csv'), index=False)
+    combined_gas_prices = pd.concat([past_gas_prices, future_gas_prices]).drop_duplicates(subset=DATE_FIELD).sort_values(by=DATE_FIELD).reset_index(drop=True)
+    monthly_gas_prices_dataset.save_data(combined_gas_prices)
 
-system_prices = [
-    ('systemaveragepricesapofgas', 'systemaveragepriceofgas', '1.Daily SAP Gas', 'system_gas'), 
-    ('systempriceofelectricity', 'electricityprices', '1.Daily SP Electricity', 'system_electricity')
-]
+def fetch_gas_prices_and_forecast(process_only: bool) -> None:
+    if not process_only:
+        #fetch_gas_prices()
+        fetch_gas_price_forecast()
+    process_gas_prices()
 
-def fetch_system_prices() :
-    print('Fetching system prices from ONS...')
-    # System prices are published on Thursday
-    date = datetime.now() - timedelta(days=1)
-    date = date - timedelta(days=(date.weekday() - 3) % 7)
-
-    for dataset in system_prices:
-        uri = f"/economy/economicoutputandproductivity/output/datasets/{dataset[0]}/{date.year}/{dataset[1]}dataset{date.strftime('%d%m%y')}.xlsx"
-        response = requests.get(f"https://www.ons.gov.uk/file?uri={uri}")
-        response.raise_for_status()
-
-        prices = pd.read_excel(BytesIO(response.content), dataset[2], skiprows=4)
-        prices['Date'] = pd.to_datetime(prices['Date'])
-        prices.rename(columns={prices.columns[1]: 'Price'}, inplace=True)        
-        prices['Price'] = pd.to_numeric(prices['Price'], errors='coerce')
-        prices.to_csv(os.path.join(RAW_DATA_DIR, f"{dataset[3]}_prices.csv"), index=False)
-
-def fetch_embedded_generation():
-    # Load data from CSV files
+def fetch_embedded_generation(process_only: bool) -> None:
+    if process_only:
+        return
+    
+    # fetch embedded generation data from Neso API and save to json file
     print('Fetching embedded generation data from Neso API...')
-    embedded_generation = pd.DataFrame()
-    path = os.path.join(RAW_DATA_DIR, 'embedded_generation.csv')
-    if os.path.exists(path) :
-        embedded_generation = pd.read_csv(path)
 
-    additional = pd.read_csv('https://api.neso.energy/dataset/91c0c70e-0ef5-4116-b6fa-7ad084b5e0e8/resource/db6c038f-98af-4570-ab60-24d71ebd0ae5/download/202607090125_embedded_forecast.csv')
-    additional['EMBEDDED_FORECAST_TOTAL'] = additional['EMBEDDED_WIND_FORECAST'] + additional['EMBEDDED_SOLAR_FORECAST']
-    additional.drop(columns=['DATE_GMT', 'TIME_GMT'], inplace=True)
-    embedded_generation = pd.concat([embedded_generation, additional], ignore_index=True)
-    embedded_generation.to_csv(os.path.join(RAW_DATA_DIR, 'embedded_generation.csv'), index=False)
+    embedded_generation = neso.fetch_neso_data(neso.EMBEDDED_FORECAST_ID)
+
+    embedded_generation['EMBEDDED_FORECAST_TOTAL'] = embedded_generation['EMBEDDED_WIND_FORECAST'] + embedded_generation['EMBEDDED_SOLAR_FORECAST']
+    embedded_generation.drop(columns=['DATE_GMT', 'TIME_GMT'], inplace=True)
+
+    embedded_generation_source.save_data(embedded_generation)
 
 def fetch_generation():
-    # Load data from CSV files
+    if process_only:
+        return
+    
+    def process_generation_data(additional: pd.DataFrame) -> pd.DataFrame:
+        additional[DATETIME_FIELD] = pd.to_datetime(additional['DATETIME'])
+        additional = (additional
+            .drop(columns=['DATETIME'])
+            .rename(columns={'WIND_EMB': 'Embedded Wind'})
+            .rename(columns=dict(zip(additional.columns, [titlecase(col.replace('_', ' ').replace('perc', '(%)')) for col in additional.columns])))
+        )
+        return additional
+    
     print('Fetching generation data from Neso API...')
-    generation = pd.read_csv('https://api.neso.energy/dataset/88313ae5-94e4-4ddc-a790-593554d8c6b9/resource/f93d1835-75bc-43e5-84ad-12472b180a98/download/df_fuel_ckan.csv')
-    generation['DATETIME'] = pd.to_datetime(generation['DATETIME'] + 'Z')
-    generation = generation.set_index('DATETIME')
-    generation.to_csv(os.path.join(RAW_DATA_DIR, 'generation.csv'))
-    return generation
+    generation = generation_source.load_data() if generation_source.exists() else process_generation_data(generation_source.fetch_data())
+    additional = neso.fetch_neso_data(neso.GENERATION_ID, offset=len(generation) if not generation.empty else 0, sort='DATETIME asc')
+
+    if not additional.empty:    
+        generation = pd.concat([generation, process_generation_data(additional)], ignore_index=True)
+    
+    generation_source.save_data(generation)
 
 def fetch_prices():
     print('Fetching market prices from Elexon API...')
     raw_prices = pd.DataFrame()
-    path = os.path.join(RAW_DATA_DIR, 'market-prices.csv')
-    start_date = datetime(2017, 1, 1, tzinfo=timezone.utc)
-
-    if os.path.exists(path) :
+    
+    if wholesale_price_source.exists():
         # Load data from CSV files
-        raw_prices = pd.read_csv(path)
-        start_date = date.fromisoformat(raw_prices['StartTime'].max()[:10])
-
-    # Fetch additional prices from Elexon API if needed
+        raw_prices = wholesale_price_source.load_data()
+        start_date = raw_prices['Settlement Date'].max()
+    else:
+        start_date = date(2017, 1, 1)
+    
     additional_prices = fetch_extended_bmrs_data(
         lambda s, f: fetch_bmrs_data("balancing/pricing/market-index", params={'from': s, 'to': f}), 
-        start_date, 
+        start_date,
         "Fetching market prices"
     )
-    raw_prices = pd.concat([raw_prices, additional_prices], ignore_index=True)
 
-    print("Merging market prices...")
-    merge_prices = lambda x: (x * raw_prices.loc[x.index, 'Volume']).sum() / raw_prices.loc[x.index, 'Volume'].sum() if raw_prices.loc[x.index, 'Volume'].sum() != 0 else 0
-    # Merge the prices of the two market indices (APX MIDP and APX SPOT) into a single price column
-    prices = raw_prices.groupby('StartTime').agg({'Price': merge_prices, "SettlementDate": "first"}).reset_index()
-    prices['DATETIME'] = pd.to_datetime(prices['StartTime'])
-    prices.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'market-prices.csv'), index=False)
+    if not additional_prices.empty:
+        def merge_prices(x):
+            series = pd.to_numeric(additional_prices.loc[x.index, 'volume'], errors='coerce')
+            return (x * series).sum() / series.sum() if series.sum() != 0 else 0
 
-    return prices
+        # Merge the prices of the two market indices (APX MIDP and APX SPOT) into a single price column
+        additional_prices = camel_case_to_capitalised(
+            additional_prices
+            .groupby('startTime')
+            .agg({'price': merge_prices, "settlementDate": "first"})
+            .reset_index()
+        )
 
-def fetch_demand():
+        additional_prices[DATETIME_FIELD] = pd.to_datetime(additional_prices['Start Time'])
+        additional_prices.drop(columns='Start Time', inplace=True)
+        additional_prices['Settlement Date'] = pd.to_datetime(additional_prices['Settlement Date'])
+        raw_prices = pd.concat([raw_prices, additional_prices], ignore_index=True)
+        wholesale_price_source.save_data(raw_prices)
+
+def fetch_demand(process_only: bool) -> None:
+    if process_only:
+        return
     print('Fetching demand data from Elexon API...')
     demand = pd.DataFrame()
-    path = os.path.join(RAW_DATA_DIR, 'demand.csv')
     start_date = date(2017, 1, 1)
 
-    if os.path.exists(path) :
+    if demand_source.exists() :
         # Load data from CSV files
-        demand = pd.read_csv(path)
-        start_date = date.fromisoformat(demand['settlementDate'].max())
+        demand = demand_source.load_data()
+        start_date = demand['settlementDate'].max()
 
     additional_demand = fetch_extended_bmrs_data(lambda s, f: fetch_bmrs_data("demand/outturn", params={'from': s, 'to': f}), start_date, "Fetching demand data")
+    additional_demand = camel_case_to_capitalised(additional_demand)
+    additional_demand[DATETIME_FIELD] = pd.to_datetime(additional_demand['Start Time'])
+    additional_demand.drop(columns='Start Time', inplace=True)
+    additional_demand['Settlement Date'] = pd.to_datetime(additional_demand['Settlement Date'])
+    additional_demand['Publish Time'] = pd.to_datetime(additional_demand['Publish Time'])
+
     demand = pd.concat([demand, additional_demand], ignore_index=True)
-    demand.to_csv(os.path.join(RAW_DATA_DIR, 'demand.csv'), index=False)
+    demand_source.save_data(demand)
 
-def merge_generators() :
-    print('Merging generator data from various sources...')
-    def convert_coordinates(row):
-        if pd.notna(row['X-coordinate']) and pd.notna(row['Y-coordinate']):
-            return OSGridReference(int(float(row['X-coordinate'])), int(float(row['Y-coordinate']))).toLatLong()
-        return OSGridReference(0, 0).toLatLong()  # Return None for both latitude and longitude if coordinates are missing
-
-    # Load generator data from CSV files
-    print('Loading generator data from CSV files...')
-    misc_generators = pd.read_csv(os.path.join(MANUAL_DATA_DIR, 'generators.csv'))
-    misc_generators = misc_generators[['Ref ID', 'Site Name', 'Latitude', 'Longitude']]
-    renewable_generators = pd.read_csv(os.path.join(RAW_DATA_DIR, 'repd.csv')).assign(
-        latlong=lambda x: x.apply(lambda row: convert_coordinates(row), axis=1),
-        Latitude=lambda x: x['latlong'].apply(lambda ll: ll.latitude if ll else None),
-        Longitude=lambda x: x['latlong'].apply(lambda ll: ll.longitude if ll else None)
-    )
-    renewable_generators = renewable_generators[['Ref ID', 'Site Name', 'Latitude', 'Longitude']]
-
-    all_generators = pd.concat([misc_generators, renewable_generators])
-    all_generators.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'all_generators.csv'), index=False)
-
-    print('Loading BMU data from CSV files...')
-    output_generators = pd.DataFrame(columns=['Ref ID', 'Site Name', 'Latitude', 'Longitude', 'BMU IDs'])
-    bmus = pd.read_csv(os.path.join(MANUAL_DATA_DIR, 'bmus.csv'))
-    bmus = bmus[['elexonBmUnit', 'Ref ID', 'fuelType', 'demandCapacity', 'generationCapacity', 'gspGroupName', 'interconnectorId']]
-
-    # For each interconnector use the interconnectorId to find all BMUs associated with it and add the corresponding ref ID to each BMU
-    interconnector_bmus = bmus[bmus['elexonBmUnit'].str.startswith('I_')]
-    for interconnector_id in interconnector_bmus['interconnectorId'] :
-        associated_bmus = bmus[bmus['interconnectorId'] == interconnector_id]
-        # Get the first Ref ID associated with this interconnector
-        ref_id = associated_bmus['Ref ID'].iloc[0]
-        bmus.loc[bmus['interconnectorId'] == interconnector_id, 'Ref ID'] = ref_id
-
-    print('Merging generator data with BMU data...')
-    bmu_data = pd.merge(all_generators, bmus, on='Ref ID', how='inner')
-    bmu_data = bmu_data.groupby('Ref ID').agg({
-        'Site Name': 'first',
-        'Latitude': 'first',
-        'Longitude': 'first',
-        'fuelType': 'first',
-        'elexonBmUnit': list
-    })
-    # Remove all text after a dash or in parentheses in the 'Site Name' column
-    bmu_data['Site Name'] = bmu_data['Site Name'].str.replace(r'[-(].*', '', regex=True).str.strip()
+def merge_generators(process_only: bool) -> None:
+    if process_only:
+        return
+    # print('Merging generator data from various sources...')
+    # def convert_coordinates(row):
+    #     if pd.notna(row['X-coordinate']) and pd.notna(row['Y-coordinate']):
+    #         return OSGridReference(int(float(row['X-coordinate'])), int(float(row['Y-coordinate']))).toLatLong()
+    #     return OSGridReference(0, 0).toLatLong()  # Return None for both latitude and longitude if coordinates are missing
     
-    bmu_data.to_json(os.path.join(TRANSFORMED_DATA_DIR, 'all_generators.json'), orient='records', indent=2)
+    # generators = pd.read_excel(os.path.join(MANUAL_DATA_PATH, 'generators.ods'), sheet='Generators', engine='odf')
 
-def fetch_generation_and_prices():
+
+    # # Load generator data from CSV files
+    # print('Loading generator data from CSV files...')
+    # misc_generators, renewable_generators, bmus = generators_dataset.base_data()
+    # misc_generators = misc_generators[['Ref ID', 'Site Name', 'Latitude', 'Longitude']]
+    # renewable_generators = renewable_generators.assign(
+    #     latlong=lambda x: x.apply(lambda row: convert_coordinates(row), axis=1),
+    #     Latitude=lambda x: x['latlong'].apply(lambda ll: ll.latitude if ll else None),
+    #     Longitude=lambda x: x['latlong'].apply(lambda ll: ll.longitude if ll else None)
+    # )
+    # renewable_generators = renewable_generators[['Ref ID', 'Site Name', 'Latitude', 'Longitude']]
+
+    # all_generators = pd.concat([misc_generators, renewable_generators])
+    
+    # print('Loading BMU data from CSV files...')
+    # output_generators = pd.DataFrame(columns=['Ref ID', 'Site Name', 'Latitude', 'Longitude', 'BMU IDs'])
+    # bmus = bmus[['elexonBmUnit', 'Ref ID', 'fuelType', 'demandCapacity', 'generationCapacity', 'gspGroupName', 'interconnectorId']]
+
+    # # For each interconnector use the interconnectorId to find all BMUs associated with it and add the corresponding ref ID to each BMU
+    # interconnector_bmus = bmus[bmus['elexonBmUnit'].str.startswith('I_')]
+    # for interconnector_id in interconnector_bmus['interconnectorId'] :
+    #     associated_bmus = bmus[bmus['interconnectorId'] == interconnector_id]
+    #     # Get the first Ref ID associated with this interconnector
+    #     ref_id = associated_bmus['Ref ID'].iloc[0]
+    #     bmus.loc[bmus['interconnectorId'] == interconnector_id, 'Ref ID'] = ref_id
+
+    # print('Merging generator data with BMU data...')
+    # bmu_data = pd.merge(all_generators, bmus, on='Ref ID', how='inner')
+    # bmu_data = bmu_data.groupby('Ref ID').agg({
+    #     'Site Name': 'first',
+    #     'Latitude': 'first',
+    #     'Longitude': 'first',
+    #     'fuelType': 'first',
+    #     'elexonBmUnit': list
+    # })
+    # # Remove all text after a dash or in parentheses in the 'Site Name' column
+    # bmu_data['Site Name'] = bmu_data['Site Name'].str.replace(r'[-(].*', '', regex=True).str.strip()
+
+    # generators_dataset.save_data(bmu_data)
+
+def fetch_generation_and_prices(process_only: bool):
+    if not process_only:
+        fetch_generation()
+        fetch_prices()
+    
     # Load data from CSV files
-    generation = fetch_generation() if '1' in option else pd.read_csv(os.path.join(RAW_DATA_DIR, 'generation.csv'), index_col='DATETIME', parse_dates=True)
-    prices = fetch_prices() if '2' in option else pd.read_csv(os.path.join(TRANSFORMED_DATA_DIR, 'market-prices.csv'), index_col='DATETIME', parse_dates=True)
-
+    generation, prices = half_hourly_dataset.base_data()
     print(f'[DEBUG] Loaded {len(generation)} generation records and {len(prices)} price records')
-    
-    merged = pd.merge(prices, generation, on='DATETIME', how='inner')
+
+    merged = pd.merge(generation, prices, on=DATETIME_FIELD, how='inner')
     # Rename columns to match expected format
-    merged = merged.rename(columns={'GENERATION': 'Total'})
-    merged['SettlementDate'] = pd.to_datetime(merged['SettlementDate'])    
-
-    # Drop rows where there is not 48 settlement periods in a day (i.e. incomplete days)
-    merged = merged.groupby('SettlementDate').filter(lambda x: len(x) == 48)
-
-    # Define aggregation functions for each column: sum for generation columns and total
-    aggregation_functions = {col: 'sum' for col in list(NESO_GENERATION_TYPES.keys()) + ['Total']}
-
+    merged = merged.rename(columns={'Generation': 'Total'})
+      
     # We need a weighted average for Price using Total as weights. When using groupby.agg,
     # the aggregation function for a column receives a Series for that column. We can
     # access the corresponding 'Total' values using the Series' index into `merged`.
@@ -227,34 +336,40 @@ def fetch_generation_and_prices():
             # If anything goes wrong, return simple mean or 0
             return float(s.mean()) if len(s) > 0 else 0.0
 
-    # Combine the aggregation mapping
-    agg_map = dict(aggregation_functions)
-    agg_map['Price'] = weighted_price
+    # Define aggregation functions for each column: sum for generation columns and total
+    aggregation_functions = [(col, 'sum') for col in list(NESO_GENERATION_TYPES.values()) + ['Total']]    
+    agg_map = dict(aggregation_functions  + [('Price', weighted_price)])
 
     # Group by date and calculate aggregated sums + weighted price
-    daily_data = merged.groupby('SettlementDate').agg(agg_map).reset_index()
-    for gen_type in NESO_GENERATION_TYPES.keys():
-        daily_data[gen_type + '_perc'] = (daily_data[gen_type] / daily_data['Total']) * 100
-    daily_data = daily_data.sort_values(by='SettlementDate').reset_index(drop=True)
+    daily_data = merged.groupby('Settlement Date').agg(agg_map).reset_index()
+    for gen_type in NESO_GENERATION_TYPES.values():
+        if gen_type in daily_data.columns:
+            daily_data[gen_type + ' (%)'] = (daily_data[gen_type] / daily_data['Total']) * 100
+
+    annual_cost = daily_data.groupby(daily_data['Settlement Date'].dt.year).apply(lambda x: (x['Total'] * x['Price']).sum())
 
     # save the cleaned data to a new CSV file
-    daily_data.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'daily_data.csv'), index=False)
-    merged.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'half_hourly_data.csv'), index=False)
+    half_hourly_dataset.save_data(merged)
+    daily_dataset.save_data(daily_data)
 
-def fetch_cfd_data():
+def create_elec_vs_gas_dataset(process_only: bool):
+    print('Creating electricity vs gas dataset...')
+    wholesale_prices, gas_prices = gasvselec_dataset.base_data()
+    merged = (
+        pd.merge(wholesale_prices, gas_prices, left_on="Settlement Date", right_on=DATE_FIELD, how='inner')
+        .rename(columns={'Price_x': 'Electricity Price', 'Price_y': 'Gas Price'})
+        .drop(columns='Settlement Date')
+    )
+
+    merged['Ratio'] = merged['Electricity Price'] / merged['Gas Price']
+    print(merged.head())
+    gasvselec_dataset.save_data(merged)
+    
+def fetch_cfd_data(process_only: bool):
     print('Fetching CFD data from Low Carbon Contracts Company...')
-    # Download the CSV file from the provided URL and save it to the RAW_DATA_DIR
-    cfd_url = "https://dp.lowcarboncontracts.uk/dataset/8e8ca0d5-c774-4dc8-a079-347f1c180c0f/resource/5279a55d-4996-4b1e-ba07-f411d8fd31f0/download/actual_cfd_generation_and_avoided_ghg_emissions.csv"
-    cfd_data = pd.read_csv(cfd_url)
-    cfd_data.to_csv(os.path.join(RAW_DATA_DIR, 'cfd_settlements.csv'), index=False)
-
-    cfd_locations_url = "https://dp.lowcarboncontracts.uk/dataset/423d3c6b-d1ea-466d-a0f2-5d169003fe56/resource/f1416517-a6ff-4cd1-a364-22015a942a3f/download/cfd_locations_by_parliamentary_constituency.csv"
-    cfd_locations_data = pd.read_csv(cfd_locations_url)
-    cfd_locations_data.to_csv(os.path.join(RAW_DATA_DIR, 'cfd_locations.csv'), index=False)
-
-    cfd_contracts_url = "https://dp.lowcarboncontracts.uk/dataset/754ae1ec-3539-4bdf-86f5-ba204a56be76/resource/7bdfb0cb-fe99-44eb-b07b-2047e82f5601/download/cfd_contract_portfolio_status.csv"
-    cfd_contracts_data = pd.read_csv(cfd_contracts_url)
-    cfd_contracts_data.to_csv(os.path.join(RAW_DATA_DIR, 'cfd_contracts.csv'), index=False)
+    cfd_locations_data = cfd_locations_source.fetch_data() if not process_only else cfd_locations_source.load_data() 
+    cfd_contracts_data = cfd_contracts_source.fetch_data() if not process_only else cfd_contracts_source.load_data()
+    cfd_settlements_data = cfd_settlements_source.fetch_data() if not process_only else cfd_settlements_source.load_data()
 
     # Merge the CFD locations and contracts data based on the 'CfD_Name' column
     cfd_locations_data = (cfd_locations_data
@@ -271,9 +386,32 @@ def fetch_cfd_data():
                 'Cars_Off_Road_Equivalent_Per_Annum'
             ])
     )
-    cfd_contracts_data = cfd_contracts_data.rename(columns={'Name_of_CFD_Unit': 'CfD_Name'})
-    merged_cfd_data = pd.merge(cfd_locations_data, cfd_contracts_data, on='CfD_Name', how='inner')
-    merged_cfd_data.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'cfd_data.csv'), index=False)
+    
+    def fix_cfd_columns(df: pd.DataFrame) -> pd.DataFrame:
+        # Rename columns to match the expected format. 
+        df = snake_case_to_capitalised(df)
+        df = df.rename(columns={col: col.replace('CFD', 'CfD') for col in df.columns})
+        df = df.rename(columns={'Name of CfD Unit': 'CfD Name'})
+        df = fix_units(df)
+        return df
+
+    if not process_only:
+        cfd_contracts_data = fix_cfd_columns(cfd_contracts_data)
+        cfd_settlements_data = fix_cfd_columns(cfd_settlements_data)
+        cfd_locations_data = fix_cfd_columns(cfd_locations_data)
+
+    cfd_settlements_data['Settlement Date'] = pd.to_datetime(cfd_settlements_data['Settlement Date'], errors='coerce')
+    cfd_settlements_data['Year'] = cfd_settlements_data['Settlement Date'].dt.year
+    cfd_settlements_data['CfD Payments (£/MWh)'] = cfd_settlements_data['CfD Payments (£)'] / cfd_settlements_data['CfD Generation (MWh)']
+
+    cfd_contracts_data['Expected Start Date'] = pd.to_datetime(cfd_contracts_data['Expected Start Date'], errors='coerce')
+
+    cfd_locations_source.save_data(cfd_locations_data)
+    cfd_contracts_source.save_data(cfd_contracts_data)
+    cfd_settlements_source.save_data(cfd_settlements_data)
+
+    merged_cfd_data = pd.merge(cfd_locations_data, cfd_contracts_data, on='CfD Name', how='inner')
+    cfd_dataset.save_data(merged_cfd_data)
 
 monthly_weights = [
     1.2,
@@ -307,29 +445,26 @@ forecasted_available_capacity = pd.Series({
     2040: 67.2
 })
 
-def fetch_cm_data():
+def fetch_cm_data(process_only):
     print("Fetching Capacity Market data from Low Carbon Contracts Company...")
-    cm_payments = pd.read_csv("https://dp.lowcarboncontracts.uk/dataset/ea55663a-30b2-4b74-b72c-946de1622167/resource/1c4daa32-2358-43d4-b2d1-29e948c159cd/download/capacity_obligation_by_auction.csv")
-    cm_payments.to_csv(os.path.join(RAW_DATA_DIR, 'capacity_obligation_by_auction.csv'), index=False)
+    cm_payments = cm_payments_source.fetch_data() if not process_only else cm_payments_source.load_data()    
+    cm_payments = snake_case_to_capitalised(fix_units(cm_payments))
 
     cm_awards = pd.DataFrame()
-    capacity_auctions_dir = os.path.join(RAW_DATA_DIR, 'capacity-market')
-    cm_auctions = pd.read_csv(os.path.join(RAW_DATA_DIR, 'auctions.csv'))
+    capacity_auctions_dir = os.path.join(MANUAL_DATA_PATH, 'capacity-market')
+    cm_auctions = cm_auctions_source.fetch_data() if not process_only else cm_auctions_source.load_data()
 
-    # Merge the CM datasets in `data/raw/capacity-auctions`
+    # Merge the CM datasets in `data/manual/capacity-auctions`
     for filename in os.listdir(capacity_auctions_dir):
+        print(f"Processing auction file: {filename}")
         if filename.endswith('.csv'):
             auction_data = ( 
                 pd.read_csv(os.path.join(capacity_auctions_dir, filename))
-                .rename(columns={
-                    'Capacity (MW)': 'Quantity',
-                    'Duration (Years)': 'Duration',
-                })
                 .drop(columns=['Parent Company', 'Bidding Company', 'CMU Name' ], errors='ignore')
             )
             #print(f"Processing auction file: {filename} with {len(auction_data)} records")
-            auction_data["Duration"] = pd.to_numeric(auction_data["Duration"], errors='coerce').fillna(0) # Replace "N/A" with 0 in the "Duration" column
-            auction_data['Quantity'] = pd.to_numeric(auction_data['Quantity'], errors='coerce').fillna(0)
+            auction_data["Duration (Years)"] = pd.to_numeric(auction_data["Duration (Years)"], errors='coerce').fillna(0) # Replace "N/A" with 0 in the "Duration" column
+            auction_data['Capacity (MW)'] = pd.to_numeric(auction_data['Capacity (MW)'], errors='coerce').fillna(0)
             # if the auction_data does not have a Fuel Type column, add it with a default value of 'Unknown'
             if 'Fuel Type' not in auction_data.columns:
                 auction_data['Fuel Type'] = 'Unknown'
@@ -344,7 +479,9 @@ def fetch_cm_data():
             else:
                 print(f"Warning: No matching auction info found for {auction_name} in auctions.csv")
 
-    cm_awards.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'capacity_auction_awards.csv'), index=False)
+    cm_awards_source.save_data(cm_awards)
+    cm_payments_source.save_data(cm_payments)
+    cm_auctions_source.save_data(cm_auctions)
     
     # Append the auction data to estimate payments for future years by multiplying the price 
     # with the Quantity from the last known year and applying the inflator to adjust the price to the delivery year.
@@ -365,67 +502,96 @@ def fetch_cm_data():
     #         # Calculate the estimated payments for the month
     #         estimated_payments = row['Price'] * row['Quantity'] * monthly_weights[next_date.month - 1] * INFLATORS.get(next_date.year, 1.0)/INFLATORS.get(row['Price Year'], 1.0)
     #         # Append the estimated payments to the cm_forcast DataFrame if it does not already exist for that month overwise update the existing row with the new estimated payments
-    #         forcast_row = pd.DataFrame({'Date': [next_date], 'Capacity Payment': [estimated_payments], 'Quantity': [row['Quantity']]})
+    #         forcast_row = pd.DataFrame({DATE_FIELD: [next_date], 'Capacity Payment': [estimated_payments], 'Quantity': [row['Quantity']]})
     #         cm_forcast = pd.concat([cm_forcast, forcast_row], ignore_index=True)
     #         next_date -= pd.DateOffset(months=1)
 
-    # cm_forcast = cm_forcast.groupby('Date').agg({'Capacity Payment': 'sum', 'Quantity': 'sum'}).reset_index()
+    # cm_forcast = cm_forcast.groupby(DATE_FIELD).agg({'Capacity Payment': 'sum', 'Quantity': 'sum'}).reset_index()
 
-    cm_forcast = pd.read_csv("https://dp.lowcarboncontracts.uk/dataset/a90f0e9b-d894-4d80-bedd-608a837d5e5d/resource/011a729d-5e58-4247-838e-601fd9bcf8d1/download/cm_forecast_cost.csv")
-    cm_forcast.to_csv(os.path.join(RAW_DATA_DIR, 'neso_capacity_market_forecast.csv'), index=False)
-    
-    # Iterater over each month is the cm_forcast DataFrame if the quantity is less than forcasted_max_demand for that year
-    # then estimate the additional payments needed to meet the forcasted_max_demand and add it to the cm_forcast DataFrame
-    # for index, row in cm_forcast.iterrows():
-    #     year = row['Date'].year
+    cm_forecast = cm_forecast_source.fetch_data()
+    cm_forecast = snake_case_to_capitalised(fix_units(cm_forecast))
+    cm_forecast_source.save_data(cm_forecast)
+
+    # Iterater over each month is the cm_forecast DataFrame if the quantity is less than forcasted_max_demand for that year
+    # then estimate the additional payments needed to meet the forcasted_max_demand and add it to the cm_forecast DataFrame
+    # for index, row in cm_forecast.iterrows():
+    #     year = row[DATE_FIELD].year
     #     if year in forecasted_max_demand.index:
     #         if row['Quantity'] < forecasted_max_demand[year]:
     #             additional_quantity = forecasted_max_demand[year] - row['Quantity']
     #             additional_payments = additional_quantity * row['Capacity Payment'] / row['Quantity']
     #             cm_forcast.loc[index, 'Capacity Payment'] += additional_payments
     #             cm_forcast.loc[index, 'Quantity'] += additional_quantity
-    cm_forcast.to_csv(os.path.join(TRANSFORMED_DATA_DIR, 'capacity_market_forecast.csv'), index=False)
+    # cm_forcast.to_csv(os.path.join(TRANSFORMED_DATA_PATH, 'capacity_market_forecast.csv'), index=False)
 
-fetch_functions = {
-    'A': fetch_generation_and_prices,
-    'B': fetch_generation_and_prices,
-    'C': fetch_demand,
-    'D': fetch_embedded_generation,
-    'E': fetch_system_prices,
-    'F': merge_generators,
-    'G': fetch_monthly_gas_prices,
-    'H': fetch_cfd_data,
-    'I': fetch_cm_data
+def create_metrics(process_only: bool):
+    '''
+    Create metrics for the electricity market including 
+        - total gas cost
+        - total wholesale cost
+        - total CFD payments
+        - total capacity market payments
+        The metrics are created by creating a dataframe with the with date and metric columns and passing it to `Metric.create_metric`
+    '''
+    print("Creating metrics...")
+    gasvselec = gasvselec_dataset.load_data()
+    cfd_settlements = cfd_settlements_source.load_data()
+    cm_payments = cm_payments_source.load_data()
+
+    gasvselec['Gas Cost'] = gasvselec['Gas Price'] * gasvselec['Gas']/0.4
+    gasvselec['Wholesale Cost'] = gasvselec['Electricity Price'] * gasvselec['Total']
+    cfd_settlements[DATE_FIELD] = pd.to_datetime(cfd_settlements['Settlement Date'], errors='coerce')
+    cfd_settlements = cfd_settlements.groupby(DATE_FIELD).agg({'CfD Payments (£)': 'sum'}).reset_index()
+    cm_payments[DATE_FIELD] = pd.to_datetime(cm_payments['Calendar Year'].astype(str) + '-' + cm_payments['Calendar Month'].astype(str) + '-01', errors='coerce')
+    cm_payments = cm_payments.groupby(DATE_FIELD).agg({'Capacity Payment (£)': 'sum'}).reset_index()
+
+    metrics = [
+        Metric.create_metric("Total Gas Cost", "£", gasvselec, "Gas Cost"),
+        Metric.create_metric("Total Wholesale Cost", "£", gasvselec, "Wholesale Cost"),
+        Metric.create_metric("Total CFD Payments", "£", cfd_settlements, "CfD Payments (£)"),
+        Metric.create_metric("Total Capacity Market Payments", "£", cm_payments, "Capacity Payment (£)"),
+    ]
+    for metric in metrics:
+        metric.save()
+
+fetch_functions: dict[str, tuple[Callable[[bool], None], str]] = {
+    'A': (fetch_generation_and_prices, "Generation and Prices Data"),
+    'B': (fetch_demand, "Demand Data"),
+    'C': (fetch_embedded_generation, "Embedded Generation Data"),
+    'D': (merge_generators, "Update List of Generators"),
+    'E': (fetch_gas_prices_and_forecast, "Gas Prices Data"),
+    'F': (fetch_cfd_data, "CFD Data"),
+    'G': (fetch_cm_data, "Capacity Market Data"),
+    'H': (create_elec_vs_gas_dataset, "Electricity vs Gas Data"),
+    'I': (create_metrics, "Create Metrics")
 }
+
+ALL = ''.join([key for key in fetch_functions.keys()])
+
 
 def show_menu():
     print("Select the data to fetch and process. Available options:")
-    print("A. Generation Data")
-    print("B. Price Data")
-    print("C. Demand Data")
-    print("D. Embedded Generation Data")
-    print("E. System Prices Data")
-    print("F. Update List of Generators")
-    print("G. Monthly Gas Prices Data")
-    print("H. CFD Data")
-    print("I. Capacity Market Data")
+    for key, (func, description) in fetch_functions.items():
+        print(f"{key}. {description}")
     print("#. All Data (default)")
-    option = input("Enter the option letter (A-I, #): ").strip().upper()
+    option = input("Enter the option letter (A-H, #): ").strip().upper()
     if option == '#' or option == '':
-        option = 'ABCDEFGHI'
-
+        option = ALL  # All options
     return option
 
 if __name__ == "__main__":
     # If --fetch-all is passed as an argument, fetch all data
-    
     if '--fetch-all' in sys.argv:
-        option = 'ABCDEFGHI'
+        option = ALL
     else:
         option = show_menu()
 
+    process_only = False
+    if '--process-only' in sys.argv:
+        process_only = True
+
     for opt in option:
         if opt in fetch_functions:
-            fetch_functions[opt]()
+            fetch_functions[opt][0](process_only)
         else:
             print(f"Invalid option: {opt}. Skipping.")

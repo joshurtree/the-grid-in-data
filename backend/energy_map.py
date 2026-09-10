@@ -3,11 +3,12 @@ import json
 import os
 import pandas as pd
 import plotly.graph_objects as go
-from backend.constants import ALL_GENERATION_TYPES, GENERATION_COLOURS, GENERATION_TYPE_GROUPS, GENERATION_SUPER_GROUPS, TRANSFORMED_DATA_DIR
+from backend.constants import ALL_GENERATION_TYPES, GENERATION_COLOURS, GENERATION_TYPE_GROUPS, GENERATION_SUPER_GROUPS
 from backend.bmrs import fetch_FPN, time_to_settlement_period
 from backend.geojson import add_boundaries_to_chart
+from datasources.system import embedded_generation_source, generators_source
 
-generators = pd.read_json(os.path.join(TRANSFORMED_DATA_DIR, 'all_generators.json'))
+generators = generators_source.load_data()
 
 # GENERATION_TYPES = [
 #     ('FOSSIL', 'Fossil fuels', [
@@ -55,7 +56,7 @@ class GenerationData:
         return total_generation
 
     def get_embedded_generation(self, time):
-        generation = pd.read_csv(os.path.join(RAW_DATA_DIR, 'embedded_generation.csv'))
+        generation = embedded_generation_source.load_data()
         return generation[generation['SETTLEMENT_DATE'] == time.strftime('%Y-%m-%dT00:00:00') and (generation['SETTLEMENT_PERIOD'] == time_to_settlement_period(time))]
 
     def get_generation(self, bmus):
@@ -103,16 +104,12 @@ class GenerationData:
 
     def create_chart(self):
         data = self.data
-        config = {
-            'displayModeBar': False,
-            'displaylogo': False,
-        }
         # Create Plotly figure with boundaries and generator markers
         chart_figure = go.Figure()
 
         # Add boundaries
         add_boundaries_to_chart(chart_figure, 'data/ETYS-boundaries-simple.geojson', "Boundary_n")
-
+        sizeref = 2 * max(data['level']) / 200
         for group in ALL_GENERATION_TYPES.keys():
             trace_data = data[data['fuel_type'] == group]
             if not trace_data.empty: 
@@ -121,7 +118,7 @@ class GenerationData:
                     lon=trace_data['lon'],
                     lat=trace_data['lat'],
                     mode='markers',
-                    marker=dict(size=trace_data['level'] / 10, color=trace_data['colour'], opacity=0.5),
+                    marker=dict(size=trace_data['level'] / sizeref, color=trace_data['colour'], opacity=0.5),
                     text=trace_data["text"],
                     hovertemplate='%{text}<extra></extra>',
                     name=ALL_GENERATION_TYPES[group]
@@ -129,23 +126,24 @@ class GenerationData:
         chart_figure.update_geos(
             scope='europe',
             projection_type='mercator',
-            resolution=50,
             showland=True,
             showocean=True,
             landcolor='rgb(74, 170, 68)',
             oceancolor='rgb(119, 221, 221)',
-            lataxis=dict(range=[54, 60]),
-            lonaxis=dict(range=[-4, 3.5]),
-            fitbounds='locations'
+            lataxis_range=[53, 57],
+            lonaxis_range=[-6, 4],
         )
 
         # Update layout
         chart_figure.update_layout(
             #title='GB Generation Live Map',
-            height=1200,
-            margin={"r":0,"t":20,"l":0,"b":0},
+            #height=1200,
+            margin=dict(r=0, t=0, l=0, b=0),
             paper_bgcolor='rgba(0,0,0,0)',
-            hovermode='closest'
+            hovermode='closest',
+            #showlegend=False,
+            legend=dict(itemsizing='constant', orientation='h'),
+            autosize=True
         )
 
         self.chart_figure = chart_figure

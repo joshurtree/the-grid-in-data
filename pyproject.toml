@@ -8,10 +8,8 @@ dependencies = [
     "bs4>=0.0.2",
     "streamlit>=1.38.0",
     "matplotlib>=3.11.0",
-    "numpy>=2.4.6",
     "openpyxl>=3.1.5",
     "osgridconverter>=0.1.3",
-    "pandas>=2.0.0",
     "plotly>=6.8.0",
     "pvlive-api>=1.5.2",
     "requests>=2.34.2",
@@ -19,4 +17,10 @@ dependencies = [
     "tqdm>=4.68.3",
     "pdfplumber>=0.11.10",
     "jupyterlab>=4.6.3",
+    "certifi>=2026.7.22",
+    "pandas>=3.0.5",
+    "titlecase>=2.4.1",
 ]
+
+[tool.uv.extra-build-dependencies]
+"titlecase-2.4.1" = ["setuptools"]

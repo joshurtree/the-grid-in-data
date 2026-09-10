@@ -147,10 +147,13 @@ def fetch_generation_by_type(dateFrom: datetime = datetime.now() - timedelta(day
     }
 
     data = fetch_bmrs_data("generation/outturn/summary", params, True)
-
+    
+    if data.empty:
+        return pd.DataFrame(columns=['startTime'] + list(ELEXON_GENERATION_TYPES.keys()))
     # Convert `data: { "fuelType": ..., "generation": ... }` to `fuelType`: `generation`
     for fuel_type in ELEXON_GENERATION_TYPES.keys():
-        data[fuel_type] = data['data'].apply(lambda x: next((item['generation'] for item in x if item['fuelType'] == fuel_type), 0))
+        column = fuel_type if not fuel_type.startswith("INT") else "IMPORTS"
+        data[column] = data['data'].apply(lambda x: next((item['generation'] for item in x if item['fuelType'] == fuel_type), 0))
     data.drop(columns=['data'], inplace=True)
     return data
 
