@@ -6,6 +6,7 @@ pages, each of which is implemented as a `render()` function in `pages/*.py`
 reusing the existing backend chart/data functions.
 """
 import streamlit as st
+from pages.base import footer
 
 # energy_map_page = st.Page(
 #     render_energy_map, title="GB Energy Generation Map", icon=":material/map:", url="/energy-map"
@@ -39,10 +40,4 @@ This app provides a dashboard for visualizing and analyzing GB electricity price
 """
 )
 
-with st.bottom:
-    st.markdown(
-        """
-        ---
-        Made by [Josh Andrews](joshurtree@yahoo.com)
-        """
-    )
+footer()

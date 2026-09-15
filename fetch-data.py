@@ -11,6 +11,7 @@ import random
 import re
 import requests
 import sys
+from functools import partial
 from titlecase import titlecase
 from tqdm import tqdm
 
@@ -308,6 +309,24 @@ def merge_generators(process_only: bool) -> None:
 
     # generators_dataset.save_data(bmu_data)
 
+def fetch_balancing_mechanism_data(process_only: bool) -> None:
+    if process_only:
+        return
+    print('Fetching balancing mechanism data from Neso API...')
+    bm_data = neso.fetch_all_records(neso.BALANCING_MECHANISM_ID)
+    bm_data = bm_data.groupby('SETT_DATE').agg({
+        'Energy Imbalance': 'sum',
+        'Frequency Control': 'sum',
+        'Positive Reserve': 'sum',
+        'Constraints': 'sum',
+        'Negative Reserve': 'sum',
+        'Other': 'sum'
+    }).reset_index()
+    bm_data = bm_data.rename(columns={'SETT_DATE': DATE_FIELD})
+    bm_data[DATE_FIELD] = pd.to_datetime(bm_data[DATE_FIELD], format="mixed", dayfirst=True, errors='coerce')
+    print(f'[DEBUG] Fetched {len(bm_data)} balancing mechanism records')
+    bm_payments_source.save_data(bm_data)
+
 def fetch_generation_and_prices(process_only: bool):
     if not process_only:
         fetch_generation()
@@ -362,7 +381,6 @@ def create_elec_vs_gas_dataset(process_only: bool):
     )
 
     merged['Ratio'] = merged['Electricity Price'] / merged['Gas Price']
-    print(merged.head())
     gasvselec_dataset.save_data(merged)
     
 def fetch_cfd_data(process_only: bool):
@@ -379,14 +397,12 @@ def fetch_cfd_data(process_only: bool):
                 'MP_Name',
                 'Country',
                 'Technology_Type', 
-                'Operational_Start_Date', 
                 'Expected_Operational_Start_Date', 
-                'Maximum_Contract_Capacity_MW',
                 'Homes_Powered_Equivalent_Per_Annum',
                 'Cars_Off_Road_Equivalent_Per_Annum'
             ])
     )
-    
+
     def fix_cfd_columns(df: pd.DataFrame) -> pd.DataFrame:
         # Rename columns to match the expected format. 
         df = snake_case_to_capitalised(df)
@@ -399,6 +415,8 @@ def fetch_cfd_data(process_only: bool):
         cfd_contracts_data = fix_cfd_columns(cfd_contracts_data)
         cfd_settlements_data = fix_cfd_columns(cfd_settlements_data)
         cfd_locations_data = fix_cfd_columns(cfd_locations_data)
+
+    cfd_locations_data['Operational Start Date'] = pd.to_datetime(cfd_locations_data['Operational Start Date'], errors='coerce')
 
     cfd_settlements_data['Settlement Date'] = pd.to_datetime(cfd_settlements_data['Settlement Date'], errors='coerce')
     cfd_settlements_data['Year'] = cfd_settlements_data['Settlement Date'].dt.year
@@ -510,6 +528,24 @@ def fetch_cm_data(process_only):
 
     cm_forecast = cm_forecast_source.fetch_data()
     cm_forecast = snake_case_to_capitalised(fix_units(cm_forecast))
+
+    # Extend the cm_forecast DataFrame with remaining months of the last year given by taking the mean price and appliying the cm_weights to the remaining months of the last year in the cm_forecast DataFrame
+    last_year = cm_forecast['Calendar Year'].max()
+    last_year_data = cm_forecast[cm_forecast['Calendar Year'] == last_year]    
+    print(last_year_data)
+
+    for auction in last_year_data['Auction Identifier'].unique():
+        base_cost = last_year_data[(last_year_data['Calendar Month'] == 1) & (last_year_data['Auction Identifier'] == auction)]['Monthly CM Forecast Cost (£)'].mean() / monthly_weights[0]
+        print(f"Extending CM forecast for auction {auction} in year {last_year} with base cost {base_cost}")
+        for month in range(last_year_data['Calendar Month'].max() + 1, 13):
+            estimated_payments = base_cost * monthly_weights[month - 1] 
+            forcast_row = pd.DataFrame({
+                'Auction Identifier': [auction],
+                'Calendar Year': [last_year], 
+                'Calendar Month': [month], 
+                'Monthly CM Forecast Cost (£)': [estimated_payments]})
+            cm_forecast = pd.concat([cm_forecast, forcast_row], ignore_index=True)
+
     cm_forecast_source.save_data(cm_forecast)
 
     # Iterater over each month is the cm_forecast DataFrame if the quantity is less than forcasted_max_demand for that year
@@ -524,6 +560,48 @@ def fetch_cm_data(process_only):
     #             cm_forcast.loc[index, 'Quantity'] += additional_quantity
     # cm_forcast.to_csv(os.path.join(TRANSFORMED_DATA_PATH, 'capacity_market_forecast.csv'), index=False)
 
+def local_data_sources(process_only: bool) -> None:
+    data = capacity_factors_source.fetch_data()
+    data[DATE_FIELD] = pd.to_datetime(data[DATE_FIELD], format='%d/%m/%y', errors='coerce')
+    
+    capacity_factor_constant = 100000/(91.5*24)
+    for fuel_type in ['Onshore Wind', 'Offshore Wind', 'Solar']:
+        data[f'{fuel_type} Capacity Factor (%)'] = capacity_factor_constant * data[f'{fuel_type} Generation (GWh)'] / data[f'{fuel_type} Capacity (MW)'] 
+    capacity_factors_source.save_data(data)
+
+def create_metric(metric: Metric, values: list[float]) -> None:
+    latest_value, previous_value, five_years_ago_value = values
+    calc_change = lambda current, previous: ((current - previous) / previous) * 100 if previous != 0 else np.nan
+    metric.current = latest_value
+    metric.annual_change = calc_change(latest_value, previous_value)
+    metric.change_from_5_years_ago = calc_change(latest_value, five_years_ago_value)
+    metric.save()
+
+def create_aggregate_metric(time_frames: list[tuple[int, int]], metric: Metric, df: pd.DataFrame, metric_column: str, agg_type="sum") -> None:
+    '''
+    Input: A dataframe with a 'Metric' column and a 'Date' column
+    '''
+    print(f"Creating metric {metric.name} with aggregation type {agg_type}...")
+    get_offset = lambda months: pd.Timestamp.now() - pd.DateOffset(months=months)
+    values = []
+    for lower_bound, upper_bound in time_frames:
+        filtered_df = df[(df[DATE_FIELD] >= get_offset(lower_bound)) & (df[DATE_FIELD] <= get_offset(upper_bound))]
+        if filtered_df.empty:
+            print(f"Warning: No data found for {metric.name} in the range of {lower_bound} to {upper_bound} months ago.")
+
+        if agg_type == "sum":
+            values.append(filtered_df[metric_column].sum())
+        elif agg_type == "mean":
+            values.append(filtered_df[metric_column].mean())
+        else:
+            raise ValueError(f"Unsupported aggregation type: {agg_type}")
+    
+    create_metric(metric, values)
+
+create_monthly_metric = partial(create_aggregate_metric, [(1, 0), (13, 12), (61, 60)])
+create_annual_metric = partial(create_aggregate_metric, [(13, 1), (25, 13), (73, 61)])
+create_total_metric = partial(create_aggregate_metric, [(1000, 0), (1000, 12), (1000, 60)])
+
 def create_metrics(process_only: bool):
     '''
     Create metrics for the electricity market including 
@@ -537,44 +615,58 @@ def create_metrics(process_only: bool):
     gasvselec = gasvselec_dataset.load_data()
     cfd_settlements = cfd_settlements_source.load_data()
     cm_payments = cm_payments_source.load_data()
+    cfd_locations = cfd_locations_source.load_data()
+    bm_payments = bm_payments_source.load_data()
 
     gasvselec['Gas Cost'] = gasvselec['Gas Price'] * gasvselec['Gas']/0.4
+    gasvselec['Total'] = gasvselec['Total']/2 # Half hourly data is in MW, so we need to divide by 2 to get MWh
     gasvselec['Wholesale Cost'] = gasvselec['Electricity Price'] * gasvselec['Total']
+
     cfd_settlements[DATE_FIELD] = pd.to_datetime(cfd_settlements['Settlement Date'], errors='coerce')
     cfd_settlements = cfd_settlements.groupby(DATE_FIELD).agg({'CfD Payments (£)': 'sum'}).reset_index()
-    cm_payments[DATE_FIELD] = pd.to_datetime(cm_payments['Calendar Year'].astype(str) + '-' + cm_payments['Calendar Month'].astype(str) + '-01', errors='coerce')
-    cm_payments = cm_payments.groupby(DATE_FIELD).agg({'Capacity Payment (£)': 'sum'}).reset_index()
 
-    metrics = [
-        Metric.create_metric("Total Gas Cost", "£", gasvselec, "Gas Cost"),
-        Metric.create_metric("Total Wholesale Cost", "£", gasvselec, "Wholesale Cost"),
-        Metric.create_metric("Total CFD Payments", "£", cfd_settlements, "CfD Payments (£)"),
-        Metric.create_metric("Total Capacity Market Payments", "£", cm_payments, "Capacity Payment (£)"),
-    ]
-    for metric in metrics:
-        metric.save()
+    cfd_locations[DATE_FIELD] = pd.to_datetime(cfd_locations['Operational Start Date'], errors='coerce')
 
-fetch_functions: dict[str, tuple[Callable[[bool], None], str]] = {
-    'A': (fetch_generation_and_prices, "Generation and Prices Data"),
-    'B': (fetch_demand, "Demand Data"),
-    'C': (fetch_embedded_generation, "Embedded Generation Data"),
-    'D': (merge_generators, "Update List of Generators"),
-    'E': (fetch_gas_prices_and_forecast, "Gas Prices Data"),
-    'F': (fetch_cfd_data, "CFD Data"),
-    'G': (fetch_cm_data, "Capacity Market Data"),
-    'H': (create_elec_vs_gas_dataset, "Electricity vs Gas Data"),
-    'I': (create_metrics, "Create Metrics")
-}
+    cm_payments[DATE_FIELD] = pd.to_datetime(cm_payments['Calendar Year'].astype(str) + '-' + cm_payments['Calendar Month'].astype(str) + f"-{datetime.today().day}", errors='coerce')
+    cm_payments = cm_payments.groupby(DATE_FIELD).agg({'Capacity Payment (£)': 'sum', "Auction Acquired Capacity Obligation (MW)": 'sum'}).reset_index()
+    
+    bm_payments["Total"] = bm_payments[['Energy Imbalance', 'Frequency Control', 'Positive Reserve', 'Constraints', 'Negative Reserve', 'Other']].sum(axis=1)
 
+    create_monthly_metric(current_gas_price_metric, gasvselec, "Gas Price", "mean")
+    create_annual_metric(total_gas_cost_metric, gasvselec, "Gas Cost")
+    create_monthly_metric(sparkgap_metric, gasvselec, "Ratio", "mean")
+    create_monthly_metric(current_wholesale_price_metric, gasvselec, "Electricity Price", "mean")
+    create_annual_metric(total_wholesale_cost_metric, gasvselec, "Wholesale Cost")
+    create_annual_metric(total_generation_metric, gasvselec, "Total")
+    create_annual_metric(total_cfd_payments_metric, cfd_settlements, "CfD Payments (£)")
+    create_total_metric(total_cfd_capacity_metric, cfd_locations, "Maximum Contract Capacity (MW)")
+    create_annual_metric(total_cm_payments_metric, cm_payments, "Capacity Payment (£)")
+    create_annual_metric(total_cm_capacity_metric, cm_payments, "Auction Acquired Capacity Obligation (MW)")
+    create_annual_metric(annual_bm_payments_metric, bm_payments, "Total")
+    
+fetch_functions_list: list[tuple[Callable[[bool], None], str]] = [
+    (fetch_generation_and_prices, "Generation and Prices Data"),
+    (fetch_demand, "Demand Data"),
+    (fetch_embedded_generation, "Embedded Generation Data"),
+    (merge_generators, "Update List of Generators"),
+    (fetch_balancing_mechanism_data, "Balancing Mechanism Data"),
+    (fetch_gas_prices_and_forecast, "Gas Prices Data"),
+    (fetch_cfd_data, "CFD Data"),
+    (fetch_cm_data, "Capacity Market Data"),
+    (create_elec_vs_gas_dataset, "Electricity vs Gas Data"),
+    (local_data_sources, "Local Data Sources"),
+    (create_metrics, "Create Metrics")
+]
+
+fetch_functions = {chr(65 + i): (func, desc) for i, (func, desc) in enumerate(fetch_functions_list)}
 ALL = ''.join([key for key in fetch_functions.keys()])
-
 
 def show_menu():
     print("Select the data to fetch and process. Available options:")
     for key, (func, description) in fetch_functions.items():
         print(f"{key}. {description}")
     print("#. All Data (default)")
-    option = input("Enter the option letter (A-H, #): ").strip().upper()
+    option = input(f"Enter the option letter (A-{chr(65 + len(fetch_functions) - 1)}, #): ").strip().upper()
     if option == '#' or option == '':
         option = ALL  # All options
     return option

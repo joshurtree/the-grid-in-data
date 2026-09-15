@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from backend.constants import PERIOD_GROUPS, PROCESSED_DATA_PATH, RAW_DATA_PATH
+from backend.constants import FREQ_GROUPS, PROCESSED_DATA_PATH, RAW_DATA_PATH
 from datasources.system import gasvselec_dataset
 from datasources.gas import daily_gas_prices_dataset, monthly_gas_prices_dataset
 import numpy as np
@@ -18,8 +18,8 @@ def filter_and_group_data(data: pd.DataFrame, start_date: datetime, end_date: da
     filtered_data = filtered_data[filtered_data['Date'] <= pd.to_datetime(end_date)]
     #filtered_data = filtered_data[(filtered_data['GAS_perc'] >= gas_usage[0]) & (filtered_data['GAS_perc'] <= gas_usage[1])]
 
-    if period_group in PERIOD_GROUPS:
-        freq = PERIOD_GROUPS[period_group]
+    if period_group in FREQ_GROUPS:
+        freq = FREQ_GROUPS[period_group]
         filtered_data = filtered_data.set_index('Date').resample(freq).mean().reset_index()
         #print(f'{len(filtered_data)} records after resampling to {period_group} frequency')
 

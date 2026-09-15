@@ -5,14 +5,14 @@ import plotly.graph_objects as go
 import streamlit as st
 
 import backend.cfd as cfd 
-from datasources.policy import cfd_dataset
-from pages.base import display_chart
+from datasources.policy import cfd_dataset, total_cfd_payments_metric, total_cfd_capacity_metric
+from pages.base import display_chart, display_metrics
 
 st.markdown('''
 # Contract for Difference (CFD) 
 Analysis of electricity price contracts and CFD payments.
 ''')
-
+display_metrics([total_cfd_payments_metric, total_cfd_capacity_metric])
 with st.sidebar:
     st.markdown("### Filter Options",)
     st.markdown("Select the date range and strike price to analyze the CFD payments.")

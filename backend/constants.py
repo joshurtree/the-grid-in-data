@@ -113,13 +113,13 @@ GENERATION_SUPER_GROUPS = {
 
 GENERATION_COLOURS = {fuel_type: group['colour'] for group in GENERATION_TYPE_GROUPS for fuel_type in group['types']}
 
-PERIOD_GROUPS = {
-    'Hour': timedelta(hours=1),
-    'Day': timedelta(days=1),
-    'Week': timedelta(weeks=1),
-    'Month': timedelta(days=30),
-    'Quarter': timedelta(days=90),
-    'Year': timedelta(days=365),
+FREQ_GROUPS = {
+    'Hourly': timedelta(hours=1),
+    'Daily': timedelta(days=1),
+    'Weekly': timedelta(weeks=1),
+    'Monthly': timedelta(days=30),
+    'Quarterly': timedelta(days=90),
+    'Yearly': timedelta(days=365),
 }
 
 RAW_DATA_PATH = os.path.join('data', 'raw')

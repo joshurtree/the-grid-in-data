@@ -1,3 +1,4 @@
+from backend.metric import CURRENCY, POWER, Metric
 from datasources.datasource import DataSource, DataCategory, DataSet, self_provider
 from datasources.providers import *
 from backend.constants import RAW_DATA_PATH, MANUAL_DATA_PATH
@@ -40,3 +41,7 @@ cfd_locations_source = DataSource(
 ro_source = DataSource(providers=[ofgem_provider], category=DataCategory.POLICY, name="renewables_obligation")
 cfd_dataset = DataSet(datasources=[cfd_contracts_source, cfd_locations_source], name="cfd_data", category=DataCategory.POLICY)
 
+total_cfd_payments_metric = Metric("Annual CFD Payments", description="Annual payments for Contracts for Difference (CFD) projects", unit=CURRENCY)
+total_cfd_capacity_metric = Metric("Total CFD Capacity", description="Total capacity obtained through Contracts for Difference (CFD)", unit=POWER)
+total_cm_payments_metric = Metric("Annual Capacity Market Payments", description="Annual payments to Capacity Market providers", unit=CURRENCY)
+total_cm_capacity_metric = Metric("Capacity Obtained", description="Current capacity obtained through the Capacity Market", unit=POWER)

@@ -5,10 +5,9 @@ from typing import Tuple
 import pandas as pd
 import plotly.graph_objects as go
 
-from backend.constants import NESO_GENERATION_TYPES, RAW_DATA_PATH, PROCESSED_DATA_PATH
+from backend.constants import FREQ_GROUPS, NESO_GENERATION_TYPES
 from datasources.system import half_hourly_dataset, daily_dataset
 from backend.chartset import Chart
-
 
 def filter_data(data: pd.DataFrame, start_date: date, end_date: date, target_generation: str, usage: tuple[float, float]) -> Tuple[pd.DataFrame, float]:
     print(f'{len(data)} records before filtering')
@@ -25,8 +24,11 @@ def filter_data(data: pd.DataFrame, start_date: date, end_date: date, target_gen
 
     print(f'{len(filtered_data)} records after filtering by {target_generation} percentage >= {usage[0]}% and <= {usage[1]}%')
     return filtered_data, y_max
-def create_chart(start_date: date, end_date: date, target_generation: str, usage: tuple[float, float]) -> Chart:
+
+def create_chart(start_date: date, end_date: date, frequency: str, target_generation: str|None, usage: tuple[float, float]) -> Chart:
+    target_generation = target_generation or "Low Carbon"  # Default to Low Carbon if None    
     data, y_max = filter_data(daily_dataset.load_data(), start_date, end_date, target_generation, usage)
+    data = data.resample(FREQ_GROUPS.get(frequency, 'D'), on='Settlement Date').mean().reset_index()  # Resample to daily frequency for better visualization
     # Create Plotly scatter chart with color by volume
     chart_figure = go.Figure(data=go.Scatter(
         mode='markers',
@@ -35,7 +37,7 @@ def create_chart(start_date: date, end_date: date, target_generation: str, usage
         marker=dict(
             size=8,
             color=data[target_generation + ' (%)'],
-            colorscale='Viridis_r',
+            colorscale='turbo',
             showscale=True,
             colorbar=dict(title=f"Usage (%)"),
             opacity=0.7,
@@ -63,7 +65,8 @@ def create_chart(start_date: date, end_date: date, target_generation: str, usage
     return Chart(half_hourly_dataset, chart_figure, title="Wholesale Price vs Date", description="This chart shows the relationship between wholesale electricity prices and generation types over time.")
 
 # Group by generation type and calculate average price, total generation, and total cost for each generation type
-def create_table(start_date: date, end_date: date, target_generation: str, usage: tuple[float, float]) -> Chart:
+def create_table(start_date: date, end_date: date, target_generation: str|None, usage: tuple[float, float]) -> Chart:
+    target_generation = target_generation or "Low Carbon"  # Default to Low Carbon if None
     data, _ = filter_data(half_hourly_dataset.load_data(), start_date, end_date, target_generation, usage)
 
     def calc_data(gen_type):

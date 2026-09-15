@@ -1,5 +1,6 @@
 from datasources.datasource import DataSource, DataCategory, DataSet
 from datasources.providers import *
+from backend.metric import NO_UNIT, Metric, CURRENCY, UNIT_PRICE
 
 ons_system_gas_price_source = DataSource(
     name="ons_system_gas_price",
@@ -31,3 +32,16 @@ monthly_gas_prices_dataset = DataSet(
     category=DataCategory.GAS,
     date_fields=["Date"]
 )
+
+current_gas_price_metric = Metric(
+    "Current Gas Price", 
+    description="Current price of gas in pence per therm. Averaged over the last month", 
+    unit=UNIT_PRICE)
+total_gas_cost_metric = Metric(
+    "Estimated Annual Gas Cost", 
+    description="Estimated cost of gas in last year. Calculated by taking generation by gas power plants and assuming an efficiency of 40%", 
+    unit=CURRENCY)
+sparkgap_metric = Metric(
+    "Spark Gap (Wholesale)", 
+    description="Current difference between wholesale electricity prices and gas prices. Averaged over the last month", 
+    unit=NO_UNIT)

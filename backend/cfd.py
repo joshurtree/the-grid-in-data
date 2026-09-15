@@ -26,6 +26,7 @@ colours = {
 }
 
 base_data = cfd_settlements_source.load_data()
+base_data['Allocation Round'] = base_data['Allocation Round'].apply(lambda x: "Pre-Allocation Round 1" if x == "Investment Contract" else x)
 filtered_data = base_data.copy()
 
 def get_available_technologies():

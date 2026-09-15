@@ -1,3 +1,4 @@
+from backend.metric import CURRENCY, ENERGY, UNIT_PRICE, Metric, NO_UNIT
 from datasources.datasource import DataSource, DataCategory, DataSet, self_provider
 from datasources.gas import daily_gas_prices_dataset
 from datasources.providers import *
@@ -58,6 +59,21 @@ total_capacity_source = DataSource(
     url="https://assets.publishing.service.gov.uk/media/6a6a3668862aaf18d9c629ed/DUKES_5.12.xlsx"
 )
 
+bm_payments_source = DataSource(
+    providers=[neso_provider],
+    name="balancing_mechanism_payments",
+    category=DataCategory.SYSTEM,
+    url="https://www.neso.energy/data-portal/daily-balancing-costs-balancing-services-use-system",
+    date_fields=[DATETIME_FIELD]
+)
+
+capacity_factors_source = DataSource(
+    providers=[energy_trends_provider],
+    name="capacity_factors",
+    category=DataCategory.SYSTEM,
+    url="data/manual/capacity_factors.csv"
+)
+
 generators_dataset = DataSet(
     name="generators",
     datasources=[generators_manual_source, repd_projects_source, bmus_source],
@@ -82,3 +98,19 @@ gasvselec_dataset = DataSet(
     date_fields=[DATE_FIELD]
 )
 
+current_wholesale_price_metric = Metric(
+    "Current Wholesale Price", 
+    description="Current price of wholesale electricity in £/MWh. Averaged over the last month", 
+    unit=UNIT_PRICE)
+total_wholesale_cost_metric = Metric(
+    "Annual Wholesale Cost", 
+    description="Total cost of wholesale electricity in the last year", 
+    unit=CURRENCY)
+total_generation_metric = Metric(
+    "Annual Electricity Generation", 
+    description="Total electricity generation (including imports) in the last year", 
+    unit=ENERGY)
+annual_bm_payments_metric = Metric(
+    "Annual Balancing Mechanism Payments", 
+    description="Total payments made to the balancing mechanism in the last year", 
+    unit=CURRENCY)

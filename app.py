@@ -10,6 +10,7 @@ pages = {
         st.Page("pages/gas_price.py", title="Gas Prices", icon=":material/propane_tank:"),
         st.Page("pages/cfds.py", title="Contracts for Difference", icon=":material/contract:"),
         st.Page("pages/capacity_market.py", title="Capacity Market", icon=":material/brick:"),
+        st.Page("pages/balancing_costs.py", title="Balancing Costs", icon=":material/balance:"),
     ],
     "Security of supply" : [
         st.Page("pages/capacity_factors.py", title="Capacity Factors", icon=":material/bolt:"),

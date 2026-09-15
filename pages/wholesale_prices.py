@@ -5,7 +5,8 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 from backend.constants import NESO_GENERATION_TYPES
 import backend.gbwep as gbwep
-from pages.base import display_chart
+from pages.base import date_range_slider, display_chart, display_metrics, footer
+from datasources.system import current_wholesale_price_metric, total_wholesale_cost_metric, total_generation_metric
 
 with st.sidebar:
     st.markdown("### Filter Options")
@@ -17,13 +18,14 @@ with st.sidebar:
         "The chart shows the electricity prices over time, while the table "
         "provides detailed statistics for the selected generation type."
     )
-    start_date = st.date_input(
-        "Start Date", 
-        value=(datetime.now() - timedelta(days=365)).date(),
-        min_value=datetime(2017, 1, 1).date(),
-        max_value=datetime.now().date()
+    start_date, end_date, frequency = date_range_slider(
+        start_date=(datetime.now() - timedelta(days=365)).date(),
+        end_date=datetime.now().date(),
+        min_date=datetime(2017, 1, 1).date(),
+        max_date=datetime.now().date(),
+        frequency="daily",
+        key_prefix="wholesale_prices_date"
     )
-    end_date = st.date_input("End Date", value=datetime.now().date(), min_value=start_date, max_value=datetime.now().date())
     target_keys = list(NESO_GENERATION_TYPES.values())
     default_index = target_keys.index("Low Carbon") if "Low Carbon" in target_keys else 0
     target = st.selectbox(
@@ -35,11 +37,13 @@ with st.sidebar:
 
 
 st.markdown("## GB Wholesale Electricity Prices")
+display_metrics([current_wholesale_price_metric, total_wholesale_cost_metric, total_generation_metric])
 st.markdown(
     "This chart shows the relationship between wholesale electricity prices and generation types over time. "
     "The color of the points represents the percentage of the selected generation type in the total generation mix."
 )
 
-display_chart(gbwep.create_chart(start_date, end_date, target, usage))
+display_chart(gbwep.create_chart(start_date, end_date, frequency, target, usage))
 display_chart(gbwep.create_table(start_date, end_date, target, usage))
+footer()
 

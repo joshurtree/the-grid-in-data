@@ -4,7 +4,7 @@ import pandas as pd
 from plotly import graph_objects as go
 from plotly.subplots import make_subplots
 from backend.chartset import Chart
-from backend.constants import INFLATORS, RAW_DATA_PATH, MANUAL_DATA_PATH
+from backend.constants import DATE_FIELD, INFLATORS, RAW_DATA_PATH, MANUAL_DATA_PATH
 from datasources.policy import cm_auctions_source, cm_payments_source, cm_forecast_source
 
 
@@ -75,7 +75,7 @@ def create_cm_auction_scatter(inflator_type='Delivery Year'):
         description="This chart shows the Capacity Market auction prices over time, broken down by auction. Each auction is represented by a different symbol, and the capacity secured in each auction is shown as a stacked bar chart."
     )
 
-def create_cm_payments():
+def create_cm_payments(inflator_type='Delivery Year') -> Chart:
     """
     Create a DataFrame of CM payments for each auction year, adjusted by the selected inflator.
 
@@ -84,6 +84,8 @@ def create_cm_payments():
     """   
     # Read the data
     df = cm_payments_source.load_data()
+    #df[DATE_FIELD] = pd.to_datetime(f"{df['Calendar Month']} {df['Calendar Year']}", format='%B %Y')
+    #df = df[(df[DATE_FIELD] >= start_date) & (df[DATE_FIELD] <= end_date)]
     df = df[df['Capacity Payment Suspension Flag'] == 'Not Suspended']
     df = df.groupby('Calendar Year')['Capacity Payment (£)'].sum().reset_index()
 
@@ -102,13 +104,14 @@ def create_cm_payments():
     #         df = pd.concat([df, pd.DataFrame({'Calendar_Year': [delivery_year], 'Capacity_Payment_GBP': [estimated_payments]})], ignore_index=True)
 
     forcast_df = cm_forecast_source.load_data().groupby('Calendar Year')['Monthly CM Forecast Cost (£)'].sum().reset_index()
-
+    #forcast_df = forcast_df[DATE_FIELD > df[DATE_FIELD].max()]
+    
     # Create the figure
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=df['Calendar Year'],
         y=df['Capacity Payment (£)'],
-        name='CM Payments',
+        name='Actual Payments',
         marker_color='indianred'
     ))
 

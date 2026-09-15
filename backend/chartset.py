@@ -21,5 +21,8 @@ class Chart:
     def is_table(self) -> bool:
         return isinstance(self.chart, pd.DataFrame)
     
+    def figure(self) -> go.Figure:
+        return self.chart if isinstance(self.chart, go.Figure) else go.Figure(self.chart)
+    
     def dataset_info(self):
         return self.dataset.source_info()
