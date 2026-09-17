@@ -103,7 +103,7 @@
               echo ""
               echo "Quick start:"
               echo "  uv sync                          # Install dependencies from pyproject.toml"
-              echo "  uv run streamlit run Home.py     # Run the Streamlit web interface on http://localhost:8501"
+              echo "  uv run streamlit run app.py     # Run the Streamlit web interface on http://localhost:8501"
               echo "  uv run fetch-data.py             # Fetch the latest data from the NESO and LCCC APIs"
               echo "  nix run .#app                    # Run with flake"
             '';

@@ -1,7 +1,7 @@
 from backend.constants import DATE_FIELD
 from datasources.datasource import DataSet, DataCategory
 from datasources.system import half_hourly_dataset
-from datasources.gas import daily_gas_prices_dataset
+from datasources.supply import daily_gas_prices_dataset
 from datasources.policy import cfd_settlements_source, cm_payments_source
 
 

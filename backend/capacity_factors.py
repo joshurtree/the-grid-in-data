@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 
 from backend.chartset import Chart
 from backend.constants import DATE_FIELD
-from datasources.system import capacity_factors_source
+from datasources.supply import capacity_factors_source
 
 def create_capacity_factor_chart():
     """

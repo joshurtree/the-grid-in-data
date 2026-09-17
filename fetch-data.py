@@ -19,7 +19,7 @@ from backend.bmrs import fetch_FPN, fetch_extended_bmrs_data, fetch_bmrs_data
 import backend.neso as neso
 from backend.metric import Metric
 from backend.constants import INFLATORS, MANUAL_DATA_PATH, NESO_GENERATION_TYPES, RAW_DATA_PATH, PROCESSED_DATA_PATH, DATE_FIELD, DATETIME_FIELD
-from datasources.gas import *
+from datasources.supply import *
 from datasources.policy import *
 from datasources.system import *
 
@@ -356,16 +356,15 @@ def fetch_generation_and_prices(process_only: bool):
             return float(s.mean()) if len(s) > 0 else 0.0
 
     # Define aggregation functions for each column: sum for generation columns and total
+    generation = lambda x: x.sum()/2  # Half the generation values to convert from MW to MWh for the half-hourly period
     aggregation_functions = [(col, 'sum') for col in list(NESO_GENERATION_TYPES.values()) + ['Total']]    
-    agg_map = dict(aggregation_functions  + [('Price', weighted_price)])
+    agg_map = dict(aggregation_functions + [('Price', weighted_price)])
 
     # Group by date and calculate aggregated sums + weighted price
     daily_data = merged.groupby('Settlement Date').agg(agg_map).reset_index()
     for gen_type in NESO_GENERATION_TYPES.values():
         if gen_type in daily_data.columns:
             daily_data[gen_type + ' (%)'] = (daily_data[gen_type] / daily_data['Total']) * 100
-
-    annual_cost = daily_data.groupby(daily_data['Settlement Date'].dt.year).apply(lambda x: (x['Total'] * x['Price']).sum())
 
     # save the cleaned data to a new CSV file
     half_hourly_dataset.save_data(merged)
@@ -617,9 +616,9 @@ def create_metrics(process_only: bool):
     cm_payments = cm_payments_source.load_data()
     cfd_locations = cfd_locations_source.load_data()
     bm_payments = bm_payments_source.load_data()
+    wholesale_cost = wholesale_price_source.load_data()
 
-    gasvselec['Gas Cost'] = gasvselec['Gas Price'] * gasvselec['Gas']/0.4
-    gasvselec['Total'] = gasvselec['Total']/2 # Half hourly data is in MW, so we need to divide by 2 to get MWh
+    gasvselec['Gas Cost'] = gasvselec['Gas Price'] * gasvselec['Gas'] * 2.5
     gasvselec['Wholesale Cost'] = gasvselec['Electricity Price'] * gasvselec['Total']
 
     cfd_settlements[DATE_FIELD] = pd.to_datetime(cfd_settlements['Settlement Date'], errors='coerce')

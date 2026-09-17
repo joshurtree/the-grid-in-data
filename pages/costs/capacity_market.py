@@ -33,7 +33,3 @@ This analysis explores the payments made under the Capacity Market and the aucti
 display_chart(create_cm_payments())
 display_chart(create_cm_auction_scatter(inflator_type=inflator_type))
 footer()
-
-# show metrics in top left corner of the page
-
-previous_year = True

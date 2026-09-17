@@ -4,7 +4,7 @@ from datetime import datetime, date, timedelta
 import plotly.graph_objects as go
 import backend.elecvsgas as elecvsgas
 from backend.constants import FREQ_GROUPS
-from datasources.gas import current_gas_price_metric, total_gas_cost_metric, sparkgap_metric
+from datasources.supply import current_gas_price_metric, total_gas_cost_metric, sparkgap_metric
 from pages.base import display_chart, date_range_slider, display_metrics, footer
 
 st.markdown("## Gas Prices")

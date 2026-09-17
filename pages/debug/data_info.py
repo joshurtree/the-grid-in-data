@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 from datasources.datasource import DataSet, DataSource
-import datasources.gas as gas
+import datasources.supply as supply
 import datasources.policy as policy
 import datasources.system as system
 
@@ -33,7 +33,7 @@ def data_info(member: Any) -> Optional[dict]:
         "Number of records": len(df),
     }
 
-for module in [gas, policy, system]:
+for module in [supply, policy, system]:
     st.header(f"Module: {module.__name__}")
     sources = pd.DataFrame([data_info(member) for name, member in inspect.getmembers(module) if isinstance(member, DataSource)])
     st.header(f"Data sources")

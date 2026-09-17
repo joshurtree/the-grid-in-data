@@ -35,7 +35,7 @@ monthly_gas_prices_dataset = DataSet(
 
 current_gas_price_metric = Metric(
     "Current Gas Price", 
-    description="Current price of gas in pence per therm. Averaged over the last month", 
+    description="Current price of gas in £/MWh. Averaged over the last month", 
     unit=UNIT_PRICE)
 total_gas_cost_metric = Metric(
     "Estimated Annual Gas Cost", 
@@ -45,3 +45,10 @@ sparkgap_metric = Metric(
     "Spark Gap (Wholesale)", 
     description="Current difference between wholesale electricity prices and gas prices. Averaged over the last month", 
     unit=NO_UNIT)
+
+capacity_factors_source = DataSource(
+    providers=[energy_trends_provider],
+    name="capacity_factors",
+    category=DataCategory.SYSTEM,
+    url="data/manual/capacity_factors.csv"
+)

@@ -1,6 +1,6 @@
 from backend.metric import CURRENCY, ENERGY, UNIT_PRICE, Metric, NO_UNIT
 from datasources.datasource import DataSource, DataCategory, DataSet, self_provider
-from datasources.gas import daily_gas_prices_dataset
+from datasources.supply import daily_gas_prices_dataset
 from datasources.providers import *
 from backend.constants import DATE_FIELD, DATETIME_FIELD
 
@@ -67,12 +67,6 @@ bm_payments_source = DataSource(
     date_fields=[DATETIME_FIELD]
 )
 
-capacity_factors_source = DataSource(
-    providers=[energy_trends_provider],
-    name="capacity_factors",
-    category=DataCategory.SYSTEM,
-    url="data/manual/capacity_factors.csv"
-)
 
 generators_dataset = DataSet(
     name="generators",

@@ -6,7 +6,7 @@ import streamlit as st
 
 import backend.cfd as cfd 
 from datasources.policy import cfd_dataset, total_cfd_payments_metric, total_cfd_capacity_metric
-from pages.base import display_chart, display_metrics
+from pages.base import display_chart, display_metrics, footer
 
 st.markdown('''
 # Contract for Difference (CFD) 
@@ -50,3 +50,5 @@ display_chart(
         ),
     },
 )
+
+footer()

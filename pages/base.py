@@ -64,6 +64,6 @@ def footer():
         st.markdown(
             """
             ---
-            Made by [Josh Andrews](mailto:joshurtree@yahoo.com)
+            Copyright © [Josh Andrews](mailto:joshurtree@gmail.com) 2026
             """
         )

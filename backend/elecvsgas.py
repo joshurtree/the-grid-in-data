@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from backend.constants import FREQ_GROUPS, PROCESSED_DATA_PATH, RAW_DATA_PATH
 from datasources.system import gasvselec_dataset
-from datasources.gas import daily_gas_prices_dataset, monthly_gas_prices_dataset
+from datasources.supply import daily_gas_prices_dataset, monthly_gas_prices_dataset
 import numpy as np
 from backend.chartset import Chart
 
@@ -81,7 +81,7 @@ def create_chart(start_date, end_date, period_group='Daily', gas_usage=[0, 100],
         chart_figure.update_yaxes(title_text="Electricity Price (£/MWh)", secondary_y=False)
         chart_figure.update_yaxes(title_text="Gas Price (£/MWh)", secondary_y=True)
 
-    return Chart(monthly_gas_prices_dataset, chart_figure, title="Wholesale Price vs Date", description="This chart shows the relationship between wholesale electricity and gas prices over time.")
+    return Chart(monthly_gas_prices_dataset, chart_figure, title="Wholesale Price vs Gas Price", description="This chart shows the relationship between wholesale electricity and gas prices over time.")
 
 def create_price_chart(start_date=None, end_date=None, period_group='Monthly', gas_usage=[0, 100]) -> Chart:
     data = monthly_gas_prices_dataset.load_data()
