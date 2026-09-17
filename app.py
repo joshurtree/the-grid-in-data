@@ -1,3 +1,4 @@
+import sys
 import streamlit as st
 
 pages = {
@@ -21,7 +22,7 @@ pages = {
 }
 
 # Add pages if the debug flag is set
-if st.session_state.get("debug", True):
+if "--debug" in sys.argv:
     pages["Debug"] = [
         st.Page("pages/debug/data_info.py", title="Data info", icon=":material/bug_report:")
     ]
