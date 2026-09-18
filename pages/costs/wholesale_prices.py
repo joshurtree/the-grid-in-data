@@ -14,10 +14,6 @@ with st.sidebar:
         "Select the date range, target generation type, and minimum usage "
         "percentage to filter the data."
     )
-    st.markdown(
-        "The chart shows the electricity prices over time, while the table "
-        "provides detailed statistics for the selected generation type."
-    )
     start_date, end_date, frequency = date_range_slider(
         start_date=(datetime.now() - timedelta(days=365)).date(),
         end_date=datetime.now().date(),
@@ -44,6 +40,7 @@ st.markdown(
 )
 
 display_chart(gbwep.create_chart(start_date, end_date, frequency, target, usage))
+st.markdown("* Inspired by [this](https://ember-energy.org/latest-insights/british-power-prices-are-increasingly-independent-from-gas/) analysis by Ember.")
 display_chart(gbwep.create_table(start_date, end_date, target, usage))
 footer()
 

@@ -356,8 +356,8 @@ def fetch_generation_and_prices(process_only: bool):
             return float(s.mean()) if len(s) > 0 else 0.0
 
     # Define aggregation functions for each column: sum for generation columns and total
-    generation = lambda x: x.sum()/2  # Half the generation values to convert from MW to MWh for the half-hourly period
-    aggregation_functions = [(col, 'sum') for col in list(NESO_GENERATION_TYPES.values()) + ['Total']]    
+    to_generation = lambda x: x.sum()/2  # Half the generation values to convert from MW to MWh for the half-hourly period
+    aggregation_functions = [(col, to_generation) for col in list(NESO_GENERATION_TYPES.values()) + ['Total']]    
     agg_map = dict(aggregation_functions + [('Price', weighted_price)])
 
     # Group by date and calculate aggregated sums + weighted price
@@ -626,7 +626,8 @@ def create_metrics(process_only: bool):
 
     cfd_locations[DATE_FIELD] = pd.to_datetime(cfd_locations['Operational Start Date'], errors='coerce')
 
-    cm_payments[DATE_FIELD] = pd.to_datetime(cm_payments['Calendar Year'].astype(str) + '-' + cm_payments['Calendar Month'].astype(str) + f"-{datetime.today().day}", errors='coerce')
+    cm_payments[DATE_FIELD] = pd.to_datetime(cm_payments['Calendar Year'].astype(str) + '-' + cm_payments['Calendar Month'].astype(str) + "-01", errors='coerce')
+    cm_payments = cm_payments[cm_payments['Capacity Payment Suspension Flag'] == 'Not Suspended']
     cm_payments = cm_payments.groupby(DATE_FIELD).agg({'Capacity Payment (£)': 'sum', "Auction Acquired Capacity Obligation (MW)": 'sum'}).reset_index()
     
     bm_payments["Total"] = bm_payments[['Energy Imbalance', 'Frequency Control', 'Positive Reserve', 'Constraints', 'Negative Reserve', 'Other']].sum(axis=1)
@@ -640,9 +641,28 @@ def create_metrics(process_only: bool):
     create_annual_metric(total_cfd_payments_metric, cfd_settlements, "CfD Payments (£)")
     create_total_metric(total_cfd_capacity_metric, cfd_locations, "Maximum Contract Capacity (MW)")
     create_annual_metric(total_cm_payments_metric, cm_payments, "Capacity Payment (£)")
-    create_annual_metric(total_cm_capacity_metric, cm_payments, "Auction Acquired Capacity Obligation (MW)")
+    create_annual_metric(total_cm_capacity_metric, cm_payments, "Auction Acquired Capacity Obligation (MW)", "mean")
     create_annual_metric(annual_bm_payments_metric, bm_payments, "Total")
+
+def create_rolling_quartely_totals(process_only: bool):
+    print("Creating rolling quarterly totals...")
+    gasvselec = gasvselec_dataset.load_data()
+    cfd_settlements = cfd_settlements_source.load_data()
+    cm_payments = cm_payments_source.load_data()
+    bm_payments = bm_payments_source.load_data()
+
+    gasvselec['Gas Cost'] = gasvselec['Gas Price'] * gasvselec['Gas'] * 2.5
+    gasvselec['Wholesale Cost'] = gasvselec['Electricity Price'] * gasvselec['Total']
+
+    cfd_settlements[DATE_FIELD] = pd.to_datetime(cfd_settlements['Settlement Date'], errors='coerce')
+    cfd_settlements = cfd_settlements.groupby(DATE_FIELD).agg({'CfD Payments (£)': 'sum'}).reset_index()
+
+    cm_payments[DATE_FIELD] = pd.to_datetime(cm_payments['Calendar Year'].astype(str) + '-' + cm_payments['Calendar Month'].astype(str) + "-01", errors='coerce')
+    cm_payments = cm_payments[cm_payments['Capacity Payment Suspension Flag'] == 'Not Suspended']
+    cm_payments = cm_payments.groupby(DATE_FIELD).agg({'Capacity Payment (£)': 'sum', "Auction Acquired Capacity Obligation (MW)": 'sum'}).reset_index()
     
+    bm_payments["Total"] = bm_payments[['Energy Imbalance', 'Frequency Control', 'Positive Reserve', 'Constraints', 'Negative Reserve', 'Other']].sum(axis=1)
+
 fetch_functions_list: list[tuple[Callable[[bool], None], str]] = [
     (fetch_generation_and_prices, "Generation and Prices Data"),
     (fetch_demand, "Demand Data"),

@@ -30,8 +30,8 @@ class MetricUnit:
         return f"{self.prefix}{value:,.2f}"
 
 CURRENCY = MetricUnit(prefix="£", suffix=(None, None, "Million", "Billion"))
-POWER = MetricUnit(prefix="", suffix=("W", "kW", "MW", "GW"))
-ENERGY = MetricUnit(prefix="", suffix=("Wh", "kWh", "MWh", "GWh", "TWh"))
+POWER = MetricUnit(prefix="", suffix=("MW", "GW"))
+ENERGY = MetricUnit(prefix="", suffix=("MWh", "GWh", "TWh"))
 UNIT_PRICE = MetricUnit(prefix="£", suffix=("per MWh",))
 PERCENT = MetricUnit(prefix="", suffix=("%",))
 NO_UNIT = MetricUnit(prefix="", suffix=(None,))

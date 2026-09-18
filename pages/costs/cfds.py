@@ -34,6 +34,7 @@ st.markdown('''
 
 cfd.filter_data(start_date, end_date, technology, allocation_round)
 display_chart(cfd.create_cfd_chart())
+st.markdown("* Note: CfDs awarded prior to AR1 are officially recognized as Investment Contracts.")
 display_chart(cfd.create_strike_price_chart())
 
 st.markdown("### List of Generators")

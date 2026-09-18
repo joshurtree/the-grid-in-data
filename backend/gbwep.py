@@ -62,7 +62,7 @@ def create_chart(start_date: date, end_date: date, frequency: str, target_genera
         height=600,
     )
 
-    return Chart(half_hourly_dataset, chart_figure, title="Wholesale Price vs Date", description="This chart shows the relationship between wholesale electricity prices and generation types over time.")
+    return Chart(half_hourly_dataset, chart_figure, title="Wholesale Price and Generation Mix", description="This chart shows the relationship between wholesale electricity prices and generation types over time.")
 
 # Group by generation type and calculate average price, total generation, and total cost for each generation type
 def create_table(start_date: date, end_date: date, target_generation: str|None, usage: tuple[float, float]) -> Chart:

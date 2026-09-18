@@ -42,9 +42,9 @@ def create_cm_auction_scatter(inflator_type='Delivery Year'):
             x=auction_data['Auction Year'],
             y=auction_data['Adjusted Price'],
             mode='markers+lines',
-            name=auction,
+            name=str(auction) + " Price",
             marker=dict(size=10, opacity=0.7, symbol=marker)
-        ), secondary_y=False)
+        ), secondary_y=True)
 
     # Create a stacked bar chart for the capacity securced in each auction
     auction_data = df[df['Auction Type'] == auction]
@@ -53,9 +53,9 @@ def create_cm_auction_scatter(inflator_type='Delivery Year'):
         fig.add_trace(go.Bar(
             x=auction_data['Auction Year'],
             y=auction_data['Capacity awarded'],
-            name=auction,
+            name=str(auction) + " Capacity",
             marker=dict(opacity=0.5),
-        ), secondary_y=True)
+        ), secondary_y=False)
 
     fig.update_layout(
         barmode='stack',
@@ -65,8 +65,8 @@ def create_cm_auction_scatter(inflator_type='Delivery Year'):
         legend=dict(x=1.05, y=1, traceorder='normal'),
         grid=dict(rows=1, columns=1)
     )
-    fig.update_yaxes(title_text="Price (£/kW/year)", secondary_y=False)
-    fig.update_yaxes(title_text="Capacity Secured (MW)", secondary_y=True)
+    fig.update_yaxes(title_text="Price (£/kW/year)", secondary_y=True)
+    fig.update_yaxes(title_text="Capacity Secured (MW)", secondary_y=False)
 
     return Chart(
         cm_auctions_source,
