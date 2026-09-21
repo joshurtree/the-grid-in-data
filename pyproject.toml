@@ -2,6 +2,9 @@
 name = "electricity-prices"
 version = "0.1.0"
 description = "GB Electricity Market Analysis"
+authors = [
+    { name = "Josh", email = "joshurtree@gmail.com" }
+]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -20,6 +23,7 @@ dependencies = [
     "certifi>=2026.7.22",
     "pandas>=3.0.5",
     "titlecase>=2.4.1",
+    "ckanapi>=4.11",
 ]
 
 [tool.uv.extra-build-dependencies]
