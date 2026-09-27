@@ -1,4 +1,4 @@
-# Our Grid in Data
+# The Grid in Data
 
 A website for analyzing and visualizing GB electricity grid data, including wholesale prices, gas prices, generation locations, capacity factors and
 more. 
@@ -9,24 +9,8 @@ Built with **Streamlit** for interactive data visualization and **Plotly** for c
 
 
 ## Quick Start
-### Using Poetry
 ```bash
-poetry install                  # Install dependencies
-poetry run streamlit run app.py
-poetry run python fetch-data.py            # Fetches and processed data for use in the website
-```
-
-### Using Pip
-```bash
-pip install -r requirements.txt  # Install dependencies
-streamlit run app.py             # Start the Streamlit app
-python fetch-data.py            # Fetches and processed data for use in the website
-```
-
-### Using Nix Flakes
-
-```bash
-nix develop                     # Enter dev environment
+nix develop                     # Enter dev environment (if using Nix)
 uv sync                         # Install dependencies
 uv run streamlit run app.py     # Start the Streamlit app
 uv run fetch-data.py            # Fetches and processed data for use in the website

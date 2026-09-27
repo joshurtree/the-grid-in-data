@@ -1,6 +1,6 @@
 import streamlit as st
-from backend.balancing import balancing_costs
-from backend.constants import FREQ_GROUPS
+from figures.balancing import balancing_costs
+from constants import FREQ_GROUPS
 from pages.base import display_chart, display_metrics, footer
 from  datasources.system import annual_bm_payments_metric
 

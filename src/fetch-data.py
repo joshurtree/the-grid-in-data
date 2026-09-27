@@ -6,7 +6,7 @@ from OSGridConverter import grid2latlong, OSGridReference
 import os
 import pandas as pd
 import sys
-from functools import partial
+import shutil
 from titlecase import titlecase
 import traceback
 
@@ -84,10 +84,10 @@ if __name__ == "__main__":
     if '--process-only' in sys.argv:
         process_only = True
 
-    # ensure data directories exist
-    for path in [RAW_DATA_PATH, PROCESSED_DATA_PATH, METRIC_PATH]:
-        os.makedirs(path, exist_ok=True)
-
+    # Move the directories in `data/manual/base-data` to `data`
+    for dir_name in os.listdir('data/manual/base-data'):
+        shutil.move(os.path.join('data/manual/base-data', dir_name), 'data')
+        
     for opt in option:
         if opt in fetch_functions:
             try:
