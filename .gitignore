@@ -13,6 +13,7 @@ wheels/
 /data/**/*.parquet
 /data/**/*.json
 !/data/manual/**
-.~lock*
 
+.direnv/
+.~lock*
 src/test.py
