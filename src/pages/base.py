@@ -24,14 +24,14 @@ def display_metrics(metrics: list[Metric]) -> None:
 def display_chart(chart: Chart, **kwargs):
     """Displays a chart in the Streamlit app."""
     if chart.is_table():
-        st.dataframe(chart.table, hide_index=True, **kwargs)
+        st.dataframe(chart.table, hide_index=True, lazy=True,**kwargs)
     else:
         figure_tab, table_tab = st.tabs(["Chart", "Data Table"])
         with figure_tab:
             if chart.chart is not None:
                 st.plotly_chart(chart.chart, width='stretch',  **kwargs)
         with table_tab:
-            st.dataframe(chart.table, hide_index=True, **kwargs)
+            st.dataframe(chart.table, hide_index=True, lazy=True, **kwargs)
     st.markdown(chart.dataset_info(), text_alignment="right")
     
     
@@ -42,7 +42,8 @@ def date_range_slider(
         max_date: date|None = None, 
         frequency="daily", 
         frequency_options: list[str] = list(FREQ_GROUPS.keys()), 
-        key_prefix: str = "date_range"
+        key_prefix: str = "date_range",
+        hide_frequency: bool = False
 ) -> tuple[pd.Timestamp, pd.Timestamp, str]:
     """Displays a date range slider in the sidebar and returns the selected start and end dates."""
     if min_date is None:
@@ -56,7 +57,7 @@ def date_range_slider(
             index=frequency_options.index(frequency) if frequency in frequency_options else 0,
             key=f"{key_prefix}_frequency",
             horizontal=True
-        )
+        ) if not hide_frequency else frequency
     date_range = st.slider(
         "Select Date Range",
         min_value=min_date,

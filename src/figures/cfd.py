@@ -85,6 +85,7 @@ def create_cfd_chart():
     )
     return Chart(
         cfd_settlements_source, 
+        grouped_data,
         fig, 
         title="CfD Payments by Technology and Allocation Round", 
         description="This chart shows the total CFD payments made to generators over time, broken down by technology and allocation round."
@@ -114,6 +115,7 @@ def create_strike_price_chart():
     )
     return Chart(
         cfd_settlements_source,
+        data,
         fig,
         title="CfD Payments Paid vs Strike Price",
         description="This chart shows the relationship between the strike price and the average CFD payments paid to generators, broken down by technology."
@@ -139,7 +141,7 @@ def show_generators(search_term: str = "", status: str = "All"):
     if search_term:
         filtered_generators = filtered_generators[
             filtered_generators.apply(
-                lambda row: search_term.lower() in str(row['Generator Name']).lower() or
+                lambda row: search_term.lower() in str(row['CfD Name']).lower() or
                             search_term.lower() in str(row['Technology']).lower(),
                 axis=1
             )

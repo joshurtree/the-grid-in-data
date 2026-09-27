@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 import os
 import pandas as pd
 import plotly.graph_objects as go
@@ -6,7 +6,7 @@ import streamlit as st
 
 import figures.cfd as cfd 
 from  datasources.policy import cfd_dataset, total_cfd_payments_metric, total_cfd_capacity_metric
-from pages.base import display_chart, display_metrics, footer
+from pages.base import display_chart, display_metrics, footer, date_range_slider
 
 st.markdown('''
 # Contract for Difference (CFD) 
@@ -16,10 +16,7 @@ display_metrics([total_cfd_payments_metric, total_cfd_capacity_metric])
 with st.sidebar:
     st.markdown("### Filter Options",)
     st.markdown("Select the date range and strike price to analyze the CFD payments.")
-    start_date = st.date_input(
-        "Start Date", value=(datetime.now() - timedelta(days=365)), key="cfd_start"
-    )
-    end_date = st.date_input("End Date", value=datetime.now(), key="cfd_end")
+    start_date, end_date, frequency = date_range_slider(date.today() - timedelta(days=365), date.today(), min_date=datetime(2014, 1, 1), max_date=date.today(), frequency="monthly", frequency_options=["daily", "weekly", "monthly", "quarterly", "yearly"], key_prefix="cfd", hide_frequency=True)
     technology = st.multiselect("Technology", options=cfd.get_available_technologies(), default=cfd.get_available_technologies())
     allocation_round = st.multiselect("Allocation Round", options=cfd.get_available_allocation_rounds(), default=cfd.get_available_allocation_rounds())
 
