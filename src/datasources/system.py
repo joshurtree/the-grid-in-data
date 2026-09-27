@@ -1,5 +1,5 @@
 from figures.metric import CURRENCY, ENERGY, UNIT_PRICE, Metric, NO_UNIT
-from . import DataSource, DataCategory, DataSet, self_provider, daily_gas_prices_dataset
+from .datasource import DataSource, DataCategory, DataSet
 from .providers import *
 from constants import DATE_FIELD, DATETIME_FIELD
 
@@ -14,7 +14,7 @@ generation_source = DataSource(
     providers=[neso_provider],
     name="electricity_generation",
     category=DataCategory.SYSTEM,
-    url="https://api.neso.energy/dataset/88313ae5-94e4-4ddc-a790-593554d8c6b9/resource/f93d1835-75bc-43e5-84ad-12472b180a98/download/df_fuel_ckan.csv",
+    url="https://www.neso.energy/data-portal/historic-generation-mix/historic_gb_generation_mix",
     date_fields=[DATETIME_FIELD]
 )
 demand_source = DataSource(
@@ -27,7 +27,7 @@ embedded_generation_source = DataSource(
     providers=[neso_provider],
     name="embedded_generation",
     category=DataCategory.SYSTEM,
-    url="https://api.neso.energy/dataset/91c0c70e-0ef5-4116-b6fa-7ad084b5e0e8/resource/db6c038f-98af-4570-ab60-24d71ebd0ae5/download/202607090125_embedded_forecast.csv",
+    url="https://www.neso.energy/data-portal/embedded-wind-and-solar-forecasts",
 )
 wholesale_price_source = DataSource(
     providers=[elexon_provider],
@@ -37,7 +37,7 @@ wholesale_price_source = DataSource(
     date_fields=[DATETIME_FIELD]
 )
 generators_manual_source = DataSource(
-    providers=[self_provider],
+    providers=[],
     name="generators",
     category=DataCategory.SYSTEM
 )
@@ -55,7 +55,7 @@ total_capacity_source = DataSource(
     providers=[dukes_provider],
     name="total_capacity",
     category=DataCategory.SYSTEM,
-    url="https://assets.publishing.service.gov.uk/media/6a6a3668862aaf18d9c629ed/DUKES_5.12.xlsx"
+    url="https://www.gov.uk/government/statistics/electricity-chapter-5-digest-of-united-kingdom-energy-statistics-dukes"
 )
 
 bm_payments_source = DataSource(
@@ -66,6 +66,7 @@ bm_payments_source = DataSource(
     date_fields=[DATETIME_FIELD]
 )
 
+from .supply import daily_gas_prices_dataset
 
 generators_dataset = DataSet(
     name="generators",

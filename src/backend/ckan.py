@@ -67,6 +67,7 @@ class CKANClient:
         """
         rc = RemoteCKAN(self.base_url)
         response = rc.action.package_show(id=package_id)
+        print(response)
         
         all_records = pd.DataFrame()
         for resource in response["result"]["resources"]:

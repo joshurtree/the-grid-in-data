@@ -1,5 +1,5 @@
 from figures.metric import CURRENCY, POWER, Metric
-from .datasource import DataSource, DataCategory, DataSet, self_provider
+from .datasource import DataSource, DataCategory, DataSet
 from .providers import *
 from .system import generation_source
 from constants import RAW_DATA_PATH, MANUAL_DATA_PATH

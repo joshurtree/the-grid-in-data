@@ -8,6 +8,7 @@ from .helpers import camel_case_to_capitalised
 from .ckan import CKANClient, Package, Endpoint
 from constants import DATETIME_FIELD, DATE_FIELD, NESO_GENERATION_TYPES
 from datasources.system import generation_source, wholesale_price_source, demand_source, bm_payments_source, half_hourly_dataset, daily_dataset, gasvselec_dataset
+from datasources.supply import capacity_factors_dataset
 
 neso_client = CKANClient(base_url="https://api.neso.energy")
     
@@ -218,3 +219,30 @@ def create_elec_vs_gas_dataset(process_only: bool):
 
     merged['Ratio'] = merged['Electricity Price'] / merged['Gas Price']
     gasvselec_dataset.save_data(merged)
+
+def calculate_capacity_factors():
+    """
+    Calculates the capacity factors for wind and solar based on generation and capacity data.
+    For each quarter it calculates the average, minimum, and maximum capacity factors for daily, weekly, and monthly periods.
+    """
+
+    print("Calculating capacity factors...")
+    capacity_factors, generation = capacity_factors_dataset.base_data()
+    capacity_factors['Wind Capacity (MW)'] = capacity_factors['Onshore Wind Capacity (MW)'] + capacity_factors['Offshore Wind Capacity (MW)']
+    generation = generation.rename(columns={'Settlement Date': DATE_FIELD})
+    generation['Wind'] = generation['Wind'] + generation['Embedded Wind']
+
+    # Interpolate capacity factors for missing dates
+    capacity_factors = (
+        capacity_factors
+        .set_index(DATE_FIELD).reindex(pd.date_range(start=capacity_factors[DATE_FIELD].min(), end=capacity_factors[DATE_FIELD].max(), freq='D'))
+        .interpolate(method='time').reset_index().rename(columns={'index': DATE_FIELD})
+    )
+    merged = pd.merge(generation, capacity_factors, on=DATE_FIELD, how='left', suffixes=('', '_capacity'))
+    columns_to_drop = [col for col in merged.columns if col not in {DATE_FIELD, 'Wind Capacity (MW)', 'Solar Capacity (MW)'}]
+    for window in [('Daily', 1), ('Weekly', 7), ('Monthly', 30), ('Quarterly', 90)]:
+        for gen_type in ['Wind', 'Solar']:
+            merged[f'{gen_type} Capacity Factor ({window[0]})'] = merged[gen_type].rolling(window=window[1]).sum() / (merged[f'{gen_type} Capacity (MW)'].rolling(window=window[1]).sum() * 24) * 100
+
+    merged = merged.drop(columns=columns_to_drop)
+    capacity_factors_dataset.save_data(merged)

@@ -70,6 +70,7 @@ def create_cm_auction_scatter(inflator_type='Delivery Year'):
 
     return Chart(
         cm_auctions_source,
+        df,
         fig,
         title="CM Auction Prices",
         description="This chart shows the Capacity Market auction prices over time, broken down by auction. Each auction is represented by a different symbol, and the capacity secured in each auction is shown as a stacked bar chart."
@@ -133,6 +134,7 @@ def create_cm_payments(inflator_type='Delivery Year') -> Chart:
 
     return Chart(
         cm_payments_source, 
+        df,
         fig, 
         title="CM Payments by Delivery Year", 
         description="This chart shows the total Capacity Market payments made to generators over time, broken down by delivery year. It includes both actual payments and forecasted payments based on auction data."

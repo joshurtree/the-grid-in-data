@@ -1,46 +1,35 @@
-# GB Electricity Prices - Streamlit Web Interface
+# Our Grid in Data
 
-A web application for analyzing and visualizing GB electricity market data, including wholesale prices, gas prices, and generation locations.
+A website for analyzing and visualizing GB electricity grid data, including wholesale prices, gas prices, generation locations, capacity factors and
+more. 
 
 Built with **Streamlit** for interactive data visualization and **Plotly** for charts.
 
 ## Features
 
-- **GB Energy Generation Map** — Interactive map showing generator locations and current generation levels
-- **Electricity vs Gas Prices** — Compare electricity and gas prices with dual-axis charts and spark gap analysis
-- **GB Energy Wholesale Prices** — View wholesale electricity prices over time, colored by generation volume
-- **Contracts for Difference** — Analyze CFD payments by technology and strike price
 
 ## Quick Start
+### Using Poetry
+```bash
+poetry install                  # Install dependencies
+poetry run streamlit run app.py
+poetry run python fetch-data.py            # Fetches and processed data for use in the website
+```
 
-### Using Nix Flakes (Recommended)
+### Using Pip
+```bash
+pip install -r requirements.txt  # Install dependencies
+streamlit run app.py             # Start the Streamlit app
+python fetch-data.py            # Fetches and processed data for use in the website
+```
+
+### Using Nix Flakes
 
 ```bash
 nix develop                     # Enter dev environment
 uv sync                         # Install dependencies
 uv run streamlit run app.py     # Start the Streamlit app
-```
-
-Access the app at: **http://localhost:8501**
-
-### Using Poetry
-
-```bash
-poetry install                  # Install dependencies
-poetry run streamlit run app.py
-```
-
-### Direct with UV
-
-```bash
-uv sync                         # Install dependencies
-uv run streamlit run app.py
-```
-
-### Using the Nix Flake App
-
-```bash
-nix run .#app
+uv run fetch-data.py            # Fetches and processed data for use in the website
 ```
 
 ## Requirements
@@ -50,18 +39,18 @@ nix run .#app
 
 ## Data Files
 
-The application expects data in the `data/` directory:
-- `market-prices.csv` — Wholesale electricity prices
-- `gas_prices.csv` — Natural gas prices
-- `generators.csv` — Generator locations and metadata
-- `tnuosgenzones.geojson` — DNO zone boundaries
-
+The application expects data in the `data/` directory in the following structure:
+- data/raw - Raw data files fetched from external sources
+- data/processed - Processed data files ready for analysis and visualization
+- data/manual - Any manually curated data files
+- data/metrics - Files used for displaying metrics
 ## Architecture
 
-- **app.py** — Main Streamlit entrypoint with sidebar navigation between pages
-- **pages/** — One module per page, each exposing a `render()` function
-- **backend/** — Data loading, filtering, and chart-building logic (framework-agnostic)
-- **constants.py** — Configuration and paths
+- **src/app.py** — Main Streamlit entrypoint with sidebar navigation between pages
+- **src/fetch-data.py** — Script for fetching and processing data for the website
+- **src/pages/** — One module per page, each exposing a `render()` function
+- **src/backend/** — Data loading, filtering, and chart-building (using plotly) logic (framework-agnostic)
+- **src/constants.py** — Configuration and paths
 - **pyproject.toml** — Project dependencies (managed by UV or Poetry)
 
 ## Notes

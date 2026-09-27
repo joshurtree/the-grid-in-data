@@ -55,6 +55,6 @@ st.markdown(
     "You can also view the ratio of electricity to gas prices by selecting the checkbox below."
 )
 ratio = st.toggle("Show Ratio of Electricity to Gas Prices", key="show_ratio")
-display_chart(elecvsgas.create_chart(start_date=start_date, end_date=end_date, period_group=frequency, gas_usage=usage, as_ratio=ratio))
+display_chart(elecvsgas.create_chart(start_date=start_date, end_date=end_date, period_group=frequency, target_generation=target, usage=usage, as_ratio=ratio))
 footer()
 

@@ -57,6 +57,7 @@ def create_price_chart(start_date=None, end_date=None, period_group='Monthly', g
     )
 
     return Chart(monthly_gas_prices_dataset, 
+                 filtered_data,
                  chart_figure, 
                  title="Monthly Wholesale Gas Price", 
                  description="This chart shows the monthly wholesale gas prices over time.")
@@ -92,7 +93,9 @@ def create_storage_chart(start_date=None, end_date=None, period_group='Monthly',
         height=600
     )
 
-    return Chart(gas_storage_dataset, 
-                 chart_figure, 
-                 title="Gas Reserves (Days)", 
-                 description="This chart shows the estimated number of days of gas reserves remaining based on current storage and demand.")
+    return Chart(
+        gas_storage_dataset, 
+        filtered_data,
+        chart_figure, 
+        title="Gas Reserves (Days)", 
+        description="This chart shows the estimated number of days of gas reserves remaining based on current storage and demand.")

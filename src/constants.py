@@ -122,6 +122,13 @@ FREQ_GROUPS = {
     'Yearly': timedelta(days=365),
 }
 
+DATE_WINDOWS = {
+    '1M': timedelta(days=30),
+    '6M': timedelta(days=180),
+    '1Y': timedelta(days=365),
+    '5Y': timedelta(days=5*365),
+    'All': None
+}
 RAW_DATA_PATH = os.path.join('data', 'raw')
 PROCESSED_DATA_PATH = os.path.join('data', 'processed')
 MANUAL_DATA_PATH = os.path.join('data', 'manual')

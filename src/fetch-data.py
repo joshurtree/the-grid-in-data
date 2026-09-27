@@ -3,6 +3,7 @@ from collections.abc import Callable
 from datetime import date, datetime, timezone, timedelta
 import numpy as np
 from OSGridConverter import grid2latlong, OSGridReference
+import os
 import pandas as pd
 import sys
 from functools import partial
@@ -14,7 +15,7 @@ from backend.generation import fetch_generation_and_prices, fetch_demand, merge_
 from backend.policy import fetch_lccc_data
 from backend.metrics import create_metrics
 from figures.metric import Metric
-from constants import INFLATORS, MANUAL_DATA_PATH, NESO_GENERATION_TYPES, RAW_DATA_PATH, PROCESSED_DATA_PATH, DATE_FIELD, DATETIME_FIELD
+from constants import METRIC_PATH, RAW_DATA_PATH, PROCESSED_DATA_PATH
 from datasources.supply import *
 from datasources.policy import *
 from datasources.system import *
@@ -82,6 +83,10 @@ if __name__ == "__main__":
     process_only = False
     if '--process-only' in sys.argv:
         process_only = True
+
+    # ensure data directories exist
+    for path in [RAW_DATA_PATH, PROCESSED_DATA_PATH, METRIC_PATH]:
+        os.makedirs(path, exist_ok=True)
 
     for opt in option:
         if opt in fetch_functions:

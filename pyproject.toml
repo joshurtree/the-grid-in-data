@@ -28,3 +28,4 @@ dependencies = [
 
 [tool.uv.extra-build-dependencies]
 "titlecase-2.4.1" = ["setuptools"]
+"docopt-0.6.2" = ["setuptools"]

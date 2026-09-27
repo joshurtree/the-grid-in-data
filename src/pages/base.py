@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 import os
 from plotly import graph_objects as go
 import pandas as pd
@@ -7,7 +7,7 @@ from typing import Callable
 
 from figures.chartset import Chart
 from figures.metric import Metric
-from constants import FREQ_GROUPS
+from constants import DATE_WINDOWS, FREQ_GROUPS
 
 def display_metrics(metrics: list[Metric]) -> None:
     """Displays a list of metrics in a horizontal layout."""
@@ -22,13 +22,19 @@ def display_metrics(metrics: list[Metric]) -> None:
                       help=f"{metric.description}. Comparison is with one and five years ago")
 
 def display_chart(chart: Chart, **kwargs):
-    """Displays a chart from a ChartSet object."""
+    """Displays a chart in the Streamlit app."""
     if chart.is_table():
-        st.dataframe(chart.chart, hide_index=True, width='stretch', height='content', **kwargs)
+        st.dataframe(chart.table, hide_index=True, **kwargs)
     else:
-        st.plotly_chart(chart.figure(), **kwargs)
+        figure_tab, table_tab = st.tabs(["Chart", "Data Table"])
+        with figure_tab:
+            if chart.chart is not None:
+                st.plotly_chart(chart.chart, width='stretch',  **kwargs)
+        with table_tab:
+            st.dataframe(chart.table, hide_index=True, **kwargs)
     st.markdown(chart.dataset_info(), text_alignment="right")
-
+    
+    
 def date_range_slider(
         start_date: date, 
         end_date: date, 
@@ -39,6 +45,10 @@ def date_range_slider(
         key_prefix: str = "date_range"
 ) -> tuple[pd.Timestamp, pd.Timestamp, str]:
     """Displays a date range slider in the sidebar and returns the selected start and end dates."""
+    if min_date is None:
+        min_date = start_date
+    if max_date is None:
+        max_date = end_date
     if len(frequency_options) > 1:
         frequency = st.radio(
             "Select Frequency",
@@ -49,21 +59,40 @@ def date_range_slider(
         )
     date_range = st.slider(
         "Select Date Range",
-        min_value=min_date or start_date,
-        max_value=max_date or end_date,
+        min_value=min_date,
+        max_value=max_date,
         value=(start_date, end_date),
         format="DD MMM YY",
         step=FREQ_GROUPS.get(frequency, timedelta(days=1)),
-        key=f"{key_prefix}_slider"
+        key=f"{key_prefix}_slider",
+        on_change=lambda: st.session_state.update({f"{key_prefix}_pills": "Custom"})
     )
+   
+    def update_slider_from_pills():
+        selected_window = st.session_state.get(f"{key_prefix}_pills")
+        if selected_window == "All":
+            st.session_state[f"{key_prefix}_slider"] = (min_date, max_date)
+        elif selected_window in DATE_WINDOWS:
+            new_start_date = datetime.today() - DATE_WINDOWS[selected_window]
+            st.session_state[f"{key_prefix}_slider"] = (new_start_date, datetime.today())
+
+    alt_date_range = st.pills(
+        "Quick Date Range",
+        options=list(DATE_WINDOWS.keys()),
+        label_visibility="collapsed",
+        key=f"{key_prefix}_pills",
+        on_change=update_slider_from_pills
+    )
+
     return pd.to_datetime(date_range[0]), pd.to_datetime(date_range[1]), frequency
 
 def footer():
     """Displays a footer with the author's name and email."""
     with st.container():
         st.markdown(
-            """
+            '''
             ---
             Copyright © [Josh Andrews](mailto:joshurtree@gmail.com) 2026
-            """
-        )
+            [![Repo](https://badgen.net/badge/icon/GitHub?icon=github&label)](https://github.com/joshurtree/electricity-prices)
+            [![Buy Me a Coffee](https://badgen.net/badge/icon/Buy%20Me%20a%20Coffee?icon=buymeacoffee&label)](https://www.buymeacoffee.com/joshurtree)
+            ''')

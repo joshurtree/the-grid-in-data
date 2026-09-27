@@ -90,7 +90,6 @@ def create_metrics(process_only: bool):
     #cm_payments[DATE_FIELD] = pd.to_datetime(cm_payments['Calendar Year'].astype(str) + '-' + cm_payments['Calendar Month'].astype(str) + "-01", errors='coerce')
     cm_payments = cm_payments[cm_payments['Capacity Payment Suspension Flag'] == 'Not Suspended']
     cm_payments = cm_payments.groupby(DATE_FIELD).agg({'Capacity Payment (£)': 'sum', "Auction Acquired Capacity Obligation (MW)": 'sum'}).reset_index()
-    print(cm_payments.head())
     bm_payments["Total"] = bm_payments[['Energy Imbalance', 'Frequency Control', 'Positive Reserve', 'Constraints', 'Negative Reserve', 'Other']].sum(axis=1)
 
     create_monthly_metric(current_gas_price_metric, gasvselec, "Gas Price", "mean")

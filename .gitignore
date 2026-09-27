@@ -9,4 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# Data files
+/data/**/*.parquet
+!/data/manual/**
 .~lock*
+
+src/test.py

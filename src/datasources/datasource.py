@@ -14,21 +14,33 @@ class DataCategory(Enum):
     GAS="gas"
     SECURITY="security"
 
+@dataclass
+class DataLicence:
+    name: str
+    url: str    
 
 @dataclass
 class DataProvider:
     name: str
     url: str
+    licence: DataLicence|None = None
     short_name: str =  ""
+    attribution: str|None = None
 
     def __post_init__(self):
         if self.short_name == "":
             self.short_name = self.name
 
+    def attribution_text(self):
+        if self.attribution:
+            return self.attribution
+        elif self.licence:
+            return f'Data provided by {self.name} under the {self.licence.name}'
+        else:
+            return f'Data provided by {self.name}'
+        
     def markdown_link(self):
-        return f"[{self.short_name}]({self.url})"
-
-self_provider = DataProvider(name="Self", url="")
+        return f"[{self.short_name}]({self.url} '{self.attribution_text()}')"
 
 @dataclass
 class DataBase:
