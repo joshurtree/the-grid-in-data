@@ -67,10 +67,9 @@ class CKANClient:
         """
         rc = RemoteCKAN(self.base_url)
         response = rc.action.package_show(id=package_id)
-        print(response)
         
         all_records = pd.DataFrame()
-        for resource in response["result"]["resources"]:
+        for resource in response["resources"]:
             if resource["format"].lower() != "csv":
                 continue
             all_records = pd.concat([all_records, pd.read_csv(resource["url"])], ignore_index=True)

@@ -124,7 +124,6 @@ def create_gas_storage_dataset():
     storage_data, storage_capacity_data, demand_data = gas_storage_dataset.base_data()
 
     storage_capacity_data.set_index('Year', inplace=True)
-    print(storage_capacity_data.columns)
     # Take the rolling one month daily average demand to calculate the number of days of storage remaining
     demand_data[DATE_FIELD] = pd.to_datetime(demand_data[DATE_FIELD], errors='coerce')
     demand_data = demand_data.dropna(subset=[DATE_FIELD]).sort_values(by=DATE_FIELD).reset_index(drop=True)

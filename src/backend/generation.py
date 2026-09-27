@@ -29,7 +29,7 @@ def fetch_generation() -> None:
         return additional
     
     print('Fetching generation data from Neso API...')
-    generation = generation_source.load_data() if generation_source.exists() else process_generation_data(generation_source.fetch_data())
+    generation = generation_source.load_data() if generation_source.exists() else pd.DataFrame()
     print(f'[DEBUG] Loaded {len(generation)} generation records')
     additional = GENERATION(offset=len(generation), sort='DATETIME asc')
 
