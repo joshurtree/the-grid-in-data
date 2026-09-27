@@ -93,8 +93,8 @@ class NationalGasClient:
             A new DataFrame with the updated values for the specified data item.
         """
 
-        start_date = df[DATE_FIELD].max() + timedelta(days=1) if DATE_FIELD in df.columns else None
-        if start_date is not None and start_date > datetime.today():
+        start_date = df[DATE_FIELD].max() + timedelta(days=1) if DATE_FIELD in df.columns else date.today() - timedelta(days=5*366)  # Default to 5 years ago if no start date is provided
+        if start_date is not None and start_date >= datetime.today():
             print(f"No new data to fetch for {data_item.name!r}; latest date in DataFrame is {start_date}.")
             return df
         
