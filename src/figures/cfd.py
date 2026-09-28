@@ -142,7 +142,7 @@ def show_generators(search_term: str = "", status: str = "All"):
         filtered_generators = filtered_generators[
             filtered_generators.apply(
                 lambda row: search_term.lower() in str(row['CfD Name']).lower() or
-                            search_term.lower() in str(row['Technology']).lower(),
+                            search_term.lower() in str(row['Technology Type']).lower(),
                 axis=1
             )
         ]

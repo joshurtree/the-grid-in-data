@@ -16,7 +16,7 @@ display_metrics([total_cfd_payments_metric, total_cfd_capacity_metric])
 with st.sidebar:
     st.markdown("### Filter Options",)
     st.markdown("Select the date range and strike price to analyze the CFD payments.")
-    start_date, end_date, frequency = date_range_slider(date.today() - timedelta(days=365), date.today(), min_date=datetime(2014, 1, 1), max_date=date.today(), frequency="monthly", frequency_options=["daily", "weekly", "monthly", "quarterly", "yearly"], key_prefix="cfd", hide_frequency=True)
+    start_date, end_date, frequency = date_range_slider(date.today() - timedelta(days=365), date.today(), min_date=date(2014, 1, 1), max_date=date.today(), key_prefix="cfd", hide_frequency=True)
     technology = st.multiselect("Technology", options=cfd.get_available_technologies(), default=cfd.get_available_technologies())
     allocation_round = st.multiselect("Allocation Round", options=cfd.get_available_allocation_rounds(), default=cfd.get_available_allocation_rounds())
 
