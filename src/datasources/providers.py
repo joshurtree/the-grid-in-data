@@ -1,11 +1,15 @@
 from .datasource import DataLicence, DataProvider
 
-open_government_licence = DataLicence(name="Open Government Licence", url="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/")
+open_government_licence = DataLicence(
+    name="Open Government Licence", 
+    url="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+)
 
 neso_provider = DataProvider(
     name="National Energy System Operator", 
     short_name="NESO", url="https://neso.energy/data-portal/", 
-    licence=open_government_licence
+    licence=DataLicence(name="NESO Open Licence", url="https://www.neso.energy/data-portal/neso-open-licence/"),
+    attribution="Supported by National Energy SO Open Data"
 )
 elexon_provider = DataProvider(
     name="Elexon", 

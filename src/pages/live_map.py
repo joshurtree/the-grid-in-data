@@ -16,7 +16,7 @@ def _fig_from_error(msg):
 
 def update_map(time=None):
     if time is None:
-        time = datetime.now(tz=ZoneInfo("Europe/London"))
+        time = datetime.now(tz=ZoneInfo("utc"))
     energy_map = GenerationData(time)
     fig = energy_map.chart_figure
     if isinstance(fig, str):

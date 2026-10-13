@@ -1,9 +1,10 @@
+import os
 import requests
 import pandas as pd
 from datetime import date, datetime, timedelta, timezone
 from io import StringIO
 from tqdm import tqdm
-from constants import ELEXON_GENERATION_TYPES
+from constants import CACHED_DATA_PATH, ELEXON_GENERATION_TYPES
 
 BASE_URL = "https://data.elexon.co.uk/bmrs/api/v1/"
 FUEL_TYPES = [
@@ -48,7 +49,7 @@ def fetch_bmrs_data(endpoint, params=None, is_list=False) -> pd.DataFrame:
     # Convert JSON data to DataFrame
     return pd.DataFrame(response.json()['data']) if not is_list else pd.DataFrame(response.json())
 
-def fetch_extended_bmrs_data(endpoint_func, start_date: date, description: str) -> pd.DataFrame:
+def fetch_extended_bmrs_data(endpoint: str, start_date: date, description: str) -> pd.DataFrame:
     """
     Fetch extended data from the BMRS API, handling pagination.
 
@@ -59,16 +60,23 @@ def fetch_extended_bmrs_data(endpoint_func, start_date: date, description: str) 
     Returns:
         pd.DataFrame: DataFrame containing the fetched data.
     """
-    df = pd.DataFrame()
-    date_ranges = pd.date_range(start=start_date, end=date.today(), freq='7D')
+    cache_path = os.path.join(CACHED_DATA_PATH, f"{endpoint.replace('/', '-')}.parquet")
+    df = pd.read_parquet(cache_path) if os.path.exists(cache_path) else pd.DataFrame()
+    if not df.empty:
+        start_date = (pd.to_datetime(df['startTime']).max() + timedelta(days=1)).date()
+
+    print(start_date, datetime.now(tz=timezone.utc).today())
+    date_ranges = pd.date_range(start=start_date, end=datetime.now(tz=timezone.utc).today(), freq='7D')
     progress_bar = tqdm(total=len(date_ranges), desc=description, unit='request')
     for start in date_ranges:
         end = start + timedelta(days=7)
-        response = endpoint_func(start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d'))
+        response = fetch_bmrs_data(endpoint, params={"from": start.strftime('%Y-%m-%d'), "to": end.strftime('%Y-%m-%d')})
 
         df = pd.concat([df, response], ignore_index=True)
         progress_bar.update(1)
     progress_bar.close()
+    # Save the fetched data to a cache file for future use
+    df.to_parquet(cache_path, index=False, compression='zstd', compression_level=9)
     return df
 
 def time_to_settlement_period(dt: datetime) -> int:
@@ -93,7 +101,7 @@ def get_generators() -> pd.DataFrame:
     """
     return fetch_bmrs_data("reference/bmunits/all", is_list=True)
 
-def fetch_FPN(date: datetime, bmus: list[str] = None) -> pd.DataFrame:
+def fetch_FPN(date: datetime, bmus: list[str]| None = None) -> pd.DataFrame:
     """
     Fetch Final Physical Notification (FPN) data from the BMRS API.
 
@@ -111,7 +119,7 @@ def fetch_FPN(date: datetime, bmus: list[str] = None) -> pd.DataFrame:
         params["bmUnit[]"] = bmus
     return fetch_bmrs_data("balancing/physical/all",  params=params)
 
-def fetch_generation(dateFrom: datetime, dateTo: datetime, bmus: list[str] = None) -> pd.DataFrame:
+def fetch_generation(dateFrom: datetime, dateTo: datetime, bmus: list[str]| None = None) -> pd.DataFrame:
     """
     Fetch generation data from the BMRS API.
 

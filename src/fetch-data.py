@@ -11,42 +11,15 @@ from titlecase import titlecase
 import traceback
 
 from backend.gas import fetch_gas_data
-from backend.generation import fetch_generation_and_prices, fetch_demand, merge_generators, create_elec_vs_gas_dataset, fetch_balancing_mechanism_data
+from backend.generation import create_generation_datasets, fetch_generation_and_prices, fetch_demand, merge_generators, create_elec_vs_gas_dataset, fetch_balancing_mechanism_data
 from backend.policy import fetch_lccc_data
 from backend.metrics import create_metrics
+from backend.capacity_factors import create_capacity_factor_data
 from figures.metric import Metric
 from constants import METRIC_PATH, RAW_DATA_PATH, PROCESSED_DATA_PATH
 from datasources.supply import *
 from datasources.policy import *
 from datasources.system import *
-
-def local_data_sources(process_only: bool) -> None:
-    data = capacity_factors_source.fetch_data()
-    data[DATE_FIELD] = pd.to_datetime(data[DATE_FIELD], format='%d/%m/%y', errors='coerce')
-    
-    capacity_factor_constant = 100000/(91.5*24)
-    for fuel_type in ['Onshore Wind', 'Offshore Wind', 'Solar']:
-        data[f'{fuel_type} Capacity Factor (%)'] = capacity_factor_constant * data[f'{fuel_type} Generation (GWh)'] / data[f'{fuel_type} Capacity (MW)'] 
-    capacity_factors_source.save_data(data)
-
-def create_rolling_quartely_totals(process_only: bool):
-    print("Creating rolling quarterly totals...")
-    gasvselec = gasvselec_dataset.load_data()
-    cfd_settlements = cfd_settlements_source.load_data()
-    cm_payments = cm_payments_source.load_data()
-    bm_payments = bm_payments_source.load_data()
-
-    gasvselec['Gas Cost'] = gasvselec['Gas Price'] * gasvselec['Gas'] * 2.5
-    gasvselec['Wholesale Cost'] = gasvselec['Electricity Price'] * gasvselec['Total']
-
-    cfd_settlements[DATE_FIELD] = pd.to_datetime(cfd_settlements['Settlement Date'], errors='coerce')
-    cfd_settlements = cfd_settlements.groupby(DATE_FIELD).agg({'CfD Payments (£)': 'sum'}).reset_index()
-
-    cm_payments[DATE_FIELD] = pd.to_datetime(cm_payments['Calendar Year'].astype(str) + '-' + cm_payments['Calendar Month'].astype(str) + "-01", errors='coerce')
-    cm_payments = cm_payments[cm_payments['Capacity Payment Suspension Flag'] == 'Not Suspended']
-    cm_payments = cm_payments.groupby(DATE_FIELD).agg({'Capacity Payment (£)': 'sum', "Auction Acquired Capacity Obligation (MW)": 'sum'}).reset_index()
-    
-    bm_payments["Total"] = bm_payments[['Energy Imbalance', 'Frequency Control', 'Positive Reserve', 'Constraints', 'Negative Reserve', 'Other']].sum(axis=1)
 
 fetch_functions_list: list[tuple[Callable[[bool], None], str]] = [
     (fetch_generation_and_prices, "Generation and Prices Data"),
@@ -55,8 +28,8 @@ fetch_functions_list: list[tuple[Callable[[bool], None], str]] = [
     (fetch_balancing_mechanism_data, "Balancing Mechanism Data"),
     (fetch_gas_data, "Gas Data"),
     (fetch_lccc_data, "LCCC Data"),
-    (create_elec_vs_gas_dataset, "Electricity vs Gas Data"),
-    (local_data_sources, "Local Data Sources"),
+    (create_generation_datasets, "Generation Datasets"),
+    (create_capacity_factor_data, "Create Capacity Factor Data"),
     (create_metrics, "Create Metrics")
 ]
 
@@ -85,8 +58,9 @@ if __name__ == "__main__":
         process_only = True
 
     # Move the directories in `data/manual/base-data` to `data`
-    for dir_name in os.listdir('data/manual/base-data'):
-        shutil.move(os.path.join('data/manual/base-data', dir_name), 'data')
+    if not os.path.exists('data/raw'):    
+        for dir_name in os.listdir('data/manual/base-data'):
+            shutil.move(os.path.join('data/manual/base-data', dir_name), 'data')
         
     for opt in option:
         if opt in fetch_functions:

@@ -30,6 +30,8 @@ if __name__ == "__main__":
         ("Gas Storage", gas_storage_dataset.load_data()),
         ("Gas Demand", gas_demand_source.load_data()),
         ("Gas Price Forecast", gas_price_forecast_source.load_data()),
+        ("Historical Demand", demand_source.load_data()),
+        ("Generation vs Demand", supply_vs_demand_dataset.load_data()),
     ]
 
     for (i, (name, df)) in enumerate(dataframes):

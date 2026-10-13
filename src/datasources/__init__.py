@@ -42,10 +42,14 @@ from .system import (
     half_hourly_dataset,
     daily_dataset,
     gasvselec_dataset,
+    supply_vs_demand_dataset,
     current_wholesale_price_metric,
     sparkgap_metric,
     total_wholesale_cost_metric,
-    total_generation_metric,
+    annual_generation_metric,
+    annual_supply_metric,
+    annual_imports_metric,
+    annual_demand_metric,
     annual_bm_payments_metric,
 )
 from .providers import (

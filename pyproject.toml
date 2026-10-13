@@ -1,5 +1,5 @@
 [project]
-name = "electricity-prices"
+name = "the-grid-in-data"
 version = "0.1.0"
 description = "GB Electricity Market Analysis"
 authors = [
@@ -7,6 +7,7 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.13"
+
 dependencies = [
     "bs4>=0.0.2",
     "streamlit>=1.38.0",
@@ -24,8 +25,11 @@ dependencies = [
     "pandas>=3.0.5",
     "titlecase>=2.4.1",
     "ckanapi>=4.11",
+    "pytest>=9.1.1",
 ]
-
 [tool.uv.extra-build-dependencies]
 titlecase = ["setuptools"]
 docopt = ["setuptools"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

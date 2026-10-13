@@ -6,47 +6,46 @@ import streamlit as st
 
 import figures.cfd as cfd 
 from  datasources.policy import cfd_dataset, total_cfd_payments_metric, total_cfd_capacity_metric
-from pages.base import display_chart, display_metrics, footer, date_range_slider
+from pages.base import BasePage
 
-st.markdown('''
-# Contract for Difference (CFD) 
-Analysis of electricity price contracts and CFD payments.
-''')
-display_metrics([total_cfd_payments_metric, total_cfd_capacity_metric])
-with st.sidebar:
-    st.markdown("### Filter Options",)
-    st.markdown("Select the date range and strike price to analyze the CFD payments.")
-    start_date, end_date, frequency = date_range_slider(date.today() - timedelta(days=365), date.today(), min_date=date(2014, 1, 1), max_date=date.today(), key_prefix="cfd", hide_frequency=True)
-    technology = st.multiselect("Technology", options=cfd.get_available_technologies(), default=cfd.get_available_technologies())
-    allocation_round = st.multiselect("Allocation Round", options=cfd.get_available_allocation_rounds(), default=cfd.get_available_allocation_rounds())
+with BasePage() as page:
+    with page.filter_container:
+        start_date, end_date, frequency = page.date_range_slider(date.today() - timedelta(days=365), date.today(), min_date=date(2014, 1, 1), max_date=date.today(), key_prefix="cfd", hide_frequency=True)
+        technology = st.multiselect("Technology", options=cfd.get_available_technologies(), default=cfd.get_available_technologies())
+        allocation_round = st.multiselect("Allocation Round", options=cfd.get_available_allocation_rounds(), default=cfd.get_available_allocation_rounds())
 
-st.markdown("### CFD Payments")
-st.markdown('''
-    These charts show the costs involved in the Contract for Difference (CFD) scheme, which is designed to support low-carbon electricity generation in the UK. 
-    The CFD scheme pays generators a guarenteed price by paying them the difference between the market price and a pre-agreed strike price for their electricity output.
-    
-    The first chart shows the total CFD payments made to generators over time, broken down by technology.
-    The second chart shows the total CFD payments made to generators over time, broken down by strike price.
+    st.markdown('''
+    # Contract for Difference (CFD) 
+    Analysis of electricity price contracts and CFD payments.
     ''')
+    page.display_metrics([total_cfd_payments_metric, total_cfd_capacity_metric])
 
-cfd.filter_data(start_date, end_date, technology, allocation_round)
-display_chart(cfd.create_cfd_chart())
-st.markdown("* Note: CfDs awarded prior to AR1 are officially recognized as Investment Contracts.")
-display_chart(cfd.create_strike_price_chart())
+    st.markdown("### CFD Payments")
+    st.markdown('''
+        These charts show the costs involved in the Contract for Difference (CFD) scheme, which is designed to support low-carbon electricity generation in the UK. 
+        The CFD scheme pays generators a guarenteed price by paying them the difference between the market price and a pre-agreed strike price for their electricity output.
+        
+        The first chart shows the total CFD payments made to generators over time, broken down by technology.
+        The second chart shows the total CFD payments made to generators over time, broken down by strike price.
+        ''')
 
-st.markdown("### List of Generators")
+    cfd.filter_data(start_date, end_date, technology, allocation_round)
+    page.display_chart(cfd.create_cfd_chart())
+    st.markdown("* Note: CfDs awarded prior to AR1 are officially recognized as Investment Contracts.")
+    page.display_chart(cfd.create_strike_price_chart())
 
-search_term = st.text_input("Search for a generator (by name or technology):")
-status = st.radio("Status",  ["All"] + list(cfd.get_available_statuses()), index=0, horizontal=True)
+    # st.markdown("### List of Generators")
 
-display_chart(
-    cfd.show_generators(search_term, status), 
-    column_config={
-        "Expected Start Date": st.column_config.DateColumn(
-            "Expected Start Date",
-            format="DD MMM YYYY",
-        ),
-    },
-)
+    # search_term = st.text_input("Search for a generator (by name or technology):")
+    # status = st.radio("Status",  ["All"] + list(cfd.get_available_statuses()), index=0, horizontal=True)
 
-footer()
+    # page.display_chart(
+    #     cfd.show_generators(search_term, status), 
+    #     column_config={
+    #         "Expected Start Date": st.column_config.DateColumn(
+    #             "Expected Start Date",
+    #             format="DD MMM YYYY",
+    #         ),
+    #     },
+    # )
+

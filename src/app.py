@@ -29,7 +29,7 @@ if "--debug" in sys.argv:
 
 if "__main__" == __name__:
     st.set_page_config(
-        page_title="GB Grid Tracker",
+        page_title="The Grid in Data",
         page_icon=":material/bolt:",
         layout="wide",
         initial_sidebar_state="expanded",

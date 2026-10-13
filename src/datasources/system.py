@@ -1,4 +1,4 @@
-from figures.metric import CURRENCY, ENERGY, UNIT_PRICE, Metric, NO_UNIT
+from figures.metric import CURRENCY, ENERGY, PERCENT, UNIT_PRICE, Metric, NO_UNIT
 from .datasource import DataSource, DataCategory, DataSet
 from .providers import *
 from constants import DATE_FIELD, DATETIME_FIELD
@@ -91,6 +91,12 @@ gasvselec_dataset = DataSet(
     category=DataCategory.SYSTEM,
     date_fields=[DATE_FIELD]
 )
+supply_vs_demand_dataset = DataSet(
+    name="supply_vs_demand",
+    datasources=[generation_source, demand_source],
+    category=DataCategory.SYSTEM,
+    date_fields=[DATETIME_FIELD]
+)
 
 current_wholesale_price_metric = Metric(
     "Current Wholesale Price", 
@@ -103,11 +109,23 @@ sparkgap_metric = Metric(
 
 total_wholesale_cost_metric = Metric(
     "Annual Wholesale Cost", 
-    description="Total cost of wholesale electricity in the last year", 
+    description="Estimated total cost of wholesale electricity in the last year based on next-day prices", 
     unit=CURRENCY)
-total_generation_metric = Metric(
+annual_generation_metric = Metric(
     "Annual Electricity Generation", 
-    description="Total electricity generation (including imports) in the last year", 
+    description="Total electricity generation in the last year", 
+    unit=ENERGY)
+annual_imports_metric = Metric(
+    "Annual Electricity Imports", 
+    description="Total electricity imports in the last year", 
+    unit=PERCENT)
+annual_demand_metric = Metric(
+    "Annual Electricity Demand", 
+    description="Total electricity demand in the last year", 
+    unit=ENERGY)
+annual_supply_metric = Metric(
+    "Annual Electricity Supply", 
+    description="Total electricity supply (including imports) in the last year", 
     unit=ENERGY)
 annual_bm_payments_metric = Metric(
     "Annual Balancing Mechanism Payments", 

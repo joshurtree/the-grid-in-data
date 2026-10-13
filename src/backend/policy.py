@@ -10,6 +10,7 @@ CM_FORECAST = Endpoint("a3b6a6bf-6b18-412b-9433-e1fe4a3d1ca1", lccc_client)
 CM_PAYMENTS = Endpoint("2ed26d4f-ceb0-4a96-895e-4a3cc38c788c", lccc_client)
 CFD_FORECAST = Endpoint("b8820220-ee2e-451d-acf9-deafc374c989", lccc_client)
 CFD_CONTRACTS = Endpoint("fdaf09d2-8cff-4799-a5b0-1c59444e492b", lccc_client)
+CFD_GENERATION = Endpoint("37d1bef4-55d7-4b8e-8a47-1d24b123a20e", lccc_client)
 
 cm_monthly_weights = [
     1.2,
@@ -90,13 +91,13 @@ lccc_items = [
     ),
     (
         'cfd_settlements', 
-        CFD_FORECAST, 
+        CFD_GENERATION, 
         cfd_settlements_source,
         lambda df: df.assign(**{
             'Date': pd.to_datetime(df['Settlement Date'], errors='coerce'),
             'Year': pd.to_datetime(df['Settlement Date'], errors='coerce').dt.year,
             'CfD Payments (£/MWh)': df['CfD Payments (£)'] / df['CfD Generation (MWh)']
-        })
+        }).drop(columns=['Settlement Date'], errors='ignore')
     ),
     (
         'cm_payments', 
@@ -129,7 +130,7 @@ def fetch_lccc_data(process_only: bool):
         if not process_only:
             print(f"Fetching {item_name} data from CKAN...")
             old_data = source.load_data() if source.exists() else pd.DataFrame()
-            new_data = endpoint(len(old_data))
+            new_data = endpoint()
             if not new_data.empty:
                 new_data = transform_func(fix_lccc_columns(new_data))
                 source.save_data(pd.concat([old_data, new_data], ignore_index=True))

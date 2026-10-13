@@ -42,18 +42,12 @@ import os
 import pandas as pd
 import requests
 
+from backend import fetch_from_url
 from constants import DATE_FIELD
 from datasources.datasource import DataSource
 
-# Point OpenSSL at certifi's CA bundle. Some Python builds (e.g. the portable
-# CPython downloaded by `uv`) don't have a system CA bundle wired up, which
-# causes `ssl.SSLCertVerificationError: unable to get local issuer
-# certificate` when fetching data over HTTPS.
-os.environ.setdefault("SSL_CERT_FILE", __import__("certifi").where())
 
 NATIONAL_GAS_API = "https://data.nationalgas.com/api/find-gas-data-download"
-
-DEFAULT_HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
 # A few commonly used data item IDs. Extend this as you discover more via
 # https://data.nationalgas.com/find-gas-data
@@ -79,8 +73,6 @@ class NationalGasClient:
     """Thin wrapper around the National Gas public "find gas data" REST API."""
 
     base_url: str = NATIONAL_GAS_API
-    headers: dict = field(default_factory=lambda: dict(DEFAULT_HEADERS))
-    session: requests.Session = field(default_factory=requests.Session)
 
     def update_data_item(self, data_item: NationalGasDataItem, df: pd.DataFrame) -> pd.DataFrame:
         """Update a DataFrame with the latest values for a National Gas data item.
@@ -149,19 +141,8 @@ class NationalGasClient:
             "type": "CSV",
         }
 
-        response = self.session.get(self.base_url, params=params, headers=self.headers, timeout=30)
-        if response.status_code != 200:
-            raise NationalGasAPIError(
-                f"Error fetching data item {data_item.name!r} from National Gas API: "
-                f"{response.status_code} - {response.text[:500]}"
-            )
-        
-        if not response.content or response.content.strip() == b'':
-            print(f"Warning: Received empty response for data item {data_item.name!r} from National Gas API.")
-            return pd.DataFrame(columns=[DATE_FIELD, data_item.name])
-
         try:
-            df = pd.read_csv(BytesIO(response.content))
+            df = pd.read_csv(BytesIO(fetch_from_url(self.base_url, params=params)))
             df.rename(columns={'Applicable For': DATE_FIELD, 'Value': data_item.name}, inplace=True)
             df[DATE_FIELD] = pd.to_datetime(df[DATE_FIELD], format='%d/%m/%Y', errors='coerce')
             df.drop(columns=['Applicable At', 'Data Item', 'Generated Time', 'Quality Indicator'], inplace=True)
@@ -171,7 +152,6 @@ class NationalGasClient:
         except Exception as exc:
             raise NationalGasAPIError(
                 f"Failed to parse CSV response for data item {data_item.name!r}: {exc}\n"
-                f"Response body (truncated): {response.text[:500]}"
             ) from exc
 
 # Backwards-compatible functional wrapper, matching the original signature

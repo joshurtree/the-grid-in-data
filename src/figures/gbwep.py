@@ -5,20 +5,19 @@ from typing import Tuple
 import pandas as pd
 import plotly.graph_objects as go
 
-from constants import FREQ_GROUPS, NESO_GENERATION_TYPES
+from constants import DATE_FIELD, FREQ_GROUPS, NESO_GENERATION_TYPES
 from  datasources.system import half_hourly_dataset, daily_dataset
 from .chartset import Chart
 
-def filter_data(data: pd.DataFrame, start_date: date, end_date: date, target_generation: str, usage: tuple[float, float]) -> Tuple[pd.DataFrame, float]:
+def filter_data(data: pd.DataFrame, start_date: date, end_date: date, frequency: str, target_generation: str, usage: tuple[float, float]) -> Tuple[pd.DataFrame, float]:
     print(f'{len(data)} records before filtering')
     filtered_data = data.copy()
-    
+    filtered_data = filtered_data.resample(FREQ_GROUPS.get(frequency, 'D'), on=DATE_FIELD).mean().reset_index()  # Resample to daily frequency for better visualization    
     print(f'Filtering data from {start_date} to {end_date} for {target_generation} with minimum usage of {usage[0]}% and maximum usage of {usage[1]}%')
-    filtered_data = filtered_data[filtered_data['Settlement Date'] >= pd.to_datetime(start_date)]
-    filtered_data = filtered_data[filtered_data['Settlement Date'] <= pd.to_datetime(end_date)]
+    filtered_data = filtered_data[filtered_data[DATE_FIELD] >= pd.to_datetime(start_date)]
+    filtered_data = filtered_data[filtered_data[DATE_FIELD] <= pd.to_datetime(end_date)]
     y_max = filtered_data['Price'].max() * 1.1  # Set a fixed maximum for the y-axis to allow better scaling
     print(f'{len(filtered_data)} records after date filtering')
-    y_max = filtered_data['Price'].max() * 1.1  # Set a fixed maximum for the y-axis to allow better scaling
     filtered_data = filtered_data[filtered_data[target_generation + ' (%)'] >= usage[0]]
     filtered_data = filtered_data[filtered_data[target_generation + ' (%)'] <= usage[1]]
 
@@ -27,8 +26,8 @@ def filter_data(data: pd.DataFrame, start_date: date, end_date: date, target_gen
 
 def create_chart(start_date: date, end_date: date, frequency: str, target_generation: str|None, usage: tuple[float, float]) -> Chart:
     target_generation = target_generation or "Low Carbon"  # Default to Low Carbon if None    
-    filtered_data, y_max = filter_data(daily_dataset.load_data(), start_date, end_date, target_generation, usage)
-    data = filtered_data.rolling(FREQ_GROUPS.get(frequency, 'D'), on='Settlement Date').mean().reset_index()  # Resample to daily frequency for better visualization
+    filtered_data, y_max = filter_data(daily_dataset.load_data(), start_date, end_date, frequency, target_generation, usage)
+    data = filtered_data.rolling(FREQ_GROUPS.get(frequency, 'D'), on=DATE_FIELD).mean().reset_index()  # Resample to daily frequency for better visualization
     if data.empty:
         # Handle the case where there is insufficient data to create a chart
         chart_figure = go.Figure()
@@ -39,11 +38,11 @@ def create_chart(start_date: date, end_date: date, frequency: str, target_genera
             font=dict(size=16, color="red")
         )
     else:
-        data["Description"] = data.apply(lambda row: f"Date: {row['Settlement Date'].strftime('%d %B %Y')}<br>Price: £{row['Price']:.2f}/MWh<br>{target_generation}: {row[target_generation + ' (%)']:.1f}%<br>Total Generation: {row['Total'] / 1000:.1f} GWh", axis=1)
+        data["Description"] = data.apply(lambda row: f"Date: {row[DATE_FIELD].strftime('%d %B %Y')}<br>Price: £{row['Price']:.2f}/MWh<br>{target_generation}: {row[target_generation + ' (%)']:.1f}%<br>Total Generation: {row['Total'] / 1000:.1f} GWh", axis=1)
         # Create Plotly scatter chart with color by volume
         chart_figure = go.Figure(data=go.Scatter(
             mode='markers',
-            x=data['Settlement Date'],
+            x=data[DATE_FIELD],
             y=data['Price'],
             marker=dict(
                 size=8,
@@ -74,9 +73,9 @@ def create_chart(start_date: date, end_date: date, frequency: str, target_genera
         description="This chart shows the relationship between wholesale electricity prices and generation types over time.")
 
 # Group by generation type and calculate average price, total generation, and total cost for each generation type
-def create_table(start_date: date, end_date: date, target_generation: str|None, usage: tuple[float, float]) -> Chart:
+def create_table(start_date: date, end_date: date, frequency: str, target_generation: str|None, usage: tuple[float, float]) -> Chart:
     target_generation = target_generation or "Low Carbon"  # Default to Low Carbon if None
-    data, _ = filter_data(half_hourly_dataset.load_data(), start_date, end_date, target_generation, usage)
+    data, _ = filter_data(half_hourly_dataset.load_data(), start_date, end_date, frequency, target_generation, usage)
 
     def calc_data(gen_type):
         if data[gen_type].sum() < data['Total'].sum() * 0.001:  # Skip groups that contribute less than 0.1% of total generation

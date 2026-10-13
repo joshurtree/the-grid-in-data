@@ -72,18 +72,24 @@ gas_storage_metric = Metric(
     unit=DAYS
 )
 
-from .system import daily_dataset
-
+capacity_source = DataSource(
+    providers=[energy_trends_provider],
+    name="capacity",
+    category=DataCategory.SYSTEM,
+    url="https://www.gov.uk/government/statistics/energy-trends-section-6-renewables"
+)
 capacity_factors_source = DataSource(
     providers=[energy_trends_provider],
     name="capacity_factors",
     category=DataCategory.SYSTEM,
-    url="data/manual/capacity_factors.csv"
+    url="https://www.gov.uk/government/statistics/energy-trends-section-6-renewables"
 )
+
+from .system import daily_dataset
 
 capacity_factors_dataset = DataSet(
     name="capacity_factors",
-    datasources=[capacity_factors_source, daily_dataset],
+    datasources=[capacity_source, daily_dataset],
     category=DataCategory.SYSTEM,
     date_fields=["Date"]
 )

@@ -1,9 +1,10 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
 from io import BytesIO
 import os
 import pandas as pd
-from typing import Tuple
+from typing import Self, Tuple
 
 from constants import RAW_DATA_PATH, PROCESSED_DATA_PATH
 
@@ -66,6 +67,17 @@ class DataBase:
     def extension(self) -> str:
         return "parquet"
 
+    def modified_time(self) -> float:
+        return os.path.getmtime(self.path())
+    
+    def last_date_fetched(self) -> datetime:
+        if not self.exists():
+            return datetime(2000, 1, 1)
+        data = self.load_data()
+        if not data.empty:
+            return data[self.date_fields[0]].max()
+        return datetime(2000, 1, 1)
+
     def raw_source_info(self) -> list[str]:
         raise NotImplementedError("Subclasses must implement the source_info() method.")
     
@@ -76,7 +88,7 @@ class DataBase:
     
 @dataclass
 class DataSource(DataBase):
-    providers: list[DataProvider] = field(default_factory=lambda: [self_provider])
+    providers: list[DataProvider] = field(default_factory=lambda: [])
     url: str = ""
 
     def get_providers(self) -> list[DataProvider]:
@@ -105,3 +117,14 @@ class DataSet(DataBase):
 
     def raw_source_info(self) -> list[str]:
         return [link for ds in self.datasources for link in ds.raw_source_info()]
+    
+    def get_sources(self) -> list[DataSource]:
+        # Return a flat list of underlying DataBase sources; if a datasource is itself a DataSet,
+        # extend with its sources, otherwise include the datasource directly.
+        result: list[DataSource] = []
+        for ds in self.datasources:
+            if isinstance(ds, DataSet):
+                result.extend(ds.get_sources())
+            elif isinstance(ds, DataSource):
+                result.append(ds)
+        return result

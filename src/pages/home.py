@@ -8,7 +8,13 @@ reusing the existing backend chart/data functions.
 import datetime
 import os
 import streamlit as st
-from pages.base import footer
+from constants import DATE_WINDOWS, FREQ_GROUPS
+from pages.base import BasePage
+from datasources import (
+    annual_demand_metric,
+    annual_imports_metric
+)
+from figures.supply_vs_demand import create_supply_vs_demand_chart
 
 # energy_map_page = st.Page(
 #     render_energy_map, title="GB Energy Generation Map", icon=":material/map:", url="/energy-map"
@@ -29,27 +35,36 @@ st.set_page_config(
      page_icon=":zap:",
 )
 
-st.write(f"# {title}")
+with BasePage() as page:
+    with page.filter_container:
+        start_date, end_date, frequency = page.date_range_slider(
+            start_date=(datetime.datetime.now() - datetime.timedelta(days=365)).date(),
+            end_date=datetime.datetime.now().date(),
+            min_date=datetime.datetime(2009, 1, 1).date(),
+            max_date=datetime.datetime.now().date(),
+            frequency="Weekly",
+            frequency_options=list(FREQ_GROUPS.keys()),
+            key_prefix="home_date"
+        )
+    st.write(f"# {title}")
+        
+    st.markdown(
+        f"""
+        A bunch of charts and tables to visualize and analyze electricity in Great Britain. 
+        Currently a work in progress, but feel free to explore the pages and provide feedback!
 
-
-st.markdown(
-f"""
-## {title}
-A bunch of charts and tables to visualize and analyze electricity in Great Britain. 
-Currently a work in progress, but feel free to explore the pages and provide feedback!
-
-## About this website
-This website provides a dashboard for visualizing and analyzing GB electricity prices.
-"""
-)
-
-## Generate a news feed section by fetching commit messages from the repository and displaying them in a list format.
-st.markdown("### Site Updates")
-news_file = lambda x: os.path.join("data/manual/news", x)
-news_content = []
-for news_item in sorted(os.listdir("data/manual/news"), key=lambda x: os.path.getmtime(news_file(x)), reverse=True):
-    news_date = datetime.datetime.fromtimestamp(os.path.getmtime(news_file(news_item))).strftime("%d %b %Y")
-    with open(news_file(news_item), "r") as f:
-        news_content.append((news_date, f.read().strip()))
-st.table(news_content, border=False, hide_index=True, hide_header=True)
-footer()
+        ## About this website
+        This website provides a dashboard for visualizing and analyzing GB electricity prices.
+        """
+    )
+    page.display_metrics([annual_demand_metric,annual_imports_metric])
+    page.display_chart(create_supply_vs_demand_chart(start_date, end_date, frequency))
+    ## Generate a news feed section by fetching commit messages from the repository and displaying them in a list format.
+    st.markdown("### Site Updates")
+    news_file = lambda x: os.path.join("data/manual/news", x)
+    news_content = []
+    for news_item in sorted(os.listdir("data/manual/news"), key=lambda x: os.path.getmtime(news_file(x)), reverse=True):
+        news_date = datetime.datetime.fromtimestamp(os.path.getmtime(news_file(news_item))).strftime("%d %b %Y")
+        with open(news_file(news_item), "r") as f:
+            news_content.append((news_date, f.read().strip()))
+    st.table(news_content, border=False, hide_index=True, hide_header=True)

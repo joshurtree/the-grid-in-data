@@ -4,12 +4,11 @@ from typing import Any, Optional
 import pandas as pd
 import streamlit as st
 
-from datasource import DataSet, DataSource
+from datasources import DataSet, DataSource
 import  datasources.supply as supply
 import  datasources.policy as policy
 import  datasources.system as system
 
-# /home/josh/projects/electricity-prices/pages/debug/data_info.py
 
 st.title("Debug: Data sources & datasets")
 st.write("Introspect DataSource and DataSet objects from * modules.")

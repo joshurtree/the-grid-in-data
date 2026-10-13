@@ -1,12 +1,15 @@
 import os
+from matplotlib.pylab import size
 import pandas as pd
 from datetime import datetime, date
 from constants import RAW_DATA_PATH
 from  datasources.policy import cfd_settlements_source, cfd_contracts_source
+import numpy as np
 from plotly import graph_objects as go
 from figures.chartset import Chart
 
 colours = {
+    "Pre-Allocation Round 1": "#000080",  # Midnight Blue
     "Allocation Round 1": "#1f77b4",  # Blue
     "Allocation Round 2": "#ff7f0e",  # Orange
     "Allocation Round 3": "#2ca02c",  # Green
@@ -76,12 +79,15 @@ def create_cfd_chart():
             text=tech_data['CfD Payments (£ million)'].apply(lambda x: f'£{x:,.2f} million'),
             hovertemplate='CfD Payments: %{text}<extra></extra>',
         ))
+    # Make sure "pre-Allocation Round 1" appears first in the x-axis
+    allocation_round_order = ["Pre-Allocation Round 1"] + [f"Allocation Round {i}" for i in range(1, 9)]
+    fig.update_xaxes(categoryorder='array', categoryarray=allocation_round_order)
     fig.update_layout(
         title=f'CfD Payments by Technology and Allocation Round',
         xaxis_title='Allocation Round',
         yaxis_title='CfD Payments (£ million)',
         barmode='group',
-        hovermode='x'
+        hovermode='x',
     )
     return Chart(
         cfd_settlements_source, 
@@ -97,20 +103,27 @@ def create_strike_price_chart():
     fig = go.Figure()
     for technology in data['Technology'].unique():
         tech_data = data[data['Technology'] == technology]
-        
+        tech_data['text'] = tech_data.apply(lambda row: f"Technology: {row['Technology']}<br>Strike Price: £{row['Strike Price (£/MWh)']:.2f}/MWh<br>CfD Payments: £{row['CfD Payments (£ million)']:.2f} million (£{row['CfD Payments (£/MWh)']:.2f}/MWh)", axis=1)
         # Calculate the CFD payments paid based on the strike price
         fig.add_trace(go.Scatter(
             x=tech_data['Strike Price (£/MWh)'],
             y=tech_data['CfD Payments (£/MWh)'],
             name=technology,
+            text=tech_data['text'],
             mode='markers',
-            marker_color=colours.get(technology, '#000000'),
-            hovertemplate='Strike Price: %{x}<br>CfD Payments: £%{y}/MWh<extra></extra><br>Technology: ' + technology,
+            marker=dict(
+                color=colours.get(technology, '#000000'),
+                size=np.abs(tech_data['CfD Payments (£ million)']/10),  
+            ),
+            hovertemplate='%{text}<extra></extra>',
         ))
     fig.update_layout(
         title=f'CfD Payments Paid vs Strike Price',
         xaxis_title='Strike Price (£/MWh)',
         yaxis_title='Average CfD Payments Paid (£/MWh)',
+        xaxis_zeroline=True,
+        yaxis_zeroline=True,
+        yaxis_zerolinewidth=3,
         hovermode='closest'
     )
     return Chart(

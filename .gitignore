@@ -13,6 +13,7 @@ wheels/
 /data/**/*.parquet
 /data/**/*.json
 !/data/manual/**
+!/data/cache/**
 
 .direnv/
 .~lock*

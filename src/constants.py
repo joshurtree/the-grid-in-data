@@ -31,12 +31,26 @@ def to_dict(generation_types: list[GenerationType], include_sub_types: bool = Fa
 
     return generation_types_dict
 
-interconnectors = ('INT', 'INTELE', 'INTELEC', 'INTEW', 'INTFR', 'INTGRNL', 'INTIFA2', 'INTIRL', 'INTNED', 'INTNEM', 'INTNSL', 'INTVKL')
+INTERCONNECTOR_CODES = ('INT', 'INTELE', 'INTELEC', 'INTEW', 'INTFR', 'INTGRNL', 'INTIFA2', 'INTIRL', 'INTNED', 'INTNEM', 'INTNSL', 'INTVKL')
+INTERCONNECTOR_NAMES = {
+    'INT': 'Interconnectors',
+    'INTELE': 'Eleclink',
+    'INTELEC': 'Eleclink',
+    'INTEW': 'East West',
+    'INTFR': 'IFA',
+    'INTGRNL': 'Greenlink',
+    'INTIFA2': 'IFA2',
+    'INTIRL': 'Moyle',
+    'INTNED': 'Britned',
+    'INTNEM': 'NEMO',
+    'INTNSL': 'NSL',
+    'INTVKL': 'Viking Link'
+}
 COAL = GenerationType(code='COAL', label='Coal', legacy=True)
 OIL = GenerationType(code='OIL', label='Oil', legacy=True)
 NUCLEAR = GenerationType(code='NUCLEAR', label='Nuclear')
 WIND = GenerationType(code='WIND', label='Wind')
-IMPORTS = GenerationType(code='IMPORTS', label='Imports', sub_types=interconnectors)
+IMPORTS = GenerationType(code='IMPORTS', label='Imports', sub_types=INTERCONNECTOR_CODES)
 BIOMASS = GenerationType(code='BIOMASS', label='Biomass')
 GAS = GenerationType(code='GAS', label='Gas', sub_types=('CCGT', 'OCGT', 'RGAS'))
 WIND_EMB = GenerationType(code='WIND_EMB', label='Embedded Wind')
@@ -113,6 +127,9 @@ GENERATION_SUPER_GROUPS = {
 
 GENERATION_COLOURS = {fuel_type: group['colour'] for group in GENERATION_TYPE_GROUPS for fuel_type in group['types']}
 
+CAPACITY_FACTORS = ['Onshore Wind', 'Tidal', 'Solar', 'Hydro', 'Offshore Wind', 'Biomass']
+ALT_CAPACITY_FACTORS = ['Wind', 'Solar', 'Hydro', 'Biomass']
+
 FREQ_GROUPS = {
     'Hourly': timedelta(hours=1),
     'Daily': timedelta(days=1),
@@ -123,16 +140,18 @@ FREQ_GROUPS = {
 }
 
 DATE_WINDOWS = {
-    '1M': timedelta(days=30),
-    '6M': timedelta(days=180),
-    '1Y': timedelta(days=365),
-    '5Y': timedelta(days=5*365),
-    'All': None
+    '1M': (timedelta(days=30), 'Daily'),
+    '6M': (timedelta(days=180), 'Daily'),
+    '1Y': (timedelta(days=365), 'Weekly'),
+    '5Y': (timedelta(days=5*365), 'Monthly'),
+    'All': (timedelta(days=365*20), 'Monthly'),  # Assuming 20 years of data
 }
+
 RAW_DATA_PATH = os.path.join('data', 'raw')
 PROCESSED_DATA_PATH = os.path.join('data', 'processed')
 MANUAL_DATA_PATH = os.path.join('data', 'manual')
 METRIC_PATH = os.path.join('data', 'metrics')
+CACHED_DATA_PATH = os.path.join('data', 'cache')
 
 INFLATORS = {
     2012: 1.0,

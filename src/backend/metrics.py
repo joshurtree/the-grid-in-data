@@ -3,27 +3,7 @@ import numpy as np
 import pandas as pd
 
 from constants import DATE_FIELD
-from datasources import (
-    gasvselec_dataset,
-    cfd_settlements_source,
-    cm_payments_source,
-    cfd_locations_source,
-    bm_payments_source,
-    wholesale_price_source,
-    gas_storage_dataset,
-    current_gas_price_metric,
-    total_gas_cost_metric,
-    sparkgap_metric,
-    current_wholesale_price_metric,
-    total_wholesale_cost_metric,
-    total_generation_metric,
-    total_cfd_payments_metric,
-    total_cfd_capacity_metric,
-    total_cm_payments_metric,
-    total_cm_capacity_metric,
-    annual_bm_payments_metric,
-    gas_storage_metric
-)
+from datasources import *
 
 from figures.metric import Metric
 
@@ -36,26 +16,34 @@ def create_metric(metric: Metric, values: list[float]) -> None:
     metric.change_from_5_years_ago = calc_change(latest_value, five_years_ago_value)
     metric.save()
 
-def create_aggregate_metric(time_frames: list[tuple[int, int]], metric: Metric, df: pd.DataFrame, metric_column: str, agg_type="sum") -> None:
+aggreagation_functions = {
+    "sum": lambda df, column: df[column].sum(),
+    "mean": lambda df, column: df[column].mean(),
+    "ratio": lambda df, column1, column2: (df[column1].sum() / df[column2].sum())*100 if df[column2].sum() != 0 else np.nan
+}
+
+def create_aggregate_metric(time_frames: list[tuple[int, int]], metric: Metric, df: pd.DataFrame, metric_columns: list[str]|str, agg_type: str ="sum") -> None:
     '''
     Input: A dataframe with a 'Metric' column and a 'Date' column
     '''
     print(f"Creating metric {metric.name} with aggregation type {agg_type}...")
     get_offset = lambda months: pd.Timestamp.now() - pd.DateOffset(months=months)
     values = []
+    if isinstance(metric_columns, str):
+        metric_columns = [metric_columns]
+
     for lower_bound, upper_bound in time_frames:
-        filtered_df = df[(df[DATE_FIELD] >= get_offset(lower_bound)) & (df[DATE_FIELD] <= get_offset(upper_bound))]
+        filtered_df = df[(pd.to_datetime(df[DATE_FIELD], format="mixed") >= get_offset(lower_bound)) & (pd.to_datetime(df[DATE_FIELD], format="mixed") <= get_offset(upper_bound))]
         if filtered_df.empty:
             print(f"Warning: No data found for {metric.name} in the range of {lower_bound} to {upper_bound} months ago.")
 
-        if agg_type == "sum":
-            values.append(filtered_df[metric_column].sum())
-        elif agg_type == "mean":
-            values.append(filtered_df[metric_column].mean())
+        if agg_type in aggreagation_functions:
+            values.append(aggreagation_functions[agg_type](filtered_df, *metric_columns))
         else:
             raise ValueError(f"Unsupported aggregation type: {agg_type}")
     
     create_metric(metric, values)
+
 
 create_monthly_metric = partial(create_aggregate_metric, [(1, 0), (13, 12), (61, 60)])
 create_annual_metric = partial(create_aggregate_metric, [(13, 1), (25, 13), (73, 61)])
@@ -71,6 +59,7 @@ def create_metrics(process_only: bool):
         The metrics are created by creating a dataframe with the with date and metric columns and passing it to `Metric.create_metric`
     '''
     print("Creating metrics...")
+    daily_generation = daily_dataset.load_data()
     gasvselec = gasvselec_dataset.load_data()
     cfd_settlements = cfd_settlements_source.load_data()
     cm_payments = cm_payments_source.load_data()
@@ -78,6 +67,7 @@ def create_metrics(process_only: bool):
     bm_payments = bm_payments_source.load_data()
     wholesale_cost = wholesale_price_source.load_data()
     gas_storage = gas_storage_dataset.load_data()
+    demand = demand_source.load_data()
     
     gasvselec['Gas Cost'] = gasvselec['Gas Price'] * gasvselec['Gas'] * 2.5
     gasvselec['Wholesale Cost'] = gasvselec['Electricity Price'] * gasvselec['Total']
@@ -92,15 +82,24 @@ def create_metrics(process_only: bool):
     cm_payments = cm_payments.groupby(DATE_FIELD).agg({'Capacity Payment (£)': 'sum', "Auction Acquired Capacity Obligation (MW)": 'sum'}).reset_index()
     bm_payments["Total"] = bm_payments[['Energy Imbalance', 'Frequency Control', 'Positive Reserve', 'Constraints', 'Negative Reserve', 'Other']].sum(axis=1)
 
+    demand["National Demand (MWh)"] = demand[["National Demand", "Embedded Wind Generation", "Embedded Solar Generation"]].astype(float).sum(axis=1)/2
+    demand["Transmision System Demand (MWh)"] = demand["Transmission System Demand"].astype(float)/2
+
     create_monthly_metric(current_gas_price_metric, gasvselec, "Gas Price", "mean")
     create_annual_metric(total_gas_cost_metric, gasvselec, "Gas Cost")
     create_monthly_metric(sparkgap_metric, gasvselec, "Ratio", "mean")
+
     create_monthly_metric(current_wholesale_price_metric, gasvselec, "Electricity Price", "mean")
     create_annual_metric(total_wholesale_cost_metric, gasvselec, "Wholesale Cost")
-    create_annual_metric(total_generation_metric, gasvselec, "Total")
+    create_annual_metric(annual_supply_metric, gasvselec, "Total")
+    create_annual_metric(annual_demand_metric, demand, "National Demand (MWh)")
+    create_annual_metric(annual_imports_metric, gasvselec, "Imports (%)", "mean")
+    
     create_annual_metric(total_cfd_payments_metric, cfd_settlements, "CfD Payments (£)")
     create_total_metric(total_cfd_capacity_metric, cfd_locations, "Maximum Contract Capacity (MW)")
     create_annual_metric(total_cm_payments_metric, cm_payments, "Capacity Payment (£)")
     create_annual_metric(total_cm_capacity_metric, cm_payments, "Auction Acquired Capacity Obligation (MW)", "mean")
     create_annual_metric(annual_bm_payments_metric, bm_payments, "Total")
     create_monthly_metric(gas_storage_metric, gas_storage, "Gas Reserves (Days)", "mean")
+
+    create_annual_metric(annual_generation_metric, gasvselec, "Total")
